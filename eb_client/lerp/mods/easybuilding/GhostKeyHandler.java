@@ -29,7 +29,7 @@ public class GhostKeyHandler extends KeyHandler {
 	};
 	
 	public static boolean repeats[] = {
-		false, false, false, false, false, false, false, false
+		false, false, false, false, false, false, false, true
 	};
 
 	public GhostKeyHandler() {		
