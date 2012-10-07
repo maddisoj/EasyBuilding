@@ -11,11 +11,19 @@ import com.google.common.io.ByteArrayDataInput;
 import cpw.mods.fml.common.network.Player;
 
 public class PacketPlaceBlock extends PacketEB {
+	private int blockID;
+	
 	public PacketPlaceBlock() {
-		super(PacketType.PLACE_BLOCK, false);
+		super(PacketType.PLACE_BLOCK, true);
+		this.blockID = -1;
+	}
+	
+	public PacketPlaceBlock(int blockID) {
+		super(PacketType.PLACE_BLOCK, true);
+		this.blockID = blockID;
 	}
 	
 	public void handle(NetworkManager manager, Player player) {
-		GhostBlockHandler.instance().requestPlaceBlock((EntityPlayer)player);
+		GhostBlockHandler.instance().requestPlaceBlock((EntityPlayer)player, blockID);
 	}
 }

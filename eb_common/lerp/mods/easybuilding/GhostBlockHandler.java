@@ -137,8 +137,20 @@ public class GhostBlockHandler {
 		world.setBlock(x, y, z, entity.getBlockId());
 	}
 	
-	public void requestPlaceBlock(EntityPlayer player) {
+	public void requestPlaceBlock(EntityPlayer player, int blockID) {
 		GhostBlockInformation info = ghostBlocks.get(player.username);
+		
+		if(blockID == -1) {
+			Item current = player.inventory.getCurrentItem().getItem();
+			
+			if(!(current instanceof ItemBlock)) {
+				return;
+			}
+			
+			blockID = ((ItemBlock)current).getBlockID();
+		} else {
+			//if(player.inventory.hasItem())
+		}
 		
 		if(info == null) {
 			return;
@@ -154,7 +166,7 @@ public class GhostBlockHandler {
 		if(stack == null) { return; }
 		
 		Item i = stack.getItem();
-		if(!(i instanceof ItemBlock)){
+		if(!(i instanceof ItemBlock)) {
 			return;
 		}
 		
