@@ -1,5 +1,8 @@
 package lerp.mods.easybuilding;
 
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
 import cpw.mods.fml.client.FMLClientHandler;
 
 public class GhostBlockHandler {
@@ -64,7 +67,16 @@ public class GhostBlockHandler {
 		FMLClientHandler.instance().sendPacket((new PacketRemoveGhost()).toCustomPayload());
 	}
 	
-	public void update(int x, int y, int z) {
+	public void update(EntityPlayer player, int X, int Y, int Z, int blockID) {
+		TileEntity entity = player.worldObj.getBlockTileEntity(x, y, z);
 		
+		if(!(entity instanceof TileGhostBlock)) {
+			return;
+		}
+		
+		x = X;
+		y = Y;
+		z = Z;		
+		((TileGhostBlock)entity).setBlockId(blockID);
 	}
 }

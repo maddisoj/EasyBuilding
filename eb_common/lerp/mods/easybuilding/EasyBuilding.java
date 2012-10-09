@@ -42,7 +42,7 @@ public class EasyBuilding {
 		proxy.registerRenderInformation();
 	}
 	
-	public void sendToAllPlayers(PacketEB packet) {
+	public static void sendToAllPlayers(PacketEB packet) {
 		proxy.sendToAllPlayers(packet);
 	}
 }

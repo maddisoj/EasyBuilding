@@ -53,7 +53,7 @@ public class TileGhostBlock extends TileEntity {
 	public void move(EntityPlayer player, Direction direction) {
 		Vec3 moveDirection = Vec3.createVectorHelper(0.0, 0.0, 0.0);
 		
-		//if(true) {//owner != player.username) {	
+		//if(owner != player.username) {	
 			if(direction == Direction.FORWARD) {
 				moveDirection = Helper.getPlayerDirection(player);
 			} else if(direction == Direction.BACKWARD) {
@@ -89,9 +89,10 @@ public class TileGhostBlock extends TileEntity {
 			return;
 		}
 		
-		TileGhostBlock ghost = (TileGhostBlock)entity;
-		ghost.setBlockId(newBlockID);
+		TileGhostBlock newGhostTile = (TileGhostBlock)entity;
+		newGhostTile.setBlockId(newBlockID);
 		
 		worldObj.setBlock(oldX, oldY, oldZ, blockId);
+		EasyBuilding.sendToAllPlayers(newGhostTile.getUpdatePacket());
 	}
 }
