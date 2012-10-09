@@ -54,19 +54,19 @@ public class GhostKeyHandler extends KeyHandler {
 			if(target == null) { return; }
 			
 			int[] pos = Helper.getPosition(target.blockX, target.blockY, target.blockZ, target.sideHit);
-			packet = new PacketPlaceGhost(pos[0], pos[1], pos[2]);
+			GhostBlockHandler.instance().place(pos[0], pos[1], pos[2]);
 		} else if(kb.keyDescription.equals("GhostForward")) {
-			packet = new PacketMoveGhost(Direction.FORWARD);
+			GhostBlockHandler.instance().move(Direction.FORWARD);
 		} else if(kb.keyDescription.equals("GhostBackward")) {
-			packet = new PacketMoveGhost(Direction.BACKWARD);
-		}  else if(kb.keyDescription.equals("GhostLeft")) {
-			packet = new PacketMoveGhost(Direction.LEFT);
+			GhostBlockHandler.instance().move(Direction.BACKWARD);
+		} else if(kb.keyDescription.equals("GhostLeft")) {
+			GhostBlockHandler.instance().move(Direction.LEFT);
 		} else if(kb.keyDescription.equals("GhostRight")) {
-			packet = new PacketMoveGhost(Direction.RIGHT);
+			GhostBlockHandler.instance().move(Direction.RIGHT);
 		} else if(kb.keyDescription .equals("GhostUp")) {
-			packet = new PacketMoveGhost(Direction.UP);
+			GhostBlockHandler.instance().move(Direction.UP);
 		} else if(kb.keyDescription.equals("GhostDown")) {
-			packet = new PacketMoveGhost(Direction.DOWN);
+			GhostBlockHandler.instance().move(Direction.DOWN);
 		} else if(kb.keyDescription.equals("PlaceBlock")) {
 			packet = new PacketPlaceBlock();
 		}

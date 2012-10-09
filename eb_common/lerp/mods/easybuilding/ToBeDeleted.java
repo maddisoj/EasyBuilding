@@ -22,8 +22,8 @@ import net.minecraft.src.World;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.server.FMLServerHandler;
 
-public class GhostBlockHandler {
-	private static final GhostBlockHandler INSTANCE = new GhostBlockHandler();
+public class ToBeDeleted {
+	private static final ToBeDeleted INSTANCE = new ToBeDeleted();
 	
 	private class GhostBlockInformation {
 		public int x, y, z;
@@ -50,11 +50,11 @@ public class GhostBlockHandler {
 	
 	private HashMap<String, GhostBlockInformation> ghostBlocks;
 	
-	private GhostBlockHandler() {
+	private ToBeDeleted() {
 		ghostBlocks = new HashMap<String, GhostBlockInformation>();
 	}
 	
-	public static GhostBlockHandler instance() {
+	public static ToBeDeleted instance() {
 		return INSTANCE;
 	}
 	
@@ -137,10 +137,10 @@ public class GhostBlockHandler {
 		world.setBlock(x, y, z, entity.getBlockId());
 	}
 	
-	public void requestPlaceBlock(EntityPlayer player, int blockID) {
+	public void requestPlaceBlock(EntityPlayer player) {
 		GhostBlockInformation info = ghostBlocks.get(player.username);
 		
-		if(blockID == -1) {
+		/*if(blockID == -1) {
 			Item current = player.inventory.getCurrentItem().getItem();
 			
 			if(!(current instanceof ItemBlock)) {
@@ -150,7 +150,7 @@ public class GhostBlockHandler {
 			blockID = ((ItemBlock)current).getBlockID();
 		} else {
 			//if(player.inventory.hasItem())
-		}
+		}*/
 		
 		if(info == null) {
 			return;
@@ -199,7 +199,7 @@ public class GhostBlockHandler {
 	}
 	
 	private void move(EntityPlayer player, int x, int y, int z, Direction direction) {
-		Vec3 moveDirection = Vec3.createVectorHelper(0.0, 0.0, 0.0);
+		/*Vec3 moveDirection = Vec3.createVectorHelper(0.0, 0.0, 0.0);
 		
 		if(direction == Direction.FORWARD) {
 			moveDirection = Helper.getPlayerDirection(player);
@@ -224,6 +224,6 @@ public class GhostBlockHandler {
 		
 		remove(player, x, y, z);
 		place(player, targetX, targetY, targetZ);
-		updateGhostBlock(player, targetX, targetY, targetZ);
+		updateGhostBlock(player, targetX, targetY, targetZ);*/
 	}
 }

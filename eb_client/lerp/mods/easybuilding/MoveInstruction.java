@@ -3,18 +3,14 @@ package lerp.mods.easybuilding;
 import cpw.mods.fml.client.FMLClientHandler;
 
 public class MoveInstruction implements Instruction {
-	private PacketEB packet;
+	private Direction dir;
 
 	public MoveInstruction(Direction dir) {
-		packet = new PacketMoveGhost(dir);
-	}
-	
-	public void setDirection(Direction dir) {
-		packet = new PacketMoveGhost(dir);
+		this.dir = dir;
 	}
 	
 	@Override
 	public void execute() {
-		FMLClientHandler.instance().sendPacket(packet.toCustomPayload());
+		GhostBlockHandler.instance().move(dir);
 	}
 }

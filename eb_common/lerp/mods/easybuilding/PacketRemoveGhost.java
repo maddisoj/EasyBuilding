@@ -31,6 +31,6 @@ public class PacketRemoveGhost extends PacketEB {
 	}
 	
 	public void handle(NetworkManager manager, Player player) {
-		GhostBlockHandler.instance().requestRemove((EntityPlayer)player, x, y, z);
+		ToBeDeleted.instance().requestRemove((EntityPlayer)player, x, y, z);
 	}
 }

@@ -60,6 +60,7 @@ public class PacketUpdateGhost extends PacketEB {
 			}
 			
 			((TileGhostBlock)entity).handleUpdatePacket(this);
+			GhostBlockHandler.instance().update(x, y, z);
 		}
 	}
 	

@@ -7,7 +7,7 @@ import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
-public class BlockGhost extends BlockContainer {	
+public class BlockGhost extends BlockContainer {
 	public BlockGhost(int id) {		
 		super(id, Material.glass);
 

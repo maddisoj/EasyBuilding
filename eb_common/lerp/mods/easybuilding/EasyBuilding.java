@@ -41,4 +41,8 @@ public class EasyBuilding {
 		proxy.registerTileEntities();
 		proxy.registerRenderInformation();
 	}
+	
+	public void sendToAllPlayers(PacketEB packet) {
+		proxy.sendToAllPlayers(packet);
+	}
 }
