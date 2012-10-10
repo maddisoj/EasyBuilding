@@ -1,7 +1,9 @@
-package lerp.mods.easybuilding;
+package lerp.mods.easybuilding.network;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import lerp.mods.easybuilding.TileGhostBlock;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.NetworkManager;

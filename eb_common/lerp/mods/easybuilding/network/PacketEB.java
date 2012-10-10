@@ -1,4 +1,4 @@
-package lerp.mods.easybuilding;
+package lerp.mods.easybuilding.network;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;

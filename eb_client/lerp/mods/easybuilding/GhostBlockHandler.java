@@ -1,6 +1,15 @@
 package lerp.mods.easybuilding;
 
+import lerp.mods.easybuilding.macros.Instruction;
+import lerp.mods.easybuilding.macros.Macro;
+import lerp.mods.easybuilding.macros.MoveInstruction;
+import lerp.mods.easybuilding.macros.PlaceInstruction;
+import lerp.mods.easybuilding.network.PacketMoveGhost;
+import lerp.mods.easybuilding.network.PacketPlaceBlock;
+import lerp.mods.easybuilding.network.PacketPlaceGhost;
+import lerp.mods.easybuilding.network.PacketRemoveGhost;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import cpw.mods.fml.client.FMLClientHandler;
@@ -8,13 +17,16 @@ import cpw.mods.fml.client.FMLClientHandler;
 public class GhostBlockHandler {
 	private static GhostBlockHandler INSTANCE = new GhostBlockHandler();
 	private int x, y, z;
-	private boolean placed;
+	private boolean placed, recording;
+	private Macro macro;
 	
 	private GhostBlockHandler() {
 		x = 0;
 		y = 0;
 		z = 0;
 		placed = false;
+		recording = false;
+		macro = new Macro();
 	}
 	
 	public static GhostBlockHandler instance() {
@@ -46,7 +58,13 @@ public class GhostBlockHandler {
 	}
 	
 	public void move(Direction dir) {
-		FMLClientHandler.instance().sendPacket((new PacketMoveGhost(x, y, z, dir)).toCustomPayload());
+		if(placed) {
+			sendPacket((new PacketMoveGhost(x, y, z, dir)).toCustomPayload());
+			
+			if(recording) {
+				macro.addInstruction(new MoveInstruction(dir));
+			}
+		}
 	}
 	
 	public void place(int X, int Y, int Z) {		
@@ -58,14 +76,14 @@ public class GhostBlockHandler {
 		y = Y;
 		z = Z;
 		
-		FMLClientHandler.instance().sendPacket((new PacketPlaceGhost(x, y, z)).toCustomPayload());
+		sendPacket((new PacketPlaceGhost(x, y, z)).toCustomPayload());
 		placed = true;
 	}
 	
 	public void remove() {
 		if(placed) {
 			placed = false;
-			FMLClientHandler.instance().sendPacket((new PacketRemoveGhost(x, y, z)).toCustomPayload());
+			sendPacket((new PacketRemoveGhost(x, y, z)).toCustomPayload());
 		}
 	}
 	
@@ -84,7 +102,41 @@ public class GhostBlockHandler {
 	
 	public void placeBlock() {
 		if(placed) {
-			FMLClientHandler.instance().sendPacket((new PacketPlaceBlock(x, y, z)).toCustomPayload());
+			sendPacket((new PacketPlaceBlock(x, y, z)).toCustomPayload());
+			
+			if(recording) {
+				Instruction lastInstruction = macro.getLastInstruction();
+				
+				if(lastInstruction != null && !(lastInstruction instanceof PlaceInstruction)) {
+					macro.addInstruction(new PlaceInstruction(getCurrentItem()));
+				}
+			}
 		}
 	}
+
+	public void toggleRecording() {
+		recording = !recording;
+		
+		if(recording) {
+			FMLClientHandler.instance().getClient().thePlayer.addChatMessage("Started Recording");
+		} else {
+			FMLClientHandler.instance().getClient().thePlayer.addChatMessage("Finished Recording");
+		}
+	}
+
+	public void playMacro() {
+		if(recording) { return; }
+		
+		System.out.println(macro.toString());
+		macro.run();
+	}
+	
+	private void sendPacket(Packet packet) {
+		FMLClientHandler.instance().sendPacket(packet);
+	}
+	
+	private int getCurrentItem() {
+		return FMLClientHandler.instance().getClient().thePlayer.inventory.currentItem;
+	}
+
 }

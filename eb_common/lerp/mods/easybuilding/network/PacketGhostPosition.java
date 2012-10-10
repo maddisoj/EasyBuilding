@@ -1,4 +1,4 @@
-package lerp.mods.easybuilding;
+package lerp.mods.easybuilding.network;
 import java.io.DataOutputStream;
 import java.io.IOException;
 

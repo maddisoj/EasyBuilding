@@ -1,5 +1,7 @@
 package lerp.mods.easybuilding;
 
+import lerp.mods.easybuilding.network.PacketEB;
+import lerp.mods.easybuilding.network.PacketHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;

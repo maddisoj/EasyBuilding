@@ -18,18 +18,20 @@ import cpw.mods.fml.common.TickType;
 public class GhostKeyHandler extends KeyHandler {
 	
 	public static KeyBinding keyBindings[] = {
-		new KeyBinding("PlaceGhost", Keyboard.KEY_NUMPAD3),
-		new KeyBinding("GhostForward", Keyboard.KEY_NUMPAD8),
-		new KeyBinding("GhostBackward", Keyboard.KEY_NUMPAD5),
-		new KeyBinding("GhostLeft", Keyboard.KEY_NUMPAD4),
-		new KeyBinding("GhostRight", Keyboard.KEY_NUMPAD6),
-		new KeyBinding("GhostUp", Keyboard.KEY_NUMPAD9),
-		new KeyBinding("GhostDown", Keyboard.KEY_NUMPAD7),
-		new KeyBinding("PlaceBlock", Keyboard.KEY_ADD),
+		new KeyBinding("PlaceGhost", Keyboard.KEY_NUMPAD0),
+		new KeyBinding("GhostForward", Keyboard.KEY_NUMPAD5),
+		new KeyBinding("GhostBackward", Keyboard.KEY_NUMPAD2),
+		new KeyBinding("GhostLeft", Keyboard.KEY_NUMPAD1),
+		new KeyBinding("GhostRight", Keyboard.KEY_NUMPAD3),
+		new KeyBinding("GhostUp", Keyboard.KEY_NUMPAD4),
+		new KeyBinding("GhostDown", Keyboard.KEY_NUMPAD6),
+		new KeyBinding("PlaceBlock", Keyboard.KEY_NUMPADENTER),
+		new KeyBinding("ToggleRecord", Keyboard.KEY_NUMPAD7),
+		new KeyBinding("PlayMacro", Keyboard.KEY_NUMPAD9),
 	};
 	
 	public static boolean repeats[] = {
-		false, false, false, false, false, false, false, true
+		false, false, false, false, false, false, false, true, false, false, false
 	};
 
 	public GhostKeyHandler() {		
@@ -68,6 +70,10 @@ public class GhostKeyHandler extends KeyHandler {
 			GhostBlockHandler.instance().move(Direction.DOWN);
 		} else if(kb.keyDescription.equals("PlaceBlock")) {
 			GhostBlockHandler.instance().placeBlock();
+		} else if(kb.keyDescription.equals("ToggleRecord")) {
+			GhostBlockHandler.instance().toggleRecording();
+		} else if(kb.keyDescription.equals("PlayMacro")) {
+			GhostBlockHandler.instance().playMacro();
 		}
 	}
 

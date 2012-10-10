@@ -1,4 +1,5 @@
-package lerp.mods.easybuilding;
+package lerp.mods.easybuilding.network;
+
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
