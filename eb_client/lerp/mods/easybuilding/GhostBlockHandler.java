@@ -70,7 +70,7 @@ public class GhostBlockHandler {
 	}
 	
 	public void update(EntityPlayer player, int X, int Y, int Z, int blockID) {
-		TileEntity entity = player.worldObj.getBlockTileEntity(x, y, z); //should be X Y Z
+		TileEntity entity = player.worldObj.getBlockTileEntity(X, Y, Z);
 		
 		if(!(entity instanceof TileGhostBlock)) {
 			return;

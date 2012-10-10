@@ -6,6 +6,7 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
@@ -34,14 +35,13 @@ public class TileGhostBlock extends TileEntity {
 		this.owner = owner;
 	}
 	
-	public void handleUpdatePacket(PacketUpdateGhost packet) {
-		if(worldObj.isRemote) {
-			blockID = packet.getBlockId();
-		}
-	}
-	
 	public PacketUpdateGhost getUpdatePacket() {
 		return new PacketUpdateGhost(xCoord, yCoord, zCoord, blockID);
+	}
+	
+	@Override
+	public Packet getAuxillaryInfoPacket() {
+		return getUpdatePacket().toCustomPayload();
 	}
 	
 	@Override
@@ -95,7 +95,6 @@ public class TileGhostBlock extends TileEntity {
 		newGhostTile.setBlockId(newBlockID);
 		
 		worldObj.setBlock(oldX, oldY, oldZ, blockID);
-		EasyBuilding.sendToAllPlayers(newGhostTile.getUpdatePacket());
 	}
 	
 	public void place(EntityPlayer player) {
@@ -115,8 +114,6 @@ public class TileGhostBlock extends TileEntity {
 		ItemBlock item = (ItemBlock)i;
 		blockID = item.getBlockID();
 		--stack.stackSize;
-		
-		EasyBuilding.sendToAllPlayers(getUpdatePacket());
 	}
 
 	public void remove() {
