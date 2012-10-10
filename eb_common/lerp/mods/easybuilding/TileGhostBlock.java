@@ -103,7 +103,7 @@ public class TileGhostBlock extends TileEntity {
 
 		ItemBlock item = (ItemBlock)i;
 		blockID = item.getBlockID();
-		--stack.stackSize;
+		player.inventory.consumeInventoryItem(stack.itemID);
 		
 		EasyBuilding.sendToAllPlayers(getUpdatePacket());
 	}

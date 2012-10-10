@@ -28,17 +28,17 @@ public class Macro implements Runnable {
 		if(!playing) {
 			playing = true;
 			iterator = instructions.iterator();
-			scheduler.schedule(this, 500, TimeUnit.MILLISECONDS);
+		}
+		
+		if(iterator != null) {
+			((Instruction)iterator.next()).execute();
 			
-			return;
+			if(iterator.hasNext()) {
+				scheduler.schedule(this, 500, TimeUnit.MILLISECONDS);
+			} else {
+				playing = false;
+			}
 		}
-		
-		if(iterator == null || !iterator.hasNext()) {
-			return;
-		}
-		
-		((Instruction)iterator.next()).execute();
-		scheduler.schedule(this, 500, TimeUnit.MILLISECONDS);
 	}
 	
 	public void stopPlaying() {

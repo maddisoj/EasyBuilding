@@ -19,7 +19,7 @@ public class GhostBlockHandler {
 	private int x, y, z;
 	private boolean placed, recording;
 	private Macro macro;
-	
+
 	private GhostBlockHandler() {
 		x = 0;
 		y = 0;
@@ -28,115 +28,125 @@ public class GhostBlockHandler {
 		recording = false;
 		macro = new Macro();
 	}
-	
+
 	public static GhostBlockHandler instance() {
 		return INSTANCE;
 	}
-	
+
 	public int getX() {
 		return x;
 	}
-	
+
 	public void setX(int X) {
 		x = X;
 	}
-	
+
 	public int getY() {
 		return y;
 	}
-	
+
 	public void setY(int Y) {
 		y = Y;
 	}
-	
+
 	public int getZ() {
 		return z;
 	}
-	
+
 	public void setZ(int Z) {
 		z = Z;
 	}
-	
+
 	public void move(Direction dir) {
 		if(placed) {
 			sendPacket((new PacketMoveGhost(x, y, z, dir)).toCustomPayload());
-			
+
 			if(recording) {
 				macro.addInstruction(new MoveInstruction(dir));
 			}
 		}
 	}
-	
+
 	public void place(int X, int Y, int Z) {		
 		if(placed) {
 			remove();
 		}
-		
+
 		x = X;
 		y = Y;
 		z = Z;
-		
+
 		sendPacket((new PacketPlaceGhost(x, y, z)).toCustomPayload());
 		placed = true;
 	}
-	
+
 	public void remove() {
 		if(placed) {
 			placed = false;
 			sendPacket((new PacketRemoveGhost(x, y, z)).toCustomPayload());
 		}
 	}
-	
+
 	public void update(EntityPlayer player, int X, int Y, int Z, int blockID) {
 		TileEntity entity = player.worldObj.getBlockTileEntity(X, Y, Z);
-		
+
 		if(!(entity instanceof TileGhostBlock)) {
 			return;
 		}
-		
+
 		x = X;
 		y = Y;
 		z = Z;
 		((TileGhostBlock)entity).setBlockId(blockID);
 	}
-	
+
 	public void placeBlock() {
 		if(placed) {
 			sendPacket((new PacketPlaceBlock(x, y, z)).toCustomPayload());
-			
-			if(recording) {
-				Instruction lastInstruction = macro.getLastInstruction();
-				
-				if(lastInstruction != null && !(lastInstruction instanceof PlaceInstruction)) {
-					macro.addInstruction(new PlaceInstruction(getCurrentItem()));
-				}
+
+			if(recording && !(macro.getLastInstruction() instanceof PlaceInstruction)) {
+				macro.addInstruction(new PlaceInstruction(getCurrentItem()));
 			}
 		}
+	}
+	
+	public void placeBlock(int itemID) {
+		InventoryPlayer inventory = FMLClientHandler.instance().getClient().thePlayer.inventory;
+		
+		//TODO search for itemID in player inventory, if found equip it and place
+		
+		placeBlock();
 	}
 
 	public void toggleRecording() {
 		recording = !recording;
-		
+
 		if(recording) {
-			FMLClientHandler.instance().getClient().thePlayer.addChatMessage("Started Recording");
+			sendMessage("Started Recording");
 		} else {
-			FMLClientHandler.instance().getClient().thePlayer.addChatMessage("Finished Recording");
+			sendMessage("Finished Recording");
 		}
 	}
 
 	public void playMacro() {
-		if(recording) { return; }
-		
+		if(recording) {
+			sendMessage("You must stop recording before you can play the macro");
+			return;
+		}
+
 		System.out.println(macro.toString());
 		macro.run();
 	}
-	
+
 	private void sendPacket(Packet packet) {
 		FMLClientHandler.instance().sendPacket(packet);
 	}
-	
+
 	private int getCurrentItem() {
-		return FMLClientHandler.instance().getClient().thePlayer.inventory.currentItem;
+		return FMLClientHandler.instance().getClient().thePlayer.inventory.getCurrentItem().itemID;
 	}
 
+	private void sendMessage(String message) {
+		FMLClientHandler.instance().getClient().thePlayer.addChatMessage(message);
+	}
 }

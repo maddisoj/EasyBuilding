@@ -7,20 +7,19 @@ import net.minecraft.src.EntityClientPlayerMP;
 import net.minecraft.src.InventoryPlayer;
 
 public class PlaceInstruction implements Instruction {
-	private int slot;
+	private int itemID;
 	
-	public PlaceInstruction(int slot) {
-		this.slot = slot;
+	public PlaceInstruction(int itemID) {
+		this.itemID = itemID;
 	}
 	
 	@Override
-	public void execute() {
-		FMLClientHandler.instance().getClient().thePlayer.inventory.currentItem = slot;
-		GhostBlockHandler.instance().placeBlock();
+	public void execute() {	
+		GhostBlockHandler.instance().placeBlock(itemID);
 	}
 	
 	@Override
 	public String toString() {
-		return "Place " + slot;
+		return "Place " + itemID;
 	}
 }
