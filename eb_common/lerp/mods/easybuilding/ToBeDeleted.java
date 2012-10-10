@@ -161,69 +161,7 @@ public class ToBeDeleted {
 	
 	private void placeBlock(EntityPlayer player, int x, int y, int z) {
 		World world = player.worldObj;
-		ItemStack stack = player.inventory.getCurrentItem();
-		
-		if(stack == null) { return; }
-		
-		Item i = stack.getItem();
-		if(!(i instanceof ItemBlock)) {
-			return;
-		}
-		
-		if(world.getBlockId(x, y, z) == 180) {
-			TileGhostBlock entity = (TileGhostBlock)world.getBlockTileEntity(x, y, z);
-			if(entity.getBlockId() != 0) {
-				return;
-			}
-		} else {
-			return;
-		}
-		
-		ItemBlock item = (ItemBlock)i;
-		item.placeBlockAt(stack, player, world, x, y, z, -1, x, y, z);
-		--stack.stackSize;
 		
 		place(player, x, y, z);
-	}
-
-	public void requestMove(EntityPlayer player, Direction direction) {
-		GhostBlockInformation info = ghostBlocks.get(player.username);
-		
-		if(info == null) {
-			return;
-		} else if(!info.placed) {
-			return;
-		} else {
-			move(player, info.x, info.y, info.z, direction);
-		}
-	}
-	
-	private void move(EntityPlayer player, int x, int y, int z, Direction direction) {
-		/*Vec3 moveDirection = Vec3.createVectorHelper(0.0, 0.0, 0.0);
-		
-		if(direction == Direction.FORWARD) {
-			moveDirection = Helper.getPlayerDirection(player);
-		} else if(direction == Direction.BACKWARD) {
-			moveDirection = Helper.getPlayerDirection(player);
-			moveDirection.rotateAroundY((float)Math.PI);
-		} else if(direction == Direction.LEFT) {
-			moveDirection = Helper.getPlayerDirection(player);
-			moveDirection.rotateAroundY((float)Math.PI/2);
-		} else if(direction == Direction.RIGHT) {
-			moveDirection = Helper.getPlayerDirection(player);
-			moveDirection.rotateAroundY((float)-Math.PI/2);
-		} else if(direction == Direction.UP) {
-			moveDirection = Vec3.createVectorHelper(0.0, 1.0, 0.0);
-		} else if(direction == Direction.DOWN) {
-			moveDirection = Vec3.createVectorHelper(0.0, -1.0, 0.0);
-		}
-		
-		int targetX = x + (int)moveDirection.xCoord;
-		int targetY = y + (int)moveDirection.yCoord;
-		int targetZ = z + (int)moveDirection.zCoord;
-		
-		remove(player, x, y, z);
-		place(player, targetX, targetY, targetZ);
-		updateGhostBlock(player, targetX, targetY, targetZ);*/
 	}
 }

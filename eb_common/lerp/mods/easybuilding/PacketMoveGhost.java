@@ -13,23 +13,19 @@ import com.google.common.io.ByteArrayDataInput;
 
 import cpw.mods.fml.common.network.Player;
 
-public class PacketMoveGhost extends PacketEB {
-	private int x, y, z;
+public class PacketMoveGhost extends PacketGhostPosition {
 	private Direction direction;
 	
 	public PacketMoveGhost() {
-		super(PacketType.MOVE, false);
-		this.x = -1;
-		this.y = -1;
-		this.z = -1;
+		super(PacketType.MOVE, true);
 		direction = null;
 	}
 	
-	public PacketMoveGhost(int x, int y, int z, Direction dir) {
-		super(PacketType.MOVE, false);
-		this.x = x;
-		this.y = y;
-		this.z = z;
+	public PacketMoveGhost(int X, int Y, int Z, Direction dir) {
+		super(PacketType.MOVE, true);
+		x = X;
+		y = Y;
+		z = Z;
 		direction = dir;
 	}
 	
@@ -48,18 +44,14 @@ public class PacketMoveGhost extends PacketEB {
 	
 	@Override
 	public void read(ByteArrayDataInput bis) {
-		x = bis.readInt();
-		y = bis.readInt();
-		z = bis.readInt();
+		super.read(bis);
 		int dir = bis.readInt();
 		setDirection(dir);
 	}
 	
 	@Override
 	public void getData(DataOutputStream dos) throws IOException {
-		dos.writeInt(x);
-		dos.writeInt(y);
-		dos.writeInt(z);
+		super.getData(dos);
 		dos.writeInt(direction.ordinal());
 	}
 	
@@ -70,7 +62,6 @@ public class PacketMoveGhost extends PacketEB {
 		
 		TileEntity entity = world.getBlockTileEntity(x, y, z);
 		if(!(entity instanceof TileGhostBlock)) {
-			System.out.println("Entity not ghost block (" + x + " " + y + " " + z + ")");
 			return;
 		}
 		

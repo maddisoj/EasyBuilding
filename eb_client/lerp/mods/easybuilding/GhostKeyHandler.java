@@ -47,8 +47,7 @@ public class GhostKeyHandler extends KeyHandler {
 		
 		Minecraft mc = FMLClientHandler.instance().getClient();
 		EntityClientPlayerMP player = mc.thePlayer;
-		
-		PacketEB packet = null;
+
 		if(kb.keyDescription.equals("PlaceGhost")) {
 			MovingObjectPosition target = mc.objectMouseOver;
 			if(target == null) { return; }
@@ -68,11 +67,7 @@ public class GhostKeyHandler extends KeyHandler {
 		} else if(kb.keyDescription.equals("GhostDown")) {
 			GhostBlockHandler.instance().move(Direction.DOWN);
 		} else if(kb.keyDescription.equals("PlaceBlock")) {
-			packet = new PacketPlaceBlock();
-		}
-		
-		if(packet != null) {
-			FMLClientHandler.instance().sendPacket(packet.toCustomPayload());
+			GhostBlockHandler.instance().placeBlock();
 		}
 	}
 

@@ -49,26 +49,28 @@ public class GhostBlockHandler {
 		FMLClientHandler.instance().sendPacket((new PacketMoveGhost(x, y, z, dir)).toCustomPayload());
 	}
 	
-	public void place(int X, int Y, int Z) {
-		x = X;
-		y = Y;
-		z = Z;
-		
+	public void place(int X, int Y, int Z) {		
 		if(placed) {
 			remove();
 		}
+		
+		x = X;
+		y = Y;
+		z = Z;
 		
 		FMLClientHandler.instance().sendPacket((new PacketPlaceGhost(x, y, z)).toCustomPayload());
 		placed = true;
 	}
 	
 	public void remove() {
-		placed = false;
-		FMLClientHandler.instance().sendPacket((new PacketRemoveGhost()).toCustomPayload());
+		if(placed) {
+			placed = false;
+			FMLClientHandler.instance().sendPacket((new PacketRemoveGhost(x, y, z)).toCustomPayload());
+		}
 	}
 	
 	public void update(EntityPlayer player, int X, int Y, int Z, int blockID) {
-		TileEntity entity = player.worldObj.getBlockTileEntity(x, y, z);
+		TileEntity entity = player.worldObj.getBlockTileEntity(x, y, z); //should be X Y Z
 		
 		if(!(entity instanceof TileGhostBlock)) {
 			return;
@@ -76,7 +78,13 @@ public class GhostBlockHandler {
 		
 		x = X;
 		y = Y;
-		z = Z;		
+		z = Z;
 		((TileGhostBlock)entity).setBlockId(blockID);
+	}
+	
+	public void placeBlock() {
+		if(placed) {
+			FMLClientHandler.instance().sendPacket((new PacketPlaceBlock(x, y, z)).toCustomPayload());
+		}
 	}
 }

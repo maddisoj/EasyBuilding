@@ -1,25 +1,29 @@
 package lerp.mods.easybuilding;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemBlock;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 
 public class TileGhostBlock extends TileEntity {
-	private int blockId;
+	private int blockID;
 	private String owner;
 	
 	public TileGhostBlock() {
-		blockId = 0;
+		blockID = 0;
 	}
 
 	public int getBlockId() {
-		return blockId;
+		return blockID;
 	}
 
 	public void setBlockId(int blockId) {
-		this.blockId = blockId;
+		this.blockID = blockId;
 	}
 	
 	public String getOwner() {
@@ -32,12 +36,12 @@ public class TileGhostBlock extends TileEntity {
 	
 	public void handleUpdatePacket(PacketUpdateGhost packet) {
 		if(worldObj.isRemote) {
-			blockId = packet.getBlockId();
+			blockID = packet.getBlockId();
 		}
 	}
 	
 	public PacketUpdateGhost getUpdatePacket() {
-		return new PacketUpdateGhost(xCoord, yCoord, zCoord, blockId);
+		return new PacketUpdateGhost(xCoord, yCoord, zCoord, blockID);
 	}
 	
 	@Override
@@ -70,8 +74,6 @@ public class TileGhostBlock extends TileEntity {
 			} else if(direction == Direction.DOWN) {
 				moveDirection = Vec3.createVectorHelper(0.0, -1.0, 0.0);
 			}
-			
-			System.out.println("moving " + direction.toString());
 		//}
 		
 		int oldX = xCoord;
@@ -92,7 +94,32 @@ public class TileGhostBlock extends TileEntity {
 		TileGhostBlock newGhostTile = (TileGhostBlock)entity;
 		newGhostTile.setBlockId(newBlockID);
 		
-		worldObj.setBlock(oldX, oldY, oldZ, blockId);
+		worldObj.setBlock(oldX, oldY, oldZ, blockID);
 		EasyBuilding.sendToAllPlayers(newGhostTile.getUpdatePacket());
+	}
+	
+	public void place(EntityPlayer player) {
+		if(blockID != 0) {
+			return;
+		}
+		
+		ItemStack stack = player.inventory.getCurrentItem();
+		
+		if(stack == null) { return; }
+		
+		Item i = stack.getItem();
+		if(!(i instanceof ItemBlock)) {
+			return;
+		}
+		
+		ItemBlock item = (ItemBlock)i;
+		blockID = item.getBlockID();
+		--stack.stackSize;
+		
+		EasyBuilding.sendToAllPlayers(getUpdatePacket());
+	}
+
+	public void remove() {
+		worldObj.setBlock(xCoord, yCoord, zCoord, blockID);
 	}
 }

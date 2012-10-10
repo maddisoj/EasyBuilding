@@ -25,12 +25,12 @@ public class PacketUpdateGhost extends PacketEB {
 		blockID = 0;
 	}
 	
-	public PacketUpdateGhost(int x, int y, int z, int blockId) {
+	public PacketUpdateGhost(int x, int y, int z, int blockID) {
 		super(PacketType.TILE_UPDATE, true);
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.blockID = blockId;
+		this.blockID = blockID;
 	}
 	
 	public int getBlockId() {
@@ -56,5 +56,4 @@ public class PacketUpdateGhost extends PacketEB {
 			GhostBlockHandler.instance().update((EntityPlayer)player, x, y, z, blockID);
 		}
 	}
-	
 }
