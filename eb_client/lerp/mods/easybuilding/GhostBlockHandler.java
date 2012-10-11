@@ -138,9 +138,7 @@ public class GhostBlockHandler {
 	}
 
 	public void openMacroGui() {
-		/*EntityClientPlayerMP player = FMLClientHandler.instance().getClient().thePlayer;
-		player.openGui(EasyBuilding.instance, 0, player.worldObj, (int)player.posX, (int)player.posY, (int)player.posZ);*/
-		//FMLClientHandler.instance().getClient().displayGuiScreen(new GuiMacro());
+		FMLClientHandler.instance().getClient().displayGuiScreen(new GuiMacro());
 	}
 
 	private void sendPacket(Packet packet) {
