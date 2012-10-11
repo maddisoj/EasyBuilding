@@ -10,6 +10,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
@@ -28,7 +29,7 @@ public class EasyBuilding {
 	
 	@PreInit
 	public void preInit(FMLPreInitializationEvent event) {
-		ghostBlockId = 180;
+		ghostBlockId = BlockIDs.ghostBlockID;
 		
 		proxy.registerKeyBindings();
 	}

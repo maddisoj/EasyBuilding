@@ -1,5 +1,6 @@
 package lerp.mods.easybuilding;
 
+import lerp.mods.easybuilding.macros.GuiMacro;
 import lerp.mods.easybuilding.macros.Instruction;
 import lerp.mods.easybuilding.macros.Macro;
 import lerp.mods.easybuilding.macros.MoveInstruction;
@@ -8,6 +9,7 @@ import lerp.mods.easybuilding.network.PacketMoveGhost;
 import lerp.mods.easybuilding.network.PacketPlaceBlock;
 import lerp.mods.easybuilding.network.PacketPlaceGhost;
 import lerp.mods.easybuilding.network.PacketRemoveGhost;
+import net.minecraft.src.EntityClientPlayerMP;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Packet;
@@ -133,6 +135,12 @@ public class GhostBlockHandler {
 
 		System.out.println(macro.toString());
 		macro.run();
+	}
+
+	public void openMacroGui() {
+		/*EntityClientPlayerMP player = FMLClientHandler.instance().getClient().thePlayer;
+		player.openGui(EasyBuilding.instance, 0, player.worldObj, (int)player.posX, (int)player.posY, (int)player.posZ);*/
+		//FMLClientHandler.instance().getClient().displayGuiScreen(new GuiMacro());
 	}
 
 	private void sendPacket(Packet packet) {

@@ -28,10 +28,11 @@ public class GhostKeyHandler extends KeyHandler {
 		new KeyBinding("PlaceBlock", Keyboard.KEY_NUMPADENTER),
 		new KeyBinding("ToggleRecord", Keyboard.KEY_NUMPAD7),
 		new KeyBinding("PlayMacro", Keyboard.KEY_NUMPAD9),
+		new KeyBinding("LoadSaveMacro", Keyboard.KEY_NUMPADCOMMA),
 	};
 	
 	public static boolean repeats[] = {
-		false, false, false, false, false, false, false, true, false, false, false
+		false, false, false, false, false, false, false, true, false, false, false, false
 	};
 
 	public GhostKeyHandler() {		
@@ -74,6 +75,8 @@ public class GhostKeyHandler extends KeyHandler {
 			GhostBlockHandler.instance().toggleRecording();
 		} else if(kb.keyDescription.equals("PlayMacro")) {
 			GhostBlockHandler.instance().playMacro();
+		} else if(kb.keyDescription.equals("LoadSaveMacro")) {
+			GhostBlockHandler.instance().openMacroGui();
 		}
 	}
 
