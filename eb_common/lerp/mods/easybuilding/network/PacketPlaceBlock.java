@@ -14,17 +14,33 @@ import com.google.common.io.ByteArrayDataInput;
 
 import cpw.mods.fml.common.network.Player;
 
-public class PacketPlaceBlock extends PacketGhostPosition {	
+public class PacketPlaceBlock extends PacketGhostPosition {
+	private int itemID;
+	
 	public PacketPlaceBlock() {
 		super(PacketType.PLACE_BLOCK, true);
+		itemID = -1;
 	}
 	
-	public PacketPlaceBlock(int X, int Y, int Z) {
+	public PacketPlaceBlock(int X, int Y, int Z, int itemID) {
 		super(PacketType.PLACE_BLOCK, true);
 		x = X;
 		y = Y;
 		z = Z;
+		this.itemID = itemID;
 	}
+	
+	@Override
+	public void read(ByteArrayDataInput bis) {
+		super.read(bis);
+		itemID = bis.readInt();
+	}
+	
+	@Override
+	public void getData(DataOutputStream dos) throws IOException {
+		super.getData(dos);
+		dos.writeInt(itemID);
+	}	
 	
 	public void handle(NetworkManager manager, Player player) {
 		EntityPlayer entityPlayer = (EntityPlayer)player;
@@ -36,6 +52,6 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 		}
 		
 		TileGhostBlock ghostBlock = (TileGhostBlock)entity;
-		ghostBlock.place(entityPlayer);
+		ghostBlock.place(entityPlayer, itemID);
 	}
 }

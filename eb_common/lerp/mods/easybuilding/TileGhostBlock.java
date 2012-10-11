@@ -3,6 +3,7 @@ package lerp.mods.easybuilding;
 import lerp.mods.easybuilding.network.PacketUpdateGhost;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
@@ -87,25 +88,21 @@ public class TileGhostBlock extends TileEntity {
 		worldObj.setBlock(oldX, oldY, oldZ, blockID);
 	}
 
-	public void place(EntityPlayer player) {
+	public void place(EntityPlayer player, int itemID) {
 		if(blockID != 0) {
 			return;
 		}
 
-		ItemStack stack = player.inventory.getCurrentItem();
-
-		if(stack == null) { return; }
-
-		Item i = stack.getItem();
-		if(!(i instanceof ItemBlock)) {
-			return;
+		if(player.inventory.hasItem(itemID)) {
+			Item item = Item.itemsList[itemID];
+			if(!(item instanceof ItemBlock)) {
+				return;
+			}
+			
+			blockID = ((ItemBlock)item).getBlockID();			
+			player.inventory.consumeInventoryItem(itemID);
+			EasyBuilding.sendToAllPlayers(getUpdatePacket());
 		}
-
-		ItemBlock item = (ItemBlock)i;
-		blockID = item.getBlockID();
-		player.inventory.consumeInventoryItem(stack.itemID);
-		
-		EasyBuilding.sendToAllPlayers(getUpdatePacket());
 	}
 
 	public void remove() {

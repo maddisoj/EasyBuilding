@@ -9,6 +9,7 @@ import lerp.mods.easybuilding.network.PacketPlaceBlock;
 import lerp.mods.easybuilding.network.PacketPlaceGhost;
 import lerp.mods.easybuilding.network.PacketRemoveGhost;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -101,21 +102,17 @@ public class GhostBlockHandler {
 	}
 
 	public void placeBlock() {
-		if(placed) {
-			sendPacket((new PacketPlaceBlock(x, y, z)).toCustomPayload());
-
-			if(recording && !(macro.getLastInstruction() instanceof PlaceInstruction)) {
-				macro.addInstruction(new PlaceInstruction(getCurrentItem()));
-			}
-		}
+		placeBlock(getCurrentItem());
 	}
 	
-	public void placeBlock(int itemID) {
-		InventoryPlayer inventory = FMLClientHandler.instance().getClient().thePlayer.inventory;
-		
-		//TODO search for itemID in player inventory, if found equip it and place
-		
-		placeBlock();
+	public void placeBlock(int itemID) {		
+		if(placed) {
+			sendPacket((new PacketPlaceBlock(x, y, z, itemID)).toCustomPayload());
+
+			if(recording && !(macro.getLastInstruction() instanceof PlaceInstruction)) {
+				macro.addInstruction(new PlaceInstruction(itemID));
+			}
+		}
 	}
 
 	public void toggleRecording() {
