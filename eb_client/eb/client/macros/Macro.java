@@ -7,19 +7,19 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Macro implements Runnable {
-	private LinkedList<Instruction> instructions;
+	private LinkedList<IInstruction> instructions;
 	private Iterator iterator;
 	private boolean playing;
 	private ScheduledExecutorService scheduler;
 	
 	public Macro() {
-		instructions = new LinkedList<Instruction>();
+		instructions = new LinkedList<IInstruction>();
 		iterator = null;
 		playing = false;
 		scheduler = Executors.newScheduledThreadPool(1);		
 	}
 	
-	public void addInstruction(Instruction instruction) {
+	public void addInstruction(IInstruction instruction) {
 		instructions.add(instruction);
 	}
 	
@@ -31,7 +31,7 @@ public class Macro implements Runnable {
 		}
 		
 		if(iterator != null) {
-			((Instruction)iterator.next()).execute();
+			((IInstruction)iterator.next()).execute();
 			
 			if(iterator.hasNext()) {
 				scheduler.schedule(this, 250, TimeUnit.MILLISECONDS);
@@ -45,7 +45,7 @@ public class Macro implements Runnable {
 		playing = false;
 	}
 	
-	public Instruction getLastInstruction() {
+	public IInstruction getLastInstruction() {
 		if(instructions.size() > 0) {
 			 return instructions.getLast();
 		} else {
@@ -61,7 +61,7 @@ public class Macro implements Runnable {
 	public String toString() {
 		String macro = "";
 		
-		for(Instruction i : instructions) {
+		for(IInstruction i : instructions) {
 			macro += i.toString() + "\n";
 		}
 		

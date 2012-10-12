@@ -1,5 +1,5 @@
 package eb.client.macros;
 
-public interface Instruction {
+public interface IInstruction {
 	public abstract void execute();
 }

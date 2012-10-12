@@ -4,7 +4,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import eb.client.GhostBlockHandler;
 import eb.common.Direction;
 
-public class MoveInstruction implements Instruction {
+public class MoveInstruction implements IInstruction {
 	private Direction dir;
 
 	public MoveInstruction(Direction dir) {
