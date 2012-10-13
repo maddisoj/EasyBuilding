@@ -19,14 +19,6 @@ public class CommonProxy {
 		GameRegistry.registerTileEntity(TileGhostBlock.class, "tileGhostBlock");
 	}
 	
-	public World getWorld() {
-		return null;
-	}
-	
-	public EntityClientPlayerMP getPlayer() {
-		return null;
-	}
-	
 	public void sendToPlayer(EntityPlayer player, PacketEB packet) {
 		EntityPlayerMP playerMP = (EntityPlayerMP)player;
 		playerMP.serverForThisPlayer.sendPacketToPlayer(packet.toCustomPayload());

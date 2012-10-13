@@ -12,7 +12,7 @@ import net.minecraft.src.World;
 import com.google.common.io.ByteArrayDataInput;
 
 import cpw.mods.fml.common.network.Player;
-import eb.common.BlockIDs;
+import eb.common.Constants;
 import eb.common.TileGhostBlock;
 
 public class PacketPlaceGhost extends PacketGhostPosition {
@@ -32,7 +32,7 @@ public class PacketPlaceGhost extends PacketGhostPosition {
 		World world = ((EntityPlayer)player).worldObj;
 		
 		int blockID = world.getBlockId(x, y, z);
-		world.setBlock(x, y, z, BlockIDs.ghostBlockID);
+		world.setBlock(x, y, z, Constants.GHOST_BLOCK_ID);
 		
 		TileGhostBlock ghostBlock = (TileGhostBlock)world.getBlockTileEntity(x, y, z);
 		ghostBlock.setBlockId(blockID);

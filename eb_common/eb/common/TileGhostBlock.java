@@ -75,7 +75,7 @@ public class TileGhostBlock extends TileEntity {
 		int newZ = zCoord + (int)moveDirection.zCoord;
 
 		int newBlockID = worldObj.getBlockId(newX, newY, newZ);
-		worldObj.setBlock(newX, newY, newZ, BlockIDs.ghostBlockID);
+		worldObj.setBlock(newX, newY, newZ, Constants.GHOST_BLOCK_ID);
 
 		TileEntity entity = worldObj.getBlockTileEntity(newX, newY, newZ);
 		if(!(entity instanceof TileGhostBlock)) {

@@ -111,6 +111,10 @@ public class GhostBlockHandler {
 	
 	public void placeBlock(int itemID) {		
 		if(placed) {
+			if(itemID == -1) {
+				return;
+			}
+			
 			sendPacket((new PacketPlaceBlock(x, y, z, itemID)).toCustomPayload());
 
 			if(recording && !(macro.getLastInstruction() instanceof PlaceInstruction)) {
@@ -148,7 +152,13 @@ public class GhostBlockHandler {
 	}
 
 	private int getCurrentItem() {
-		return FMLClientHandler.instance().getClient().thePlayer.inventory.getCurrentItem().itemID;
+		EntityClientPlayerMP player = FMLClientHandler.instance().getClient().thePlayer;
+		
+		if(player != null) {
+			return player.inventory.getCurrentItem().itemID;
+		} else {
+			return -1;
+		}
 	}
 
 	private void sendMessage(String message) {

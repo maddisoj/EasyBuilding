@@ -4,6 +4,10 @@ import net.minecraft.src.FontRenderer;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class GuiMacroItem implements GuiListItem {
 	private static final int MAX_STRING_LENGTH = 30;
 	private String name, desc;
@@ -16,7 +20,7 @@ public class GuiMacroItem implements GuiListItem {
 	
 	@Override
 	public int getHeight() {
-		return 22;
+		return 11;
 	}
 
 	@Override
@@ -33,14 +37,7 @@ public class GuiMacroItem implements GuiListItem {
 			renderedName += "...";
 		}
 		
-		String renderedDesc = desc;
-		if(font.getStringWidth(renderedDesc) > width) {
-			renderedDesc = renderedDesc.substring(0, MAX_STRING_LENGTH - 3);
-			renderedDesc += "...";
-		}
-		
 		font.drawStringWithShadow(renderedName, x, y, Integer.MAX_VALUE);
-		font.drawStringWithShadow(renderedDesc, x, y + font.FONT_HEIGHT + 1, Integer.MAX_VALUE);
 	}
 
 	@Override
@@ -50,6 +47,14 @@ public class GuiMacroItem implements GuiListItem {
 	
 	@Override
 	public void setSelected(boolean selected) {
-		this.selected = false;
+		this.selected = selected;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getDesc() {
+		return desc;
 	}
 }

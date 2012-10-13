@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import org.lwjgl.input.Mouse;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.FontRenderer;
 import net.minecraft.src.Gui;
@@ -11,6 +14,7 @@ import net.minecraft.src.GuiScreen;
 import net.minecraft.src.GuiSlot;
 import net.minecraft.src.Tessellator;
 
+@SideOnly(Side.CLIENT)
 public class GuiList extends Gui {
 	private Minecraft mc;
 	private ArrayList<GuiListItem> items;
@@ -64,36 +68,53 @@ public class GuiList extends Gui {
 				selected.setSelected(false);
 			}
 			
-			selected = hover;
-			selected.setSelected(true);
+			if(hover != null) {
+				if(hover.equals(selected)) {
+					selected.setSelected(false);
+					selected = null;
+				} else {
+					selected = hover;
+					selected.setSelected(true);
+				}
+			}
 		}
 	}
 
 	public void mouseMoved(int mouseX, int mouseY) {
-		if(pointInRect(mouseX, mouseY, x, y, width, height)) {
+		if(GuiHelper.pointInRect(mouseX, mouseY, x, y, width, height)) {
 			
 			int itemWidth = width - (padding * 2);
-			int currentY = y + padding;;
+			int currentY = y + padding;
 			for(GuiListItem item : items) {
-				if(pointInRect(mouseX, mouseY, x + padding, currentY, itemWidth, item.getHeight())) {
-					if(hover != null) {
-						hover.setMouseOver(false);
-					}
-					
-					hover = item;
-					hover.setMouseOver(true);
+				if(GuiHelper.pointInRect(mouseX, mouseY, x + padding, currentY, itemWidth, item.getHeight())) {
+					setHoverItem(item);
 					break;
 				}
-			}	
-		} else {
-			if(hover != null) {
-				hover.setMouseOver(false);
+				
+				currentY += item.getHeight();
+				
+				if(items.get(items.size() - 1).equals(item)) {
+					setHoverItem(null);
+				}
 			}
+		} else {
+			setHoverItem(null);
 		}
 	}
+
+	public int getHeight() {
+		return height;
+	}
 	
-	private boolean pointInRect(int pointX, int pointY, int x, int y, int width, int height) {
-		return (pointY > y && pointY < (y + height)
-				&& pointX > x && pointX < (x + width));
+	private void setHoverItem(GuiListItem item) {
+		if(hover != null) {
+			hover.setMouseOver(false);
+		}
+		
+		hover = item;
+		
+		if(hover != null) {
+			hover.setMouseOver(true);
+		}
 	}
 }

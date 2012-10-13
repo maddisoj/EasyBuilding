@@ -18,12 +18,4 @@ public class ClientProxy extends CommonProxy {
 	public void registerRenderInformation() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileGhostBlock.class, new GhostBlockRenderer());
 	}
-	
-	public World getClientWorld() {
-		return FMLClientHandler.instance().getClient().theWorld;
-	}
-	
-	public EntityClientPlayerMP getPlayer() {
-		return FMLClientHandler.instance().getClient().thePlayer;
-	}
 }

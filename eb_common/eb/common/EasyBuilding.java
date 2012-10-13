@@ -14,7 +14,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import eb.common.network.PacketEB;
 import eb.common.network.PacketHandler;
 
-@Mod(modid = "EasyBuilding", name = "Easy Building", version = "1.0")
+@Mod(modid = "EasyBuilding", name = "Easy Building", version = Constants.VERSION)
 @NetworkMod(channels = { "EasyBuilding" }, clientSideRequired = true, serverSideRequired = false, packetHandler = PacketHandler.class)
 public class EasyBuilding {
 	@Instance("EasyBuilding")
@@ -25,18 +25,14 @@ public class EasyBuilding {
 	@SidedProxy(clientSide = "eb.client.ClientProxy", serverSide = "eb.common.CommonProxy")
 	public static CommonProxy proxy;
 	
-	private int ghostBlockId;
-	
 	@PreInit
 	public void preInit(FMLPreInitializationEvent event) {
-		ghostBlockId = BlockIDs.ghostBlockID;
-		
 		proxy.registerKeyBindings();
 	}
 	
 	@Init
 	public void init(FMLInitializationEvent event) {
-		ghostBlock = new BlockGhost(ghostBlockId);
+		ghostBlock = new BlockGhost(Constants.GHOST_BLOCK_ID);
 		
 		GameRegistry.registerBlock(ghostBlock);
 		LanguageRegistry.addName(ghostBlock, "Ghost Block");
