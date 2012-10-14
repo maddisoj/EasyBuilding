@@ -2,6 +2,7 @@ package eb.client.gui;
 
 import org.lwjgl.input.Keyboard;
 
+import net.minecraft.src.ChatAllowedCharacters;
 import net.minecraft.src.FontRenderer;
 import net.minecraft.src.Gui;
 import cpw.mods.fml.common.Side;
@@ -73,17 +74,33 @@ public class GuiTextArea extends Gui {
 					break;
 					
 				case Keyboard.KEY_BACK:
-					removeAtCursor();
+					removeAt(cursorPosition);
+					break;
+					
+				case Keyboard.KEY_DELETE:
+					removeAt(cursorPosition + 1);
+					break;
+					
+				default:
+					if(ChatAllowedCharacters.isAllowedCharacter(key)) {
+						String strKey = Character.toString(key);
+						if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+							strKey = strKey.toUpperCase();
+						}
+						
+						insertCharacter(cursorPosition, strKey);
+					}
+					
 					break;
 			}
 		}
 	}
-	
+
 	public void mouseClicked(int mouseX, int mouseY, int button) {
 		setFocused(GuiHelper.pointInRect(mouseX, mouseY, x, y, width, height));
 		
 		if(focused) {
-			cursorPosition = text.length();
+			setCursorPosition(text.length());
 		}
 	}
 	
@@ -98,31 +115,38 @@ public class GuiTextArea extends Gui {
 	
 	public void setCursorPosition(int pos) {
 		cursorPosition = pos;
+		
+		cursorPosition = Math.min(cursorPosition, text.length());
+		cursorPosition = Math.max(cursorPosition, 0);
 	}
 	
 	public void draw() {
 		drawRect(x - 1, y - 1, x + width + 1, y + height + 1, -6250336);
         drawRect(x, y, x + width, y + height, -16777216);
         
-        int pos = 0;
-        int currentLine = 0;
-        while(pos < text.length()) {
-        	String lineText = fontRenderer.trimStringToWidth(text.substring(pos), width - 2);
-
-        	drawStringOnLine(lineText, currentLine);
-        	
-        	//if the cursor lies on this line
-        	if((pos <= cursorPosition && pos + lineText.length() > cursorPosition)
-        	   || pos + lineText.length() >= text.length()) {
-        		drawCursor(pos, currentLine);
-        	}
-
-        	++currentLine;
-        	pos += lineText.length();
-
-        	if(currentLine >= lines) {
-        		break;
-        	}
+        if(text.length() == 0) {
+        	drawCursor(0, 0);
+        } else {
+	        int pos = 0;
+	        int currentLine = 0;
+	        while(pos < text.length()) {
+	        	String lineText = fontRenderer.trimStringToWidth(text.substring(pos), width - 2);
+	
+	        	drawStringOnLine(lineText, currentLine);
+	        	
+	        	//if the cursor lies on this line
+	        	if((pos <= cursorPosition && pos + lineText.length() > cursorPosition)
+	        	   || pos + lineText.length() >= text.length()) {
+	        		drawCursor(pos, currentLine);
+	        	}
+	
+	        	++currentLine;
+	        	pos += lineText.length();
+	
+	        	if(currentLine >= lines) {
+	        		break;
+	        	}
+	        }
         }
 	}
 	
@@ -136,7 +160,7 @@ public class GuiTextArea extends Gui {
 		if((cursorCounter / 6) % 2 != 0) { return; }
 				
 		int cursorX = x + 1;
-		if(cursorPosition > 0) {
+		if(cursorPosition > 0 && text.length() > 0) {
 			if(cursorPosition >= text.length()) {
 				cursorX += fontRenderer.getStringWidth(text.substring(lineStartPos));
 			} else {
@@ -156,19 +180,35 @@ public class GuiTextArea extends Gui {
 			direction = 1;
 		}
 		
-		cursorPosition += direction;
-		cursorPosition = Math.min(cursorPosition, text.length());
-		cursorPosition = Math.max(cursorPosition, 0);
+		setCursorPosition(cursorPosition + direction);
 	}
 	
-	private void removeAtCursor() {
-		if(cursorPosition == 0) { return; }
+	private void removeAt(int position) {
+		if(position < 1 || position > text.length()) { return; }
 		
 		String temp = text;
-		text = temp.substring(0, cursorPosition - 1);
+		text = temp.substring(0, position - 1);
 		
-		if(cursorPosition + 1 < text.length()) {
-			text += temp.substring(cursorPosition + 1);
+		if(position < temp.length()) {
+			text += temp.substring(position);
+			setCursorPosition(cursorPosition - 1);
+		} else {
+			setCursorPosition(cursorPosition);
+		}
+	}
+	
+	private void insertCharacter(int position, String character) {
+		if(text.length() != maxLength && position >= 0) {
+			if(position > text.length()) {
+				position = text.length();
+			}
+			
+			String temp = text;
+			text = temp.substring(0, position);
+			text += character;
+			text += temp.substring(position);
+			
+			setCursorPosition(cursorPosition + 1);
 		}
 	}
 }
