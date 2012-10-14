@@ -118,4 +118,21 @@ public class GuiMacro extends GuiScreen {
         
         super.mouseMovedOrUp(x, y, event);
 	}
+	
+	@Override
+	protected void actionPerformed(GuiButton button) {
+		if(button.enabled) {
+			if(button.id == 0) { //Save button
+				saveMacro(macroName.getText(), macroDesc.getText());
+			} else if(button.id == 1) { //Load button
+				loadMacro(macroName.getText());
+			}
+		}
+	}
+
+	private void saveMacro(String name, String description) {
+	}
+	
+	private void loadMacro(String name) {
+	}
 }
