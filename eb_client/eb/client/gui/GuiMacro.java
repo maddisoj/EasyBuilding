@@ -38,8 +38,10 @@ public class GuiMacro extends GuiScreen {
 		
 		files = new GuiList(mc, this, guiLeft + 6, guiTop + 6, guiWidth - 12, guiHeight - 60);
 		files.setPadding(2);
-		files.addItem(new GuiMacroItem("Test", "This is a test"));
-		files.addItem(new GuiMacroItem("Test2", "This is a also test that is very, very, very, very long"));
+		
+		for(int i = 0; i < 20; ++i) {
+			files.addItem(new GuiMacroItem("Test" + i, "This is a test"));
+		}
 		
 		macroName = new GuiTextField(fontRenderer, guiLeft + 7, guiTop + files.getHeight() + 8, guiWidth - 60, 11);
 		macroName.setFocused(false);

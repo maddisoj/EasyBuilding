@@ -10,6 +10,8 @@ import cpw.mods.fml.common.asm.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiTextArea extends Gui {
+	private static final int TEXT_COLOUR = 14737632;
+	
 	private FontRenderer fontRenderer;
 	private int x, y, width, height;
 	private String text;
@@ -130,7 +132,7 @@ public class GuiTextArea extends Gui {
 	        int pos = 0;
 	        int currentLine = 0;
 	        while(pos < text.length()) {
-	        	String lineText = fontRenderer.trimStringToWidth(text.substring(pos), width - 2);
+	        	String lineText = fontRenderer.trimStringToWidth(text.substring(pos), width - 5);
 	
 	        	drawStringOnLine(lineText, currentLine);
 	        	
@@ -151,15 +153,13 @@ public class GuiTextArea extends Gui {
 	}
 	
 	private void drawStringOnLine(String str, int line) {
-    	fontRenderer.drawStringWithShadow(str, x + 1, y + line * fontRenderer.FONT_HEIGHT + 1, Integer.MAX_VALUE);
+    	fontRenderer.drawStringWithShadow(str, x + 4, y + line * fontRenderer.FONT_HEIGHT + 1, TEXT_COLOUR);
 	}
 	
 	private void drawCursor(int lineStartPos, int line) {
-		if(!focused) { return; }
-		if(cursorPosition < lineStartPos) { return; }
-		if((cursorCounter / 6) % 2 != 0) { return; }
+		if(!focused || cursorPosition < lineStartPos || (cursorCounter / 6) % 2 != 0) { return; }
 				
-		int cursorX = x + 1;
+		int cursorX = x + 4;
 		if(cursorPosition > 0 && text.length() > 0) {
 			if(cursorPosition >= text.length()) {
 				cursorX += fontRenderer.getStringWidth(text.substring(lineStartPos));
@@ -170,7 +170,7 @@ public class GuiTextArea extends Gui {
 		
 		int cursorY = y + line * fontRenderer.FONT_HEIGHT + 2;
 		
-		fontRenderer.drawStringWithShadow("_", cursorX, cursorY, Integer.MAX_VALUE);
+		fontRenderer.drawStringWithShadow("_", cursorX, cursorY, TEXT_COLOUR);
 	}
 	
 	private void moveCursor(int direction) {
