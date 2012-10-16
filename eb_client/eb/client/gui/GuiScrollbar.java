@@ -22,7 +22,7 @@ public class GuiScrollbar extends Gui {
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		this.containedHeight = 0;
+		this.containedHeight = height;
 		this.amountScrolled = 0;
 		this.scrollbarHeight = 0;
 		this.hover = false;
@@ -71,6 +71,7 @@ public class GuiScrollbar extends Gui {
 	}
 
 	public void setContainedHeight(int containedHeight) {
+		containedHeight = Math.max(height, containedHeight);
 		this.containedHeight = containedHeight;
 		
 		scrollbarHeight = containedHeight;
@@ -99,11 +100,11 @@ public class GuiScrollbar extends Gui {
 		lastMouseY = mouseY;
 	}
 
-	public int getScroll() {
-		return amountScrolled;
+	public float getScroll() {
+		return (float)amountScrolled / (float)height;
 	}
-	
-	public int getLength() {
-		return scrollbarHeight;
+
+	public float getLength() {
+		return (float)scrollbarHeight / (float)height;
 	}
 }

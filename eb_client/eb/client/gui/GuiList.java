@@ -43,10 +43,8 @@ public class GuiList extends Gui {
 	public void addItem(GuiListItem item) {
 		items.add(item);
 		
-		containedHeight += item.getHeight() + padding;
+		containedHeight += item.getHeight();
 		scrollbar.setContainedHeight(containedHeight);
-		
-		System.out.println(containedHeight);
 	}
 	
 	public void setPadding(int padding) {
@@ -54,9 +52,9 @@ public class GuiList extends Gui {
 	}
 	
 	public void draw() {
-		this.drawRect(x, y, x + width - scrollbar.getWidth(), y + height, Integer.MIN_VALUE);
+		drawRect(x, y, x + width - scrollbar.getWidth(), y + height, Integer.MIN_VALUE);
 		
-		int itemWidth = width - (padding * 2) - scrollbar.getWidth();
+		int itemWidth = getItemWidth();
 		int currentY = y + padding;
 		for(GuiListItem item : getVisibleItems()) {
 			if(currentY + item.getHeight() >= (y + height - padding)) {
@@ -98,9 +96,11 @@ public class GuiList extends Gui {
 
 	public void mouseMoved(int mouseX, int mouseY) {
 		if(GuiHelper.pointInRect(mouseX, mouseY, x, y, width, height)) {
-			int itemWidth = width - (padding * 2) - scrollbar.getWidth();
+			int itemWidth = getItemWidth();
 			int currentY = y + padding;
-			for(GuiListItem item : items) {
+			ArrayList<GuiListItem> visibleItems = getVisibleItems();
+			
+			for(GuiListItem item : visibleItems) {
 				if(GuiHelper.pointInRect(mouseX, mouseY, x + padding, currentY, itemWidth, item.getHeight())) {
 					setHoverItem(item);
 					break;
@@ -108,7 +108,7 @@ public class GuiList extends Gui {
 				
 				currentY += item.getHeight();
 				
-				if(items.get(items.size() - 1).equals(item)) {
+				if(visibleItems.get(visibleItems.size() - 1).equals(item)) {
 					setHoverItem(null);
 				}
 			}
@@ -135,17 +135,22 @@ public class GuiList extends Gui {
 		}
 	}
 	
+	private int getItemWidth() {
+		return width - (2 * padding) - scrollbar.getWidth();
+	}
+	
 	private ArrayList<GuiListItem> getVisibleItems() {
 		ArrayList<GuiListItem> visibleItems = new ArrayList<GuiListItem>();
 		
-		int currentY = 0;
+		float currentY = 0;
 		for(GuiListItem item : items) {
-			if(currentY > scrollbar.getScroll()) {
+			if(currentY >= scrollbar.getScroll()) {
 				visibleItems.add(item);
 			}
 			
-			currentY += item.getHeight();
-			if(currentY > scrollbar.getScroll() + height) {
+			currentY += (float)item.getHeight() / (float)containedHeight;
+			
+			if(currentY > scrollbar.getScroll() + scrollbar.getLength()) {
 				break;
 			}
 		}

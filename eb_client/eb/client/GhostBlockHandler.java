@@ -1,5 +1,9 @@
 package eb.client;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+
 import net.minecraft.src.EntityClientPlayerMP;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.InventoryPlayer;
@@ -12,6 +16,7 @@ import eb.client.macros.IInstruction;
 import eb.client.macros.Macro;
 import eb.client.macros.MoveInstruction;
 import eb.client.macros.PlaceInstruction;
+import eb.common.Constants;
 import eb.common.Direction;
 import eb.common.TileGhostBlock;
 import eb.common.network.PacketMoveGhost;
@@ -145,6 +150,39 @@ public class GhostBlockHandler {
 
 	public void openMacroGui() {
 		FMLClientHandler.instance().getClient().displayGuiScreen(new GuiMacro());
+	}
+	
+	public boolean saveMacro(String name, String desc) {
+		if(macro == null) { return false; }
+		
+		String path = Constants.MACROS_PATH + name;
+		
+		try {
+			File file = new File(path);
+			if(!file.createNewFile()) {
+				System.out.println("Could not create new file");
+			}
+			
+			System.out.println("File opened");
+			PrintStream out = new PrintStream(file);
+			System.out.println("PrintStream opened");
+			
+			out.println("NAME" + name);
+			out.println("DESC" + desc + "\n");
+			out.println("MACRO");
+			out.print(macro.toString());
+			out.close();
+			
+			System.out.println("Saved to " + file.getAbsolutePath());
+		} catch (Exception e) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean loadMacro() {
+		return false;
 	}
 
 	private void sendPacket(Packet packet) {

@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
+import eb.client.GhostBlockHandler;
 import eb.common.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.FontRenderer;
@@ -39,7 +40,7 @@ public class GuiMacro extends GuiScreen {
 		files = new GuiList(mc, this, guiLeft + 6, guiTop + 6, guiWidth - 12, guiHeight - 60);
 		files.setPadding(2);
 		
-		for(int i = 0; i < 20; ++i) {
+		for(int i = 0; i < 1; ++i) {
 			files.addItem(new GuiMacroItem("Test" + i, "This is a test"));
 		}
 		
@@ -125,6 +126,7 @@ public class GuiMacro extends GuiScreen {
 	protected void actionPerformed(GuiButton button) {
 		if(button.enabled) {
 			if(button.id == 0) { //Save button
+				System.out.println("Saving");
 				saveMacro(macroName.getText(), macroDesc.getText());
 			} else if(button.id == 1) { //Load button
 				loadMacro(macroName.getText());
@@ -133,6 +135,11 @@ public class GuiMacro extends GuiScreen {
 	}
 
 	private void saveMacro(String name, String description) {
+		if(GhostBlockHandler.instance().saveMacro(name, description)) {
+			System.out.println("Saved");
+		} else {
+			System.out.println("Error saving file");
+		}
 	}
 	
 	private void loadMacro(String name) {
