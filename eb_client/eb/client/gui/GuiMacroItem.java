@@ -12,10 +12,12 @@ public class GuiMacroItem implements GuiListItem {
 	private static final int MAX_STRING_LENGTH = 30;
 	private String name, desc;
 	private boolean mouseover, selected;
+	private boolean loaded;
 	
 	public GuiMacroItem(String name, String desc) {
 		this.name = name;
 		this.desc = desc;
+		this.loaded = false;
 	}
 	
 	@Override
@@ -54,7 +56,19 @@ public class GuiMacroItem implements GuiListItem {
 		return name;
 	}
 
-	public String getDesc() {
+	public String getDescription() {
 		return desc;
+	}
+
+	public void setDescription(String description) {
+		this.desc = description;
+	}
+	
+	public void setLoaded(boolean loaded) {
+		this.loaded = loaded;
+	}
+	
+	public boolean isLoaded() {
+		return loaded;
 	}
 }

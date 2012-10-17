@@ -1,11 +1,14 @@
 package eb.client.gui;
 
+import java.io.File;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 import eb.client.GhostBlockHandler;
+import eb.client.macros.Macro;
 import eb.common.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.FontRenderer;
@@ -39,10 +42,7 @@ public class GuiMacro extends GuiScreen {
 		
 		files = new GuiList(mc, this, guiLeft + 6, guiTop + 6, guiWidth - 12, guiHeight - 60);
 		files.setPadding(2);
-		
-		for(int i = 0; i < 1; ++i) {
-			files.addItem(new GuiMacroItem("Test" + i, "This is a test"));
-		}
+		populateList();
 		
 		macroName = new GuiTextField(fontRenderer, guiLeft + 7, guiTop + files.getHeight() + 8, guiWidth - 60, 11);
 		macroName.setFocused(false);
@@ -57,7 +57,7 @@ public class GuiMacro extends GuiScreen {
 		controlList.add(saveButton);
 		controlList.add(loadButton);
 	}
-	
+
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -79,8 +79,16 @@ public class GuiMacro extends GuiScreen {
 			selected = item;
 			GuiMacroItem macroItem = (GuiMacroItem)item;
 			
+			if(!macroItem.isLoaded()) {
+				Macro macro = GhostBlockHandler.instance().requestMacro(macroItem.getName());
+				
+				if(macro != null) {
+					macroItem.setDescription(macro.getDescription());
+				}
+			}
+			
 			macroName.setText(macroItem.getName());
-			macroDesc.setText(macroItem.getDesc());
+			macroDesc.setText(macroItem.getDescription());
 		}
 		
 
@@ -126,7 +134,6 @@ public class GuiMacro extends GuiScreen {
 	protected void actionPerformed(GuiButton button) {
 		if(button.enabled) {
 			if(button.id == 0) { //Save button
-				System.out.println("Saving");
 				saveMacro(macroName.getText(), macroDesc.getText());
 			} else if(button.id == 1) { //Load button
 				loadMacro(macroName.getText());
@@ -135,13 +142,31 @@ public class GuiMacro extends GuiScreen {
 	}
 
 	private void saveMacro(String name, String description) {
-		if(GhostBlockHandler.instance().saveMacro(name, description)) {
-			System.out.println("Saved");
-		} else {
-			System.out.println("Error saving file");
+		if(name.length() > 0) {
+			if(GhostBlockHandler.instance().saveMacro(name, description)) {
+				System.out.println("Saved");
+			}
 		}
 	}
 	
 	private void loadMacro(String name) {
+		//GhostBlockHandler.instance()
+	}
+	
+	private void populateList() {
+		File dir = new File(Constants.MACROS_PATH);
+		
+		if(dir.exists()) {
+			for(File file : dir.listFiles()) {
+				files.addItem(new GuiMacroItem(getMacroName(file.getName()), ""));
+			}
+		}
+	}
+	
+	private String getMacroName(String filename) {
+		String name = filename.substring(0, filename.lastIndexOf('.'));
+		name.replace("_", " ");
+		
+		return name;
 	}
 }

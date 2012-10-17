@@ -17,9 +17,9 @@ public class PlaceInstruction implements IInstruction {
 	public void execute() {	
 		GhostBlockHandler.instance().placeBlock(itemID);
 	}
-	
+
 	@Override
-	public String toString() {
-		return "Place " + itemID;
+	public String getParameters() {
+		return Integer.toString(itemID);
 	}
 }

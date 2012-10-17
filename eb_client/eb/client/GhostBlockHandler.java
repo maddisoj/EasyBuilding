@@ -3,6 +3,9 @@ package eb.client;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.minecraft.src.EntityClientPlayerMP;
 import net.minecraft.src.EntityPlayer;
@@ -14,6 +17,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import eb.client.gui.GuiMacro;
 import eb.client.macros.IInstruction;
 import eb.client.macros.Macro;
+import eb.client.macros.MacroIO;
 import eb.client.macros.MoveInstruction;
 import eb.client.macros.PlaceInstruction;
 import eb.common.Constants;
@@ -29,6 +33,7 @@ public class GhostBlockHandler {
 	private int x, y, z;
 	private boolean placed, recording;
 	private Macro macro;
+	private Map<String, Macro> loadedMacros;
 
 	private GhostBlockHandler() {
 		x = 0;
@@ -37,6 +42,7 @@ public class GhostBlockHandler {
 		placed = false;
 		recording = false;
 		macro = new Macro();
+		loadedMacros = new HashMap<String, Macro>();
 	}
 
 	public static GhostBlockHandler instance() {
@@ -155,34 +161,23 @@ public class GhostBlockHandler {
 	public boolean saveMacro(String name, String desc) {
 		if(macro == null) { return false; }
 		
-		String path = Constants.MACROS_PATH + name;
+		macro.setName(name);
+		name = name.replace(' ', '_');
+		String path = Constants.MACROS_PATH + name + ".txt";
 		
-		try {
-			File file = new File(path);
-			if(!file.createNewFile()) {
-				System.out.println("Could not create new file");
-			}
-			
-			System.out.println("File opened");
-			PrintStream out = new PrintStream(file);
-			System.out.println("PrintStream opened");
-			
-			out.println("NAME" + name);
-			out.println("DESC" + desc + "\n");
-			out.println("MACRO");
-			out.print(macro.toString());
-			out.close();
-			
-			System.out.println("Saved to " + file.getAbsolutePath());
-		} catch (Exception e) {
-			return false;
-		}
-		
-		return true;
+		return MacroIO.save(macro, path);
 	}
 	
-	public boolean loadMacro() {
-		return false;
+	public Macro requestMacro(String file) {
+		Macro requested = null;
+		
+		requested = loadedMacros.get(file);
+		if(requested == null) {
+			requested = MacroIO.load(Constants.MACROS_PATH + file);
+			loadedMacros.put(file, requested);
+		}
+		
+		return requested;
 	}
 
 	private void sendPacket(Packet packet) {

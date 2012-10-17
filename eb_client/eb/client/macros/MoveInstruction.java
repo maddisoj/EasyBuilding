@@ -15,9 +15,9 @@ public class MoveInstruction implements IInstruction {
 	public void execute() {
 		GhostBlockHandler.instance().move(dir);
 	}
-	
+
 	@Override
-	public String toString() {
-		return "Move " + dir.name();
+	public String getParameters() {
+		return dir.name();
 	}
 }
