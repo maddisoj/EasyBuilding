@@ -23,8 +23,8 @@ public class MacroIO {
 			out.println("DESC " + macro.getDescription());
 			out.println("MACRO");
 
-			List<IInstruction> instructions = macro.getInstructions();
-			for(IInstruction instruction : instructions) {
+			List<Instruction> instructions = macro.getInstructions();
+			for(Instruction instruction : instructions) {
 				out.print(instruction.getClass() + ", ");
 				out.println(instruction.getParameters());
 			}
@@ -59,20 +59,11 @@ public class MacroIO {
 					
 					Class klass = Class.forName(instructionName);
 					
-					if(IInstruction.class.isAssignableFrom(klass)) {
-						Constructor[] ctors = klass.getConstructors();
-						Constructor finalCtor = null;
+					if(Instruction.class.isAssignableFrom(klass)) {
+						Instruction instruction = (Instruction)klass.newInstance();
+						instruction.parseParameters(parameters);
 						
-						for(Constructor ctor : ctors) {
-							if(ctor.getParameterTypes().length == parameters.length) {
-								finalCtor = ctor; //suitable ctor? (need to type check)
-								break;
-							}
-						}
-						
-						if(finalCtor == null) {
-							System.out.println("Problem finding constructor for: " + line);
-						}
+						macro.addInstruction(instruction);
 					}
 					
 				} else {
