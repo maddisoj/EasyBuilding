@@ -41,7 +41,7 @@ public class GhostBlockHandler {
 		z = 0;
 		placed = false;
 		recording = false;
-		macro = new Macro();
+		macro = null;
 		loadedMacros = new HashMap<String, Macro>();
 	}
 
@@ -139,6 +139,7 @@ public class GhostBlockHandler {
 
 		if(recording) {
 			sendMessage("Started Recording");
+			macro = new Macro();
 		} else {
 			sendMessage("Finished Recording");
 		}
@@ -150,7 +151,6 @@ public class GhostBlockHandler {
 			return;
 		}
 
-		System.out.println(macro.toString());
 		macro.run();
 	}
 
@@ -162,10 +162,9 @@ public class GhostBlockHandler {
 		if(macro == null) { return false; }
 		
 		macro.setName(name);
-		name = name.replace(' ', '_');
-		String path = Constants.MACROS_PATH + name + ".txt";
+		macro.setDescription(desc);
 		
-		return MacroIO.save(macro, path);
+		return MacroIO.save(macro);
 	}
 	
 	public Macro requestMacro(String file) {
@@ -192,10 +191,12 @@ public class GhostBlockHandler {
 		EntityClientPlayerMP player = FMLClientHandler.instance().getClient().thePlayer;
 		
 		if(player != null) {
-			return player.inventory.getCurrentItem().itemID;
-		} else {
-			return -1;
+			if(player.inventory.getCurrentItem() != null) {
+				return player.inventory.getCurrentItem().itemID;
+			}
 		}
+		
+		return -1;
 	}
 
 	private void sendMessage(String message) {

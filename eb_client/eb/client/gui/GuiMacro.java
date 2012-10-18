@@ -9,6 +9,7 @@ import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 import eb.client.GhostBlockHandler;
 import eb.client.macros.Macro;
+import eb.client.macros.MacroIO;
 import eb.common.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.FontRenderer;
@@ -20,6 +21,7 @@ import net.minecraft.src.GuiScreen;
 import net.minecraft.src.GuiShareToLan;
 import net.minecraft.src.GuiStats;
 import net.minecraft.src.GuiTextField;
+import net.minecraft.src.GuiYesNo;
 import net.minecraft.src.StatCollector;
 import net.minecraft.src.StatList;
 import net.minecraft.src.WorldClient;
@@ -44,15 +46,15 @@ public class GuiMacro extends GuiScreen {
 		files.setPadding(2);
 		populateList();
 		
-		macroName = new GuiTextField(fontRenderer, guiLeft + 7, guiTop + files.getHeight() + 8, guiWidth - 60, 11);
+		macroName = new GuiTextField(fontRenderer, guiLeft + 7, guiTop + files.getHeight() + 8, guiWidth - 65, 11);
 		macroName.setFocused(false);
 		
-		macroDesc = new GuiTextArea(fontRenderer, guiLeft + 7, guiTop + files.getHeight() + 22, guiWidth - 60, 32);
+		macroDesc = new GuiTextArea(fontRenderer, guiLeft + 7, guiTop + files.getHeight() + 22, guiWidth - 65, 32);
 		macroDesc.setFocused(false);
 		macroDesc.setMaxLength(65);
 		
-		saveButton = new GuiButton(0, guiLeft + guiWidth - 50, guiTop + files.getHeight() + 10, 45, 20, "Save");
-		loadButton = new GuiButton(1, guiLeft + guiWidth - 50, guiTop + files.getHeight() + 32, 45, 20, "Load");
+		saveButton = new GuiButton(0, guiLeft + guiWidth - 55, guiTop + files.getHeight() + 10, 50, 20, "Save");
+		loadButton = new GuiButton(1, guiLeft + guiWidth - 55, guiTop + files.getHeight() + 32, 50, 20, "Load");
 		
 		controlList.add(saveButton);
 		controlList.add(loadButton);
@@ -80,18 +82,22 @@ public class GuiMacro extends GuiScreen {
 			GuiMacroItem macroItem = (GuiMacroItem)item;
 			
 			if(!macroItem.isLoaded()) {
-				Macro macro = GhostBlockHandler.instance().requestMacro(macroItem.getName() + ".txt");
+				Macro macro = GhostBlockHandler.instance().requestMacro(getFileName(macroItem.getName()));
 				
 				if(macro != null) {
 					macroItem.setDescription(macro.getDescription());
 					macroItem.setLoaded(true);
-				} else {
-					System.out.println("Could not load " + macroItem.getName() + ".txt");
 				}
 			}
 			
 			macroName.setText(macroItem.getName());
 			macroDesc.setText(macroItem.getDescription());
+		}
+		
+		if(MacroIO.macroExists(macroName.getText())) {
+			saveButton.displayString = "Override";
+		} else {
+			saveButton.displayString = "Save";
 		}
 		
 
@@ -100,7 +106,7 @@ public class GuiMacro extends GuiScreen {
 		
 		super.updateScreen();
 	}
-	
+
 	@Override
 	protected void keyTyped(char key, int keyCode) {
 		if(keyCode == Keyboard.KEY_ESCAPE) {
@@ -137,9 +143,9 @@ public class GuiMacro extends GuiScreen {
 	protected void actionPerformed(GuiButton button) {
 		if(button.enabled) {
 			if(button.id == 0) { //Save button
-				saveMacro(macroName.getText(), macroDesc.getText());
+				saveMacro(macroName.getText().trim(), macroDesc.getText().trim());
 			} else if(button.id == 1) { //Load button
-				loadMacro(macroName.getText());
+				loadMacro(macroName.getText().trim());
 			}
 		}
 	}
@@ -147,19 +153,21 @@ public class GuiMacro extends GuiScreen {
 	private void saveMacro(String name, String description) {
 		if(name.length() > 0) {
 			if(GhostBlockHandler.instance().saveMacro(name, description)) {
-				System.out.println("Saved");
+				populateList();
 			}
 		}
 	}
 	
 	private void loadMacro(String name) {
-		GhostBlockHandler.instance().setMacro(macroName.getText() + ".txt");
+		GhostBlockHandler.instance().setMacro(getFileName(macroName.getText()));
 	}
 	
 	private void populateList() {
 		File dir = new File(Constants.MACROS_PATH);
 		
 		if(dir.exists()) {
+			files.clear();
+			
 			for(File file : dir.listFiles()) {
 				files.addItem(new GuiMacroItem(getMacroName(file.getName()), ""));
 			}
@@ -168,8 +176,15 @@ public class GuiMacro extends GuiScreen {
 	
 	private String getMacroName(String filename) {
 		String name = filename.substring(0, filename.lastIndexOf('.'));
-		name.replace("_", " ");
+		name = name.replace("_", " ");
 		
 		return name;
+	}
+	
+	private String getFileName(String macro) {
+		macro = macro.replace(" ", "_");
+		macro += ".txt";
+		
+		return macro;
 	}
 }

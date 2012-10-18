@@ -1,6 +1,7 @@
 package eb.client.macros;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -9,29 +10,26 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
+import eb.common.Constants;
+
 public class MacroIO {
-	public static boolean save(Macro macro, String path) {
+	private static final String newLine = System.getProperty("line.separator");
+	
+	public static boolean save(Macro macro) {
 		try {
-			File file = new File(path);
-
-			file.getParentFile().mkdirs();			
-			if(!file.createNewFile()) {
-				return false;
-			}
-
-			PrintStream out = new PrintStream(file);			
-			out.println("DESC " + macro.getDescription());
-			out.println("MACRO");
+			String path = getMacroPath(macro.getName());
+			
+			FileWriter out = new FileWriter(path);
+			out.write("DESC " + macro.getDescription() + newLine);
+			out.write("MACRO" + newLine);
 
 			List<IInstruction> instructions = macro.getInstructions();
 			for(IInstruction instruction : instructions) {				
-				out.print(instruction.getClass().getCanonicalName() + ", ");
-				out.println(instruction.getParameters());
+				out.write(instruction.getClass().getCanonicalName() + ", ");
+				out.write(instruction.getParameters() + newLine);
 			}
 
 			out.close();
-
-			System.out.println("Saved to " + file.getAbsolutePath());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -63,12 +61,14 @@ public class MacroIO {
 						IInstruction instruction = (IInstruction)klass.newInstance();
 						
 						if(instruction == null) {
+							scanner.close();
 							return null;
 						}
 						
 						if(instruction.parseParameters(parameters)) {
 							macro.addInstruction(instruction);
-						} else {	
+						} else {
+							scanner.close();
 							return null;
 						}
 					}
@@ -91,5 +91,15 @@ public class MacroIO {
 		}
 
 		return null;
+	}
+	
+	public static boolean macroExists(String name) {
+		String path = getMacroPath(name);
+		File file = new File(path);
+		return file.exists();
+	}
+	
+	private static String getMacroPath(String name) {
+		return Constants.MACROS_PATH + name.trim().replace(" ", "_") + ".txt";
 	}
 }

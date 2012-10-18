@@ -157,4 +157,8 @@ public class GuiList extends Gui {
 		
 		return visibleItems;
 	}
+
+	public void clear() {
+		items = new ArrayList<GuiListItem>();
+	}
 }
