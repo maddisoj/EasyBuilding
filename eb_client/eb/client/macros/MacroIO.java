@@ -63,24 +63,15 @@ public class MacroIO {
 						IInstruction instruction = (IInstruction)klass.newInstance();
 						
 						if(instruction == null) {
-							System.out.println("Could not create instance of " + klass.getName());
 							return null;
 						}
 						
 						if(instruction.parseParameters(parameters)) {
-							System.out.println("Adding instruction\n" + instruction.getClass().getCanonicalName() + " " + instruction.getParameters());
 							macro.addInstruction(instruction);
-						} else {
-							System.out.println("Could not parse parameters for " + klass.getName() + ": ");
-							for(String param : parameters) {
-								System.out.println("=> " + param);
-							}
-							
+						} else {	
 							return null;
 						}
 					}
-					
-					return macro;
 				} else {
 					String[] tokens = line.split(" ");
 					
@@ -93,6 +84,8 @@ public class MacroIO {
 			}
 
 			scanner.close();
+			return macro;
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
