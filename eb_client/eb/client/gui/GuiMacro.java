@@ -80,10 +80,13 @@ public class GuiMacro extends GuiScreen {
 			GuiMacroItem macroItem = (GuiMacroItem)item;
 			
 			if(!macroItem.isLoaded()) {
-				Macro macro = GhostBlockHandler.instance().requestMacro(macroItem.getName());
+				Macro macro = GhostBlockHandler.instance().requestMacro(macroItem.getName() + ".txt");
 				
 				if(macro != null) {
 					macroItem.setDescription(macro.getDescription());
+					macroItem.setLoaded(true);
+				} else {
+					System.out.println("Could not load " + macroItem.getName() + ".txt");
 				}
 			}
 			
@@ -150,7 +153,7 @@ public class GuiMacro extends GuiScreen {
 	}
 	
 	private void loadMacro(String name) {
-		//GhostBlockHandler.instance()
+		GhostBlockHandler.instance().setMacro(macroName.getText() + ".txt");
 	}
 	
 	private void populateList() {

@@ -15,7 +15,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import cpw.mods.fml.client.FMLClientHandler;
 import eb.client.gui.GuiMacro;
-import eb.client.macros.Instruction;
+import eb.client.macros.IInstruction;
 import eb.client.macros.Macro;
 import eb.client.macros.MacroIO;
 import eb.client.macros.MoveInstruction;
@@ -178,6 +178,10 @@ public class GhostBlockHandler {
 		}
 		
 		return requested;
+	}
+	
+	public void setMacro(String name) {
+		macro = requestMacro(name);
 	}
 
 	private void sendPacket(Packet packet) {

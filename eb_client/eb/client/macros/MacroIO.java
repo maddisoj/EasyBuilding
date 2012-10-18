@@ -23,9 +23,9 @@ public class MacroIO {
 			out.println("DESC " + macro.getDescription());
 			out.println("MACRO");
 
-			List<Instruction> instructions = macro.getInstructions();
-			for(Instruction instruction : instructions) {
-				out.print(instruction.getClass() + ", ");
+			List<IInstruction> instructions = macro.getInstructions();
+			for(IInstruction instruction : instructions) {				
+				out.print(instruction.getClass().getCanonicalName() + ", ");
 				out.println(instruction.getParameters());
 			}
 
@@ -55,17 +55,32 @@ public class MacroIO {
 				if(inMacro) {
 					int splitPoint = line.indexOf(',');
 					String instructionName = line.substring(0, splitPoint);
-					String[] parameters = line.substring(splitPoint + 1).split(" ");
+					String[] parameters = line.substring(splitPoint + 1).trim().split(" ");
 					
 					Class klass = Class.forName(instructionName);
 					
-					if(Instruction.class.isAssignableFrom(klass)) {
-						Instruction instruction = (Instruction)klass.newInstance();
-						instruction.parseParameters(parameters);
+					if(IInstruction.class.isAssignableFrom(klass)) {
+						IInstruction instruction = (IInstruction)klass.newInstance();
 						
-						macro.addInstruction(instruction);
+						if(instruction == null) {
+							System.out.println("Could not create instance of " + klass.getName());
+							return null;
+						}
+						
+						if(instruction.parseParameters(parameters)) {
+							System.out.println("Adding instruction\n" + instruction.getClass().getCanonicalName() + " " + instruction.getParameters());
+							macro.addInstruction(instruction);
+						} else {
+							System.out.println("Could not parse parameters for " + klass.getName() + ": ");
+							for(String param : parameters) {
+								System.out.println("=> " + param);
+							}
+							
+							return null;
+						}
 					}
 					
+					return macro;
 				} else {
 					String[] tokens = line.split(" ");
 					

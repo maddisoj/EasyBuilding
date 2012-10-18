@@ -6,8 +6,12 @@ import eb.common.network.PacketPlaceBlock;
 import net.minecraft.src.EntityClientPlayerMP;
 import net.minecraft.src.InventoryPlayer;
 
-public class PlaceInstruction extends Instruction {
+public class PlaceInstruction implements IInstruction {
 	private int itemID;
+	
+	public PlaceInstruction() {
+		this.itemID = -1;
+	}
 	
 	public PlaceInstruction(int itemID) {
 		this.itemID = itemID;

@@ -4,8 +4,12 @@ import cpw.mods.fml.client.FMLClientHandler;
 import eb.client.GhostBlockHandler;
 import eb.common.Direction;
 
-public class MoveInstruction extends Instruction {
+public class MoveInstruction implements IInstruction {
 	private Direction dir;
+	
+	public MoveInstruction() {
+		this.dir = null;
+	}
 	
 	public MoveInstruction(Direction dir) {
 		this.dir = dir;
@@ -24,8 +28,7 @@ public class MoveInstruction extends Instruction {
 	@Override
 	public boolean parseParameters(String[] parameters) {
 		try {
-			//int ordinal = Integer.parseInt(parameters[0]);
-			//dir = Direction.values()[ordinal];
+			dir = Direction.valueOf(parameters[0]);
 		} catch(Exception e) {
 			return false;
 		}
