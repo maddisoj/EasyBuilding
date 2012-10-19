@@ -1,5 +1,6 @@
 package eb.client.macros;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintStream;
@@ -12,21 +13,24 @@ import java.util.Set;
 
 import eb.common.Constants;
 
-public class MacroIO {
-	private static final String newLine = System.getProperty("line.separator");
-	
+public class MacroIO {	
 	public static boolean save(Macro macro) {
 		try {
 			String path = getMacroPath(macro.getName());
 			
-			FileWriter out = new FileWriter(path);
-			out.write("DESC " + macro.getDescription() + newLine);
-			out.write("MACRO" + newLine);
+			FileWriter writer = new FileWriter(path);
+			BufferedWriter out = new BufferedWriter(writer);
+			
+			out.write("DESC " + macro.getDescription());
+			out.newLine();
+			out.write("MACRO");
+			out.newLine();
 
 			List<IInstruction> instructions = macro.getInstructions();
 			for(IInstruction instruction : instructions) {				
 				out.write(instruction.getClass().getCanonicalName() + ", ");
-				out.write(instruction.getParameters() + newLine);
+				out.write(instruction.getParameters());
+				out.newLine();
 			}
 
 			out.close();

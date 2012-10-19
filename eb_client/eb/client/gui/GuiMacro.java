@@ -95,7 +95,7 @@ public class GuiMacro extends GuiScreen {
 		}
 		
 		if(MacroIO.macroExists(macroName.getText())) {
-			saveButton.displayString = "Override";
+			saveButton.displayString = "Overwrite";
 		} else {
 			saveButton.displayString = "Save";
 		}
@@ -143,6 +143,10 @@ public class GuiMacro extends GuiScreen {
 	protected void actionPerformed(GuiButton button) {
 		if(button.enabled) {
 			if(button.id == 0) { //Save button
+				if(button.displayString.equals("Overwrite")) {
+					((GuiMacroItem)selected).setLoaded(false);
+				}
+				
 				saveMacro(macroName.getText().trim(), macroDesc.getText().trim());
 			} else if(button.id == 1) { //Load button
 				loadMacro(macroName.getText().trim());
