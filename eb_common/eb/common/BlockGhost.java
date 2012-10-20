@@ -1,6 +1,7 @@
 package eb.common;
 
 import eb.client.GhostBlockRenderer;
+import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.CreativeTabs;
@@ -16,6 +17,16 @@ public class BlockGhost extends BlockContainer {
 		setBlockName("Ghost");
 		setCreativeTab(CreativeTabs.tabTools);
 	}
+	
+	@Override
+    public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
+        TileEntity entity = world.getBlockTileEntity(x, y, z);
+        if(!(entity instanceof TileGhostBlock)) {
+        	return null;
+        }
+        
+        return ((TileGhostBlock)entity).getContainedBoundingBox();
+    }
 	
 	@Override
 	public boolean isOpaqueCube() {

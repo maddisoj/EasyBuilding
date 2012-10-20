@@ -1,11 +1,13 @@
 package eb.common;
 
 import eb.common.network.PacketUpdateGhost;
+import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemBlock;
+import net.minecraft.src.ItemRedstone;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.Packet;
@@ -15,6 +17,7 @@ import net.minecraft.src.World;
 
 public class TileGhostBlock extends TileEntity {
 	private int blockID;
+	private int metadata;
 
 	public TileGhostBlock() {
 		blockID = 0;
@@ -26,6 +29,14 @@ public class TileGhostBlock extends TileEntity {
 
 	public void setBlockId(int blockId) {
 		this.blockID = blockId;
+	}
+	
+	public int getBlockMetadata() {
+		return metadata;
+	}
+	
+	public void setBlockMetadata(int metadata) {
+		this.metadata = metadata;
 	}
 
 	public PacketUpdateGhost getUpdatePacket() {
@@ -75,6 +86,7 @@ public class TileGhostBlock extends TileEntity {
 		int newZ = zCoord + (int)moveDirection.zCoord;
 
 		int newBlockID = worldObj.getBlockId(newX, newY, newZ);
+		int newMetadata = worldObj.getBlockMetadata(newX, newY, newZ);	
 		worldObj.setBlock(newX, newY, newZ, Constants.GHOST_BLOCK_ID);
 
 		TileEntity entity = worldObj.getBlockTileEntity(newX, newY, newZ);
@@ -84,8 +96,9 @@ public class TileGhostBlock extends TileEntity {
 
 		TileGhostBlock newGhostTile = (TileGhostBlock)entity;
 		newGhostTile.setBlockId(newBlockID);
+		newGhostTile.setBlockMetadata(newMetadata);
 
-		worldObj.setBlock(oldX, oldY, oldZ, blockID);
+		worldObj.setBlockAndMetadata(oldX, oldY, oldZ, blockID, metadata);
 	}
 
 	public void place(EntityPlayer player, int itemID) {
@@ -103,9 +116,49 @@ public class TileGhostBlock extends TileEntity {
 			player.inventory.consumeInventoryItem(itemID);
 			EasyBuilding.sendToAllPlayers(getUpdatePacket());
 		}
+		
+		/*ItemStack stack = searchInventory(player.inventory, itemID);
+		if(stack == null) {
+			return;
+		}
+		
+		Item item = stack.getItem();*/
 	}
 
 	public void remove() {
 		worldObj.setBlock(xCoord, yCoord, zCoord, blockID);
 	}
+	
+    public AxisAlignedBB getContainedBoundingBox() {
+        if(blockID == 0) {
+        	return null;
+        }
+        
+        Block block = Block.blocksList[blockID];
+        if(block != null) {
+        	return block.getCollisionBoundingBoxFromPool(this.worldObj, xCoord, yCoord, zCoord);
+        }
+        
+        return null;
+    }
+	
+	private ItemStack searchInventory(InventoryPlayer inventory, int itemID) {
+		for(ItemStack itemStack : inventory.mainInventory) {
+			if (itemStack != null && itemStack.itemID == itemID) {
+				return itemStack;
+			}
+		}
+	
+		return null;
+	}
+	
+	/*private int getPlacedBlockID(Item item) {
+		if(item instanceof ItemBlock) {
+			return ((ItemBlock)item).getBlockID();
+		} else if(item instanceof ItemRedstone) {
+			return 
+		}
+		
+		return -1;
+	}*/
 }
