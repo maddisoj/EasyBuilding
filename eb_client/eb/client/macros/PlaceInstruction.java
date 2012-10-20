@@ -37,4 +37,8 @@ public class PlaceInstruction implements IInstruction {
 		
 		return true;
 	}
+	
+	public int getItemID() {
+		return itemID;
+	}
 }

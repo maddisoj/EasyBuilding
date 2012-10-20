@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -12,6 +13,11 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import eb.common.Helper;
+
+import net.minecraft.src.Block;
+import net.minecraft.src.Item;
 
 public class Macro implements Runnable {
 	private String name, description;
@@ -81,5 +87,25 @@ public class Macro implements Runnable {
 
 	public String getDescription() {
 		return description;
+	}
+	
+	public HashMap<Item, Integer> getBlockUsage() {
+		HashMap<Item, Integer> usage = new HashMap<Item, Integer>();
+		
+		for(IInstruction instruction : instructions) {
+			if(instruction instanceof PlaceInstruction) {
+				int id = ((PlaceInstruction)instruction).getItemID();
+				Item item = Item.itemsList[id];
+				
+				Integer count = usage.get(item);
+				if(count == null) {
+					usage.put(item, 1);
+				} else {
+					++count;
+				}
+			}
+		}
+		
+		return usage;
 	}
 }

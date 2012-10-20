@@ -34,6 +34,7 @@ public class GuiMacro extends GuiScreen {
 	private GuiTextArea macroDesc;
 	private GuiButton saveButton, loadButton;
 	private GuiListItem selected;
+	private GuiListItem itemList;
 	
 	@Override
 	public void initGui() {

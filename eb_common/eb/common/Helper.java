@@ -1,6 +1,10 @@
 package eb.common;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemBlock;
+import net.minecraft.src.ItemRedstone;
 import net.minecraft.src.Vec3;
 
 public class Helper {
@@ -34,5 +38,19 @@ public class Helper {
 		}
 		
 		return playerDirection;
+	}
+	
+	public static Block getPlacedBlock(Item item) {
+		if(item == null) {
+			return null;
+		}
+		
+		if(item instanceof ItemBlock) {
+			return Block.blocksList[((ItemBlock)item).getBlockID()];
+		} else if(item instanceof ItemRedstone) {
+			return Block.redstoneWire;
+		}
+		
+		return null;
 	}
 }
