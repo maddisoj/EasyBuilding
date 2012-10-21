@@ -22,6 +22,7 @@ import eb.client.macros.MoveInstruction;
 import eb.client.macros.PlaceInstruction;
 import eb.common.Constants;
 import eb.common.Direction;
+import eb.common.Helper;
 import eb.common.TileGhostBlock;
 import eb.common.network.PacketMoveGhost;
 import eb.common.network.PacketPlaceBlock;

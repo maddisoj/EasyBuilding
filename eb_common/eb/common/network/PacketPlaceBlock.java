@@ -12,6 +12,7 @@ import net.minecraft.src.World;
 import com.google.common.io.ByteArrayDataInput;
 
 import cpw.mods.fml.common.network.Player;
+import eb.common.Helper;
 import eb.common.TileGhostBlock;
 
 public class PacketPlaceBlock extends PacketGhostPosition {
@@ -43,15 +44,10 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 	}	
 	
 	public void handle(NetworkManager manager, Player player) {
-		EntityPlayer entityPlayer = (EntityPlayer)player;
-		World world = entityPlayer.worldObj;
+		TileGhostBlock ghostBlock = Helper.getGhostBlock(((EntityPlayer)player).worldObj, x, y, z);
 		
-		TileEntity entity = world.getBlockTileEntity(x, y, z);
-		if(!(entity instanceof TileGhostBlock)) {
-			return;
+		if(ghostBlock != null) {
+			ghostBlock.place((EntityPlayer)player, itemID);
 		}
-		
-		TileGhostBlock ghostBlock = (TileGhostBlock)entity;
-		ghostBlock.place(entityPlayer, itemID);
 	}
 }

@@ -1,5 +1,7 @@
 package eb.common;
 
+import java.util.Random;
+
 import eb.client.GhostBlockRenderer;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
@@ -52,4 +54,9 @@ public class BlockGhost extends BlockContainer {
 	public boolean isBlockReplaceable(World world, int x, int y, int z) {
         return true;
     }
+	
+	@Override
+	public int quantityDropped(Random random) {
+		return 0;
+	}
 }

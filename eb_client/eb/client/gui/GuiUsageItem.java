@@ -24,9 +24,6 @@ public class GuiUsageItem implements GuiListItem {
 
 	@Override
 	public void draw(GuiList parent, int x, int y, int width) {
-		/*IItemRenderer renderer = MinecraftForgeClient.getItemRenderer(stack, ItemRenderType.INVENTORY);
-		
-		renderer.renderItem(ItemRenderType.INVENTORY, stack, (Object[])null);*/
 		renderer.renderItemIntoGUI(parent.getFontRenderer(), parent.getRenderEngine(), stack, x, y);
 		parent.getFontRenderer().drawStringWithShadow(Integer.toString(count), x + 20, y + 4, Integer.MAX_VALUE);
 	}

@@ -28,7 +28,6 @@ public class PacketPlaceGhost extends PacketGhostPosition {
 	}
 	
 	public void handle(NetworkManager manager, Player player) {
-		//ToBeDeleted.instance().requestPlace((EntityPlayer)player, x, y, z);
 		World world = ((EntityPlayer)player).worldObj;
 		
 		int blockID = world.getBlockId(x, y, z);

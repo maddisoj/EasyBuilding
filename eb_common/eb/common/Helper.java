@@ -5,7 +5,9 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemRedstone;
+import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
+import net.minecraft.src.World;
 
 public class Helper {
 	public static int[] getPosition(int x, int y, int z, int side) {
@@ -52,5 +54,14 @@ public class Helper {
 		}
 		
 		return null;
+	}
+	
+	public static TileGhostBlock getGhostBlock(World world, int x, int y, int z) {
+		TileEntity entity = world.getBlockTileEntity(x, y, z);
+		if(!(entity instanceof TileGhostBlock)) {
+			return null;
+		}
+		
+		return (TileGhostBlock)entity;
 	}
 }

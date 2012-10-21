@@ -106,13 +106,6 @@ public class TileGhostBlock extends TileEntity {
 			player.inventory.consumeInventoryItem(itemID);
 			EasyBuilding.sendToAllPlayers(getUpdatePacket());
 		}
-		
-		/*ItemStack stack = searchInventory(player.inventory, itemID);
-		if(stack == null) {
-			return;
-		}
-		
-		Item item = stack.getItem();*/
 	}
 
 	public void remove() {
@@ -141,14 +134,4 @@ public class TileGhostBlock extends TileEntity {
 	
 		return null;
 	}
-	
-	/*private int getPlacedBlockID(Item item) {
-		if(item instanceof ItemBlock) {
-			return ((ItemBlock)item).getBlockID();
-		} else if(item instanceof ItemRedstone) {
-			return 
-		}
-		
-		return -1;
-	}*/
 }
