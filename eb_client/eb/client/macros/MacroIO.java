@@ -47,7 +47,8 @@ public class MacroIO {
 		return true;
 	}
 
-	public static Macro load(String path) {
+	public static Macro load(String name) {
+		String path = Constants.MACROS_PATH + name;
 		Macro requested = null;
 		
 		requested = loadedMacros.get(path);

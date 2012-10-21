@@ -48,16 +48,6 @@ public class TileGhostBlock extends TileEntity {
 		return getUpdatePacket().toCustomPayload();
 	}
 
-	@Override
-	public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
-		super.readFromNBT(par1NBTTagCompound);
-	}
-
-	@Override
-	public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
-		super.writeToNBT(par1NBTTagCompound);
-	}
-
 	public void move(EntityPlayer player, Direction direction) {
 		Vec3 moveDirection = Vec3.createVectorHelper(0.0, 0.0, 0.0);
 

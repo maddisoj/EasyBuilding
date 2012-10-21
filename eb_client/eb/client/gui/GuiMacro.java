@@ -205,7 +205,7 @@ public class GuiMacro extends GuiScreen {
 	
 	private Macro getSelectedMacro() {
 		GuiMacroItem item = (GuiMacroItem)selected;
-		return GhostBlockHandler.instance().requestMacro(getFileName(item.getName()));
+		return MacroIO.load(getFileName(item.getName()));
 	}
 	
 	private String getMacroName(String filename) {

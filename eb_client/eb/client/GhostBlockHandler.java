@@ -165,12 +165,8 @@ public class GhostBlockHandler {
 		return MacroIO.save(macro);
 	}
 	
-	public Macro requestMacro(String file) {
-		return MacroIO.load(Constants.MACROS_PATH + file);
-	}
-	
 	public void setMacro(String name) {
-		macro = requestMacro(name);
+		macro = MacroIO.load(name);
 	}
 
 	private void sendPacket(Packet packet) {
