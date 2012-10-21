@@ -1,6 +1,8 @@
 package eb.client.gui;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -22,6 +24,7 @@ import net.minecraft.src.GuiShareToLan;
 import net.minecraft.src.GuiStats;
 import net.minecraft.src.GuiTextField;
 import net.minecraft.src.GuiYesNo;
+import net.minecraft.src.Item;
 import net.minecraft.src.StatCollector;
 import net.minecraft.src.StatList;
 import net.minecraft.src.WorldClient;
@@ -29,12 +32,11 @@ import net.minecraft.src.WorldClient;
 @SideOnly(Side.CLIENT)
 public class GuiMacro extends GuiScreen {
 	private int guiLeft, guiTop, guiWidth, guiHeight;
-	private GuiList files;
+	private GuiList files, usageList;
 	private GuiTextField macroName;
 	private GuiTextArea macroDesc;
 	private GuiButton saveButton, loadButton;
 	private GuiListItem selected;
-	private GuiListItem itemList;
 	
 	@Override
 	public void initGui() {
@@ -45,7 +47,12 @@ public class GuiMacro extends GuiScreen {
 		
 		files = new GuiList(mc, this, guiLeft + 6, guiTop + 6, guiWidth - 12, guiHeight - 60);
 		files.setPadding(2);
-		populateList();
+		populateFilesList();
+		
+		usageList = new GuiList(mc, this, guiLeft + guiWidth + 5, guiTop + 6, 48, guiHeight);
+		usageList.setPadding(2);
+		usageList.setDrawBackground(false);
+		populateUsageList();
 		
 		macroName = new GuiTextField(fontRenderer, guiLeft + 7, guiTop + files.getHeight() + 8, guiWidth - 65, 11);
 		macroName.setFocused(false);
@@ -63,7 +70,6 @@ public class GuiMacro extends GuiScreen {
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         int texture = mc.renderEngine.getTexture(Constants.GUI_PATH + "background.png");
         mc.renderEngine.bindTexture(texture);
         
@@ -71,6 +77,7 @@ public class GuiMacro extends GuiScreen {
         files.draw();
         macroName.drawTextBox();
         macroDesc.draw();
+        usageList.draw();
         
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
@@ -83,7 +90,7 @@ public class GuiMacro extends GuiScreen {
 			GuiMacroItem macroItem = (GuiMacroItem)item;
 			
 			if(!macroItem.isLoaded()) {
-				Macro macro = GhostBlockHandler.instance().requestMacro(getFileName(macroItem.getName()));
+				Macro macro = getSelectedMacro();
 				
 				if(macro != null) {
 					macroItem.setDescription(macro.getDescription());
@@ -93,6 +100,8 @@ public class GuiMacro extends GuiScreen {
 			
 			macroName.setText(macroItem.getName());
 			macroDesc.setText(macroItem.getDescription());
+			
+			populateUsageList();
 		}
 		
 		if(MacroIO.macroExists(macroName.getText())) {
@@ -158,7 +167,7 @@ public class GuiMacro extends GuiScreen {
 	private void saveMacro(String name, String description) {
 		if(name.length() > 0) {
 			if(GhostBlockHandler.instance().saveMacro(name, description)) {
-				populateList();
+				populateFilesList();
 			}
 		}
 	}
@@ -167,7 +176,7 @@ public class GuiMacro extends GuiScreen {
 		GhostBlockHandler.instance().setMacro(getFileName(macroName.getText()));
 	}
 	
-	private void populateList() {
+	private void populateFilesList() {
 		File dir = new File(Constants.MACROS_PATH);
 		
 		if(dir.exists()) {
@@ -177,6 +186,26 @@ public class GuiMacro extends GuiScreen {
 				files.addItem(new GuiMacroItem(getMacroName(file.getName()), ""));
 			}
 		}
+	}
+	
+	private void populateUsageList() {
+		if(selected == null) {
+			return;
+		}
+		
+		Macro selectedMacro = getSelectedMacro();
+		HashMap<Item, Integer> usage = selectedMacro.getBlockUsage();
+		
+		usageList.clear();
+		
+		for(Entry<Item, Integer> item : usage.entrySet()) {
+			usageList.addItem(new GuiUsageItem(item.getKey(), item.getValue()));
+		}
+	}
+	
+	private Macro getSelectedMacro() {
+		GuiMacroItem item = (GuiMacroItem)selected;
+		return GhostBlockHandler.instance().requestMacro(getFileName(item.getName()));
 	}
 	
 	private String getMacroName(String filename) {

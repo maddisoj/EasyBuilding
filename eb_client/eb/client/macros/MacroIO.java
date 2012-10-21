@@ -6,14 +6,18 @@ import java.io.FileWriter;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
 import eb.common.Constants;
 
-public class MacroIO {	
+public class MacroIO {
+	private static Map<String, Macro> loadedMacros = new HashMap<String, Macro>();
+	
 	public static boolean save(Macro macro) {
 		try {
 			String path = getMacroPath(macro.getName());

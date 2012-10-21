@@ -1,16 +1,19 @@
 package eb.client.gui;
 
+import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.RenderItem;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 public class GuiUsageItem implements GuiListItem {
-	private ItemStack item;
+	private static RenderItem renderer = new RenderItem();
+	private ItemStack stack;
 	private int count;
 	
-	public GuiUsageItem(ItemStack item, int count) {
-		this.item = item;
+	public GuiUsageItem(Item item, int count) {
+		this.stack = new ItemStack(item);
 		this.count = count;
 	}
 	
@@ -21,9 +24,11 @@ public class GuiUsageItem implements GuiListItem {
 
 	@Override
 	public void draw(GuiList parent, int x, int y, int width) {
-		IItemRenderer renderer = MinecraftForgeClient.getItemRenderer(item, ItemRenderType.INVENTORY);
+		/*IItemRenderer renderer = MinecraftForgeClient.getItemRenderer(stack, ItemRenderType.INVENTORY);
 		
-		renderer.renderItem(ItemRenderType.INVENTORY, item, (Object[])null);
+		renderer.renderItem(ItemRenderType.INVENTORY, stack, (Object[])null);*/
+		renderer.renderItemIntoGUI(parent.getFontRenderer(), parent.getRenderEngine(), stack, x, y);
+		parent.getFontRenderer().drawStringWithShadow(Integer.toString(count), x + 20, y + 4, Integer.MAX_VALUE);
 	}
 
 	@Override

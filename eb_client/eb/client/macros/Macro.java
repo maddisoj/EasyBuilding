@@ -101,7 +101,7 @@ public class Macro implements Runnable {
 				if(count == null) {
 					usage.put(item, 1);
 				} else {
-					++count;
+					usage.put(item, count + 1);
 				}
 			}
 		}

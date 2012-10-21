@@ -34,21 +34,12 @@ public class GuiScrollbar extends Gui {
 		Tessellator tess = Tessellator.instance;
 		
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		/*GL11.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-		tess.startDrawingQuads();
-		tess.addVertex(x + width, y, 0.0);
-		tess.addVertex(x, y, 0.0);
-		tess.addVertex(x, y + height, 0.0);
-		tess.addVertex(x + width, y + height, 0.0);
-		tess.draw();*/
-		//GL11.glEnable(GL11.GL_TEXTURE_2D);
 		
 		int left = x;
 		int right = x + width;
 		int top = y + amountScrolled;
 		int bottom = y + amountScrolled + scrollbarHeight;
 		
-		//GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTexture("/gui/background.png"));
 		if(selected || hover) {
 			GL11.glColor4f(0.1f, 0.1f, 0.1f, 1.0f);
 		} else {
@@ -61,6 +52,8 @@ public class GuiScrollbar extends Gui {
         tess.addVertex(left, bottom, 0.0);
         tess.addVertex(right, bottom, 0.0);
         tess.draw();
+        
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
 	}
 	
 	public void scroll(int amount) { 

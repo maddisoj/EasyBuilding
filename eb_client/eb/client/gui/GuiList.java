@@ -12,6 +12,7 @@ import net.minecraft.src.FontRenderer;
 import net.minecraft.src.Gui;
 import net.minecraft.src.GuiScreen;
 import net.minecraft.src.GuiSlot;
+import net.minecraft.src.RenderEngine;
 import net.minecraft.src.Tessellator;
 
 @SideOnly(Side.CLIENT)
@@ -23,6 +24,7 @@ public class GuiList extends Gui {
 	private GuiListItem hover, selected;
 	private GuiScrollbar scrollbar;
 	private int containedHeight;
+	private boolean drawBackground;
 	
 	public GuiList(Minecraft mc, GuiScreen parent, int x, int y, int width, int height) {
 		this.mc = mc;
@@ -38,6 +40,7 @@ public class GuiList extends Gui {
 		this.containedHeight = 0;
 		this.scrollbar = new GuiScrollbar(mc, x + width - 6, y, 6, height);
 		this.scrollbar.setContainedHeight(containedHeight);
+		this.drawBackground = true;
 	}
 	
 	public void addItem(GuiListItem item) {
@@ -51,8 +54,14 @@ public class GuiList extends Gui {
 		this.padding = padding;
 	}
 	
+	public void setDrawBackground(boolean draw) {
+		drawBackground = draw;
+	}
+	
 	public void draw() {
-		drawRect(x, y, x + width - scrollbar.getWidth(), y + height, Integer.MIN_VALUE);
+		if(drawBackground) {
+			drawRect(x, y, x + width, y + height, Integer.MIN_VALUE);
+		}
 		
 		int itemWidth = getItemWidth();
 		int currentY = y + padding;
@@ -65,11 +74,17 @@ public class GuiList extends Gui {
 			currentY += item.getHeight();
 		}
 		
-		scrollbar.draw();
+		if(scrollbar.getLength() != 1.0f) {
+			scrollbar.draw();
+		}
 	}
 	
 	public FontRenderer getFontRenderer() {
 		return mc.fontRenderer;
+	}
+	
+	public RenderEngine getRenderEngine() {
+		return mc.renderEngine;
 	}
 	
 	public GuiListItem getSelected() {
@@ -123,6 +138,10 @@ public class GuiList extends Gui {
 		return height;
 	}
 	
+	public void clear() {
+		items = new ArrayList<GuiListItem>();
+	}
+	
 	private void setHoverItem(GuiListItem item) {
 		if(hover != null) {
 			hover.setMouseOver(false);
@@ -156,9 +175,5 @@ public class GuiList extends Gui {
 		}
 		
 		return visibleItems;
-	}
-
-	public void clear() {
-		items = new ArrayList<GuiListItem>();
 	}
 }
