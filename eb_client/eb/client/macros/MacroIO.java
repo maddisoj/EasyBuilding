@@ -38,6 +38,7 @@ public class MacroIO {
 			}
 
 			out.close();
+			loadedMacros.put(path, macro);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -47,6 +48,13 @@ public class MacroIO {
 	}
 
 	public static Macro load(String path) {
+		Macro requested = null;
+		
+		requested = loadedMacros.get(path);
+		if(requested != null) {
+			return requested;
+		}
+		
 		try {
 			Macro macro = new Macro();
 			File file = new File(path);
@@ -92,6 +100,7 @@ public class MacroIO {
 			}
 
 			scanner.close();
+			loadedMacros.put(path, macro);
 			return macro;
 			
 		} catch(Exception e) {

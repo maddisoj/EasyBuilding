@@ -33,7 +33,6 @@ public class GhostBlockHandler {
 	private int x, y, z;
 	private boolean placed, recording;
 	private Macro macro;
-	private Map<String, Macro> loadedMacros;
 
 	private GhostBlockHandler() {
 		x = 0;
@@ -42,7 +41,6 @@ public class GhostBlockHandler {
 		placed = false;
 		recording = false;
 		macro = null;
-		loadedMacros = new HashMap<String, Macro>();
 	}
 
 	public static GhostBlockHandler instance() {
@@ -168,15 +166,7 @@ public class GhostBlockHandler {
 	}
 	
 	public Macro requestMacro(String file) {
-		Macro requested = null;
-		
-		requested = loadedMacros.get(file);
-		if(requested == null) {
-			requested = MacroIO.load(Constants.MACROS_PATH + file);
-			loadedMacros.put(file, requested);
-		}
-		
-		return requested;
+		return MacroIO.load(Constants.MACROS_PATH + file);
 	}
 	
 	public void setMacro(String name) {
