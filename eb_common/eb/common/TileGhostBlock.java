@@ -30,11 +30,11 @@ public class TileGhostBlock extends TileEntity {
 	public void setBlockId(int blockId) {
 		this.blockID = blockId;
 	}
-	
+
 	public int getBlockMetadata() {
 		return metadata;
 	}
-	
+
 	public void setBlockMetadata(int metadata) {
 		this.metadata = metadata;
 	}
@@ -92,7 +92,7 @@ public class TileGhostBlock extends TileEntity {
 	}
 
 	public void place(EntityPlayer player, int itemID) {
-		if(blockID != 0) {
+		/*if(blockID != 0) {
 			return;
 		}
 
@@ -101,37 +101,45 @@ public class TileGhostBlock extends TileEntity {
 			if(!(item instanceof ItemBlock)) {
 				return;
 			}
-			
+
 			blockID = ((ItemBlock)item).getBlockID();			
 			player.inventory.consumeInventoryItem(itemID);
 			EasyBuilding.sendToAllPlayers(getUpdatePacket());
+		}*/
+
+		if(player.inventory.hasItem(itemID)) {
+			World world = player.worldObj;
+			ItemStack stack = searchInventory(player.inventory, itemID);
+
+			world.setBlock(xCoord, yCoord, zCoord, 0); //WARNING: remove this line once ghost block only exists client side
+			stack.tryPlaceItemIntoWorld(player, world, xCoord, yCoord - 1, zCoord, 1, 0, 0, 0);
 		}
 	}
 
 	public void remove() {
 		worldObj.setBlock(xCoord, yCoord, zCoord, blockID);
 	}
-	
-    public AxisAlignedBB getContainedBoundingBox() {
-        if(blockID == 0) {
-        	return null;
-        }
-        
-        Block block = Block.blocksList[blockID];
-        if(block != null) {
-        	return block.getCollisionBoundingBoxFromPool(this.worldObj, xCoord, yCoord, zCoord);
-        }
-        
-        return null;
-    }
-	
+
+	public AxisAlignedBB getContainedBoundingBox() {
+		if(blockID == 0) {
+			return null;
+		}
+
+		Block block = Block.blocksList[blockID];
+		if(block != null) {
+			return block.getCollisionBoundingBoxFromPool(this.worldObj, xCoord, yCoord, zCoord);
+		}
+
+		return null;
+	}
+
 	private ItemStack searchInventory(InventoryPlayer inventory, int itemID) {
 		for(ItemStack itemStack : inventory.mainInventory) {
 			if (itemStack != null && itemStack.itemID == itemID) {
 				return itemStack;
 			}
 		}
-	
+
 		return null;
 	}
 }

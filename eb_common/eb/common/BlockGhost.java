@@ -51,12 +51,17 @@ public class BlockGhost extends BlockContainer {
 	}
 	
 	@Override
+	public int quantityDropped(Random random) {
+		return 0;
+	}
+	
+	@Override
 	public boolean isBlockReplaceable(World world, int x, int y, int z) {
         return true;
     }
 	
 	@Override
-	public int quantityDropped(Random random) {
-		return 0;
-	}
+    public boolean isAirBlock(World world, int x, int y, int z)  {
+        return true;
+    }
 }
