@@ -92,32 +92,30 @@ public class TileGhostBlock extends TileEntity {
 	}
 
 	public void place(EntityPlayer player, int itemID) {
-		/*if(blockID != 0) {
-			return;
-		}
-
-		if(player.inventory.hasItem(itemID)) {
-			Item item = Item.itemsList[itemID];
-			if(!(item instanceof ItemBlock)) {
-				return;
-			}
-
-			blockID = ((ItemBlock)item).getBlockID();			
-			player.inventory.consumeInventoryItem(itemID);
-			EasyBuilding.sendToAllPlayers(getUpdatePacket());
-		}*/
-
 		if(player.inventory.hasItem(itemID)) {
 			World world = player.worldObj;
 			ItemStack stack = searchInventory(player.inventory, itemID);
 
-			world.setBlock(xCoord, yCoord, zCoord, 0); //WARNING: remove this line once ghost block only exists client side
-			stack.tryPlaceItemIntoWorld(player, world, xCoord, yCoord - 1, zCoord, 1, 0, 0, 0);
+			world.setBlockAndMetadata(xCoord, yCoord, zCoord, blockID, metadata);
+			if(stack.tryPlaceItemIntoWorld(player, world, xCoord, yCoord - 1, zCoord, 1, xCoord, yCoord, zCoord)) {
+				System.out.println("Placed");
+			}
+
+			blockID = world.getBlockId(xCoord, yCoord, zCoord);
+			metadata = world.getBlockMetadata(xCoord, yCoord, zCoord);
+			
+			world.setBlock(xCoord, yCoord, zCoord, Constants.GHOST_BLOCK_ID);
+			TileGhostBlock ghostBlock = Helper.getGhostBlock(world, xCoord, yCoord, zCoord);
+			
+			if(ghostBlock != null) {
+				ghostBlock.setBlockId(blockID);
+				ghostBlock.setBlockMetadata(metadata);
+			}
 		}
 	}
 
 	public void remove() {
-		worldObj.setBlock(xCoord, yCoord, zCoord, blockID);
+		worldObj.setBlockAndMetadata(xCoord, yCoord, zCoord, blockID, metadata);
 	}
 
 	public AxisAlignedBB getContainedBoundingBox() {
