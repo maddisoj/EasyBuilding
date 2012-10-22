@@ -7,6 +7,7 @@ import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
 import net.minecraft.src.CreativeTabs;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -22,17 +23,17 @@ public class BlockGhost extends BlockContainer {
 	
 	@Override
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
-        TileEntity entity = world.getBlockTileEntity(x, y, z);
-        if(!(entity instanceof TileGhostBlock)) {
+        TileGhostBlock ghostBlock = Helper.getGhostBlock(world, x, y, z);
+        if(ghostBlock == null) {
         	return null;
         }
         
-        return ((TileGhostBlock)entity).getContainedBoundingBox();
+        return ghostBlock.getContainedBoundingBox();
     }
 	
 	@Override
 	public boolean isOpaqueCube() {
-		return false;
+		return true;
 	}
 	
 	@Override
@@ -61,7 +62,25 @@ public class BlockGhost extends BlockContainer {
     }
 	
 	@Override
-    public boolean isAirBlock(World world, int x, int y, int z)  {
-        return true;
+	public void onBlockDestroyedByPlayer(World world, int x, int y, int z, int metadata) {
+		destroy(world, x, y, z);
+	}
+	
+	@Override
+	public void onBlockDestroyedByExplosion(World world, int x, int y, int z) {
+		destroy(world, x, y, z);
+	}
+	
+	@Override
+    public int getLightValue(IBlockAccess world, int x, int y, int z) {
+        return 15;
     }
+	
+	private void destroy(World world, int x, int y, int z) {
+		TileGhostBlock ghostBlock = Helper.getGhostBlock(world, x, y, z);
+		
+		if(ghostBlock != null) {
+			ghostBlock.remove();
+		}
+	}
 }

@@ -95,11 +95,13 @@ public class TileGhostBlock extends TileEntity {
 		if(player.inventory.hasItem(itemID)) {
 			World world = player.worldObj;
 			ItemStack stack = searchInventory(player.inventory, itemID);
+			
+			if(stack.stackSize == 0 && player.capabilities.isCreativeMode) {
+				stack.stackSize = 1;
+			}
 
 			world.setBlockAndMetadata(xCoord, yCoord, zCoord, blockID, metadata);
-			if(stack.tryPlaceItemIntoWorld(player, world, xCoord, yCoord - 1, zCoord, 1, xCoord, yCoord, zCoord)) {
-				System.out.println("Placed");
-			}
+			stack.tryPlaceItemIntoWorld(player, world, xCoord, yCoord - 1, zCoord, 1, xCoord, yCoord, zCoord);
 
 			blockID = world.getBlockId(xCoord, yCoord, zCoord);
 			metadata = world.getBlockMetadata(xCoord, yCoord, zCoord);
