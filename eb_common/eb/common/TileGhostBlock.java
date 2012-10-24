@@ -75,20 +75,17 @@ public class TileGhostBlock extends TileEntity {
 		int newY = yCoord + (int)moveDirection.yCoord;
 		int newZ = zCoord + (int)moveDirection.zCoord;
 
+		worldObj.setBlockAndMetadata(oldX, oldY, oldZ, blockID, metadata);
+
 		int newBlockID = worldObj.getBlockId(newX, newY, newZ);
 		int newMetadata = worldObj.getBlockMetadata(newX, newY, newZ);	
 		worldObj.setBlock(newX, newY, newZ, Constants.GHOST_BLOCK_ID);
 
-		TileEntity entity = worldObj.getBlockTileEntity(newX, newY, newZ);
-		if(!(entity instanceof TileGhostBlock)) {
-			return;
+		TileGhostBlock newGhostTile = Helper.getGhostBlock(worldObj, newX, newY, newZ);
+		if(newGhostTile != null) {
+			newGhostTile.setBlockId(newBlockID);
+			newGhostTile.setBlockMetadata(newMetadata);
 		}
-
-		TileGhostBlock newGhostTile = (TileGhostBlock)entity;
-		newGhostTile.setBlockId(newBlockID);
-		newGhostTile.setBlockMetadata(newMetadata);
-
-		worldObj.setBlockAndMetadata(oldX, oldY, oldZ, blockID, metadata);
 	}
 
 	public void place(EntityPlayer player, int itemID) {
