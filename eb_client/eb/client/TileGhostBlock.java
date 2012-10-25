@@ -1,6 +1,5 @@
-package eb.common;
+package eb.client;
 
-import eb.client.GhostBlockHandler;
 import eb.common.network.PacketUpdateGhost;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;

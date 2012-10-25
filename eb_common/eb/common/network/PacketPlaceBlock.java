@@ -14,10 +14,10 @@ import net.minecraft.src.World;
 import com.google.common.io.ByteArrayDataInput;
 
 import cpw.mods.fml.common.network.Player;
+import eb.client.TileGhostBlock;
 import eb.common.Constants;
 import eb.common.EasyBuilding;
 import eb.common.Helper;
-import eb.common.TileGhostBlock;
 
 public class PacketPlaceBlock extends PacketGhostPosition {
 	private int itemID;
@@ -65,7 +65,6 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 			
 			if(blockID != 0) {
 				EasyBuilding.sendToPlayer(player, new PacketUpdateGhost(blockID, metadata));
-				System.out.println("Sending update");
 			}
 		}
 	}

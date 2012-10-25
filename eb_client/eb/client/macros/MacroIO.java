@@ -48,7 +48,7 @@ public class MacroIO {
 	}
 
 	public static Macro load(String name) {
-		String path = Constants.MACROS_PATH + name;
+		String path = getMacroPath(name);
 		Macro requested = null;
 		
 		requested = loadedMacros.get(path);
@@ -57,10 +57,12 @@ public class MacroIO {
 		}
 		
 		try {
-			Macro macro = new Macro();
+			requested = new Macro();
 			File file = new File(path);
 			Scanner scanner = new Scanner(file);
 			boolean inMacro = false;
+			
+			requested.setName(name);
 
 			while(scanner.hasNextLine()) {
 				String line = scanner.nextLine();
@@ -83,7 +85,7 @@ public class MacroIO {
 						}
 						
 						if(instruction.parseParameters(parameters)) {
-							macro.addInstruction(instruction);
+							requested.addInstruction(instruction);
 						} else {
 							scanner.close();
 							return null;
@@ -95,14 +97,14 @@ public class MacroIO {
 					if(tokens[0].toLowerCase().equals("macro")) {
 						inMacro = true;
 					} else if(tokens[0].toLowerCase().equals("desc")) {
-						macro.setDescription(line.substring(5)); //rest of the line after "desc "
+						requested.setDescription(line.substring(5)); //rest of the line after "desc "
 					}
 				}
 			}
 
 			scanner.close();
-			loadedMacros.put(path, macro);
-			return macro;
+			loadedMacros.put(path, requested);
+			return requested;
 			
 		} catch(Exception e) {
 			e.printStackTrace();

@@ -8,7 +8,6 @@ import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import eb.common.CommonProxy;
-import eb.common.TileGhostBlock;
 
 public class ClientProxy extends CommonProxy {
 	public void registerKeyBindings() {

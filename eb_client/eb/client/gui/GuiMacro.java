@@ -173,7 +173,7 @@ public class GuiMacro extends GuiScreen {
 	}
 	
 	private void loadMacro(String name) {
-		GhostBlockHandler.instance().setMacro(getFileName(macroName.getText()));
+		GhostBlockHandler.instance().setMacro(macroName.getText());
 	}
 	
 	private void populateFilesList() {
@@ -205,7 +205,7 @@ public class GuiMacro extends GuiScreen {
 	
 	private Macro getSelectedMacro() {
 		GuiMacroItem item = (GuiMacroItem)selected;
-		return MacroIO.load(getFileName(item.getName()));
+		return MacroIO.load(item.getName());
 	}
 	
 	private String getMacroName(String filename) {
@@ -213,12 +213,5 @@ public class GuiMacro extends GuiScreen {
 		name = name.replace("_", " ");
 		
 		return name;
-	}
-	
-	private String getFileName(String macro) {
-		macro = macro.replace(" ", "_");
-		macro += ".txt";
-		
-		return macro;
 	}
 }

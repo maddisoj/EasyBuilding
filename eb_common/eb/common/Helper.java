@@ -1,5 +1,6 @@
 package eb.common;
 
+import eb.client.TileGhostBlock;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Item;

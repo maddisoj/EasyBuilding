@@ -1,8 +1,8 @@
-package eb.common;
+package eb.client;
 
 import java.util.Random;
 
-import eb.client.GhostBlockRenderer;
+import eb.common.Helper;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;

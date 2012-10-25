@@ -140,6 +140,8 @@ public class GuiList extends Gui {
 	
 	public void clear() {
 		items = new ArrayList<GuiListItem>();
+		containedHeight = 0;
+		scrollbar.setContainedHeight(0);
 	}
 	
 	private void setHoverItem(GuiListItem item) {

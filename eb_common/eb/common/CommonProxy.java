@@ -4,6 +4,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.GameRegistry;
+import eb.client.TileGhostBlock;
 import eb.common.network.PacketEB;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.EntityClientPlayerMP;

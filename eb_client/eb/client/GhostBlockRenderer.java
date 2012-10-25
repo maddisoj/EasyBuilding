@@ -20,7 +20,6 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import eb.common.TileGhostBlock;
 
 public class GhostBlockRenderer extends TileEntitySpecialRenderer {
 	public static final int RENDER_ID = RenderingRegistry.getNextAvailableRenderId();
