@@ -1,5 +1,6 @@
 package eb.common;
 
+import eb.client.GhostBlockHandler;
 import eb.common.network.PacketUpdateGhost;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
@@ -40,7 +41,7 @@ public class TileGhostBlock extends TileEntity {
 	}
 
 	public PacketUpdateGhost getUpdatePacket() {
-		return new PacketUpdateGhost(xCoord, yCoord, zCoord, blockID);
+		return new PacketUpdateGhost(xCoord, yCoord, zCoord, blockID, metadata);
 	}
 
 	@Override
@@ -86,6 +87,8 @@ public class TileGhostBlock extends TileEntity {
 			newGhostTile.setBlockId(newBlockID);
 			newGhostTile.setBlockMetadata(newMetadata);
 		}
+		
+		GhostBlockHandler.instance().update(newX, newY, newZ, newBlockID, newMetadata);
 	}
 
 	public void place(EntityPlayer player, int itemID) {

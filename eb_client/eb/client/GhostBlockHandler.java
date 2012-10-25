@@ -74,8 +74,11 @@ public class GhostBlockHandler {
 
 	public void move(Direction dir) {
 		if(placed) {
-			sendPacket((new PacketMoveGhost(x, y, z, dir)).toCustomPayload());
-
+			TileGhostBlock ghost = Helper.getGhostBlock(getWorld(), x, y, z);
+			if(ghost != null) {
+				ghost.move(getPlayer(), dir);
+			}
+			
 			if(recording) {
 				macro.addInstruction(new MoveInstruction(dir));
 			}
@@ -91,28 +94,38 @@ public class GhostBlockHandler {
 		y = Y;
 		z = Z;
 
-		sendPacket((new PacketPlaceGhost(x, y, z)).toCustomPayload());
+		getWorld().setBlock(x, y, z, Constants.GHOST_BLOCK_ID);		
 		placed = true;
 	}
 
 	public void remove() {
-		if(placed) {
+		if(placed) {			
+			TileGhostBlock ghost = Helper.getGhostBlock(getWorld(), x, y, z);
+			if(ghost != null) {
+				ghost.remove();
+			}
+			
 			placed = false;
-			sendPacket((new PacketRemoveGhost(x, y, z)).toCustomPayload());
 		}
 	}
 
-	public void update(EntityPlayer player, int X, int Y, int Z, int blockID) {
-		TileEntity entity = player.worldObj.getBlockTileEntity(X, Y, Z);
-
-		if(!(entity instanceof TileGhostBlock)) {
-			return;
+	public void update(int X, int Y, int Z, int blockID, int metadata) {
+		TileGhostBlock ghost = Helper.getGhostBlock(getWorld(), X, Y, Z);
+		if(ghost == null) {
+			System.out.println("broke");
+			if(placed) {
+				place(X, Y, Z);
+				ghost = Helper.getGhostBlock(getWorld(), X, Y, Z);
+			} else {
+				return;
+			}
 		}
 
 		x = X;
 		y = Y;
 		z = Z;
-		((TileGhostBlock)entity).setBlockId(blockID);
+		ghost.setBlockId(blockID);
+		ghost.setBlockMetadata(metadata);
 	}
 
 	public void placeBlock() {
@@ -173,9 +186,13 @@ public class GhostBlockHandler {
 	private void sendPacket(Packet packet) {
 		FMLClientHandler.instance().sendPacket(packet);
 	}
+	
+	private EntityClientPlayerMP getPlayer() {
+		return FMLClientHandler.instance().getClient().thePlayer;
+	}
 
 	private int getCurrentItem() {
-		EntityClientPlayerMP player = FMLClientHandler.instance().getClient().thePlayer;
+		EntityClientPlayerMP player = getPlayer();
 		
 		if(player != null) {
 			if(player.inventory.getCurrentItem() != null) {
@@ -187,6 +204,10 @@ public class GhostBlockHandler {
 	}
 
 	private void sendMessage(String message) {
-		FMLClientHandler.instance().getClient().thePlayer.addChatMessage(message);
+		getPlayer().addChatMessage(message);
+	}
+	
+	private World getWorld() {
+		return getPlayer().worldObj;
 	}
 }

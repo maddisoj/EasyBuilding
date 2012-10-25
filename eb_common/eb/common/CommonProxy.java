@@ -2,6 +2,7 @@ package eb.common;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.GameRegistry;
 import eb.common.network.PacketEB;
 import net.minecraft.server.MinecraftServer;
@@ -24,9 +25,9 @@ public class CommonProxy {
 		playerMP.serverForThisPlayer.sendPacketToPlayer(packet.toCustomPayload());
 	}
 	
-	public void sendToAllPlayers(PacketEB packet) {
+	public void sendToPlayer(Player player, PacketEB packet) {
 		if(packet == null) { return; }
 		
-	    PacketDispatcher.sendPacketToAllPlayers(packet.toCustomPayload());
+	    PacketDispatcher.sendPacketToPlayer(packet.toCustomPayload(), player);
 	}
 }

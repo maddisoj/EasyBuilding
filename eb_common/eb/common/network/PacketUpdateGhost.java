@@ -17,7 +17,7 @@ import cpw.mods.fml.common.network.Player;
 import eb.client.GhostBlockHandler;
 
 public class PacketUpdateGhost extends PacketEB {
-	private int x, y, z, blockID;
+	private int x, y, z, blockID, metadata;
 	
 	public PacketUpdateGhost() {
 		super(PacketType.TILE_UPDATE, true);
@@ -25,18 +25,24 @@ public class PacketUpdateGhost extends PacketEB {
 		y = -1;
 		z = -1;
 		blockID = 0;
+		metadata = 0;
 	}
 	
-	public PacketUpdateGhost(int x, int y, int z, int blockID) {
+	public PacketUpdateGhost(int x, int y, int z, int blockID, int metadata) {
 		super(PacketType.TILE_UPDATE, true);
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.blockID = blockID;
+		this.metadata = metadata;
 	}
 	
 	public int getBlockId() {
 		return blockID;
+	}
+	
+	public int getMetadata() {
+		return metadata;
 	}
 	
 	public void read(ByteArrayDataInput bis) {
@@ -44,6 +50,7 @@ public class PacketUpdateGhost extends PacketEB {
 		y = bis.readInt();
 		z = bis.readInt();
 		blockID = bis.readInt();
+		metadata = bis.readInt();
 	}
 	
 	public void getData(DataOutputStream dos) throws IOException {
@@ -51,11 +58,12 @@ public class PacketUpdateGhost extends PacketEB {
 		dos.writeInt(y);
 		dos.writeInt(z);
 		dos.writeInt(blockID);
+		dos.writeInt(metadata);
 	}
 	
 	public void handle(NetworkManager manager, Player player) {
 		if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-			GhostBlockHandler.instance().update((EntityPlayer)player, x, y, z, blockID);
+			GhostBlockHandler.instance().update(x, y, z, blockID, metadata);
 		}
 	}
 }
