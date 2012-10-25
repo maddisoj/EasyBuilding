@@ -22,6 +22,7 @@ public class TileGhostBlock extends TileEntity {
 
 	public TileGhostBlock() {
 		blockID = 0;
+		metadata = 0;
 	}
 
 	public int getBlockId() {
@@ -38,82 +39,6 @@ public class TileGhostBlock extends TileEntity {
 
 	public void setBlockMetadata(int metadata) {
 		this.metadata = metadata;
-	}
-
-	public PacketUpdateGhost getUpdatePacket() {
-		return new PacketUpdateGhost(xCoord, yCoord, zCoord, blockID, metadata);
-	}
-
-	@Override
-	public Packet getAuxillaryInfoPacket() {
-		return getUpdatePacket().toCustomPayload();
-	}
-
-	public void move(EntityPlayer player, Direction direction) {
-		Vec3 moveDirection = Vec3.createVectorHelper(0.0, 0.0, 0.0);
-
-		if(direction == Direction.FORWARD) {
-			moveDirection = Helper.getPlayerDirection(player);
-		} else if(direction == Direction.BACKWARD) {
-			moveDirection = Helper.getPlayerDirection(player);
-			moveDirection.rotateAroundY((float)Math.PI);
-		} else if(direction == Direction.LEFT) {
-			moveDirection = Helper.getPlayerDirection(player);
-			moveDirection.rotateAroundY((float)Math.PI/2);
-		} else if(direction == Direction.RIGHT) {
-			moveDirection = Helper.getPlayerDirection(player);
-			moveDirection.rotateAroundY((float)-Math.PI/2);
-		} else if(direction == Direction.UP) {
-			moveDirection = Vec3.createVectorHelper(0.0, 1.0, 0.0);
-		} else if(direction == Direction.DOWN) {
-			moveDirection = Vec3.createVectorHelper(0.0, -1.0, 0.0);
-		}
-
-		int oldX = xCoord;
-		int oldY = yCoord;
-		int oldZ = zCoord;
-		int newX = xCoord + (int)moveDirection.xCoord;
-		int newY = yCoord + (int)moveDirection.yCoord;
-		int newZ = zCoord + (int)moveDirection.zCoord;
-
-		worldObj.setBlockAndMetadata(oldX, oldY, oldZ, blockID, metadata);
-
-		int newBlockID = worldObj.getBlockId(newX, newY, newZ);
-		int newMetadata = worldObj.getBlockMetadata(newX, newY, newZ);	
-		worldObj.setBlock(newX, newY, newZ, Constants.GHOST_BLOCK_ID);
-
-		TileGhostBlock newGhostTile = Helper.getGhostBlock(worldObj, newX, newY, newZ);
-		if(newGhostTile != null) {
-			newGhostTile.setBlockId(newBlockID);
-			newGhostTile.setBlockMetadata(newMetadata);
-		}
-		
-		GhostBlockHandler.instance().update(newX, newY, newZ, newBlockID, newMetadata);
-	}
-
-	public void place(EntityPlayer player, int itemID) {
-		if(player.inventory.hasItem(itemID)) {
-			World world = player.worldObj;
-			ItemStack stack = searchInventory(player.inventory, itemID);
-			
-			if(stack.stackSize == 0 && player.capabilities.isCreativeMode) {
-				stack.stackSize = 1;
-			}
-
-			world.setBlockAndMetadata(xCoord, yCoord, zCoord, blockID, metadata);
-			stack.tryPlaceItemIntoWorld(player, world, xCoord, yCoord - 1, zCoord, 1, xCoord, yCoord, zCoord);
-
-			blockID = world.getBlockId(xCoord, yCoord, zCoord);
-			metadata = world.getBlockMetadata(xCoord, yCoord, zCoord);
-			
-			world.setBlock(xCoord, yCoord, zCoord, Constants.GHOST_BLOCK_ID);
-			TileGhostBlock ghostBlock = Helper.getGhostBlock(world, xCoord, yCoord, zCoord);
-			
-			if(ghostBlock != null) {
-				ghostBlock.setBlockId(blockID);
-				ghostBlock.setBlockMetadata(metadata);
-			}
-		}
 	}
 
 	public void remove() {

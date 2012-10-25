@@ -12,6 +12,7 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import cpw.mods.fml.client.FMLClientHandler;
 import eb.client.gui.GuiMacro;
@@ -24,14 +25,11 @@ import eb.common.Constants;
 import eb.common.Direction;
 import eb.common.Helper;
 import eb.common.TileGhostBlock;
-import eb.common.network.PacketMoveGhost;
 import eb.common.network.PacketPlaceBlock;
-import eb.common.network.PacketPlaceGhost;
-import eb.common.network.PacketRemoveGhost;
 
 public class GhostBlockHandler {
 	private static GhostBlockHandler INSTANCE = new GhostBlockHandler();
-	private int x, y, z;
+	private int x, y, z, blockID, metadata;
 	private boolean placed, recording;
 	private Macro macro;
 
@@ -39,6 +37,8 @@ public class GhostBlockHandler {
 		x = 0;
 		y = 0;
 		z = 0;
+		blockID = 0;
+		metadata = 0;
 		placed = false;
 		recording = false;
 		macro = null;
@@ -47,40 +47,21 @@ public class GhostBlockHandler {
 	public static GhostBlockHandler instance() {
 		return INSTANCE;
 	}
-
-	public int getX() {
-		return x;
-	}
-
-	public void setX(int X) {
-		x = X;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public void setY(int Y) {
-		y = Y;
-	}
-
-	public int getZ() {
-		return z;
-	}
-
-	public void setZ(int Z) {
-		z = Z;
-	}
-
-	public void move(Direction dir) {
+	
+	public void move(Direction direction) {
 		if(placed) {
-			TileGhostBlock ghost = Helper.getGhostBlock(getWorld(), x, y, z);
-			if(ghost != null) {
-				ghost.move(getPlayer(), dir);
-			}
+			EntityClientPlayerMP player = getPlayer();
+			World world = getWorld();
+			Vec3 moveDirection = relativeToAbsoluteDirection(Helper.getPlayerDirection(player), direction); 
+					
+			int newX = x + (int)moveDirection.xCoord;
+			int newY = y + (int)moveDirection.yCoord;
+			int newZ = z + (int)moveDirection.zCoord;
+
+			place(newX, newY, newZ);
 			
 			if(recording) {
-				macro.addInstruction(new MoveInstruction(dir));
+				macro.addInstruction(new MoveInstruction(direction));
 			}
 		}
 	}
@@ -90,11 +71,20 @@ public class GhostBlockHandler {
 			remove();
 		}
 
+		World world = getWorld();
 		x = X;
 		y = Y;
 		z = Z;
+		blockID = world.getBlockId(x, y, z);
+		metadata = world.getBlockMetadata(x, y, z);
 
-		getWorld().setBlock(x, y, z, Constants.GHOST_BLOCK_ID);		
+		world.setBlock(x, y, z, Constants.GHOST_BLOCK_ID);
+		TileGhostBlock ghost = Helper.getGhostBlock(world, x, y, z);
+		if(ghost != null) {
+			ghost.setBlockId(blockID);
+			ghost.setBlockMetadata(metadata);
+		}
+		
 		placed = true;
 	}
 
@@ -109,23 +99,17 @@ public class GhostBlockHandler {
 		}
 	}
 
-	public void update(int X, int Y, int Z, int blockID, int metadata) {
-		TileGhostBlock ghost = Helper.getGhostBlock(getWorld(), X, Y, Z);
-		if(ghost == null) {
-			System.out.println("broke");
-			if(placed) {
-				place(X, Y, Z);
-				ghost = Helper.getGhostBlock(getWorld(), X, Y, Z);
-			} else {
-				return;
-			}
+	public void update(int blockID, int metadata) {
+		World world = getWorld();
+		world.setBlock(x, y, z, Constants.GHOST_BLOCK_ID);
+		TileGhostBlock ghost = Helper.getGhostBlock(world, x, y, z);
+		if(ghost != null) {
+			ghost.setBlockId(blockID);
+			ghost.setBlockMetadata(metadata);
+			
+			this.blockID = blockID;
+			this.metadata = metadata;
 		}
-
-		x = X;
-		y = Y;
-		z = Z;
-		ghost.setBlockId(blockID);
-		ghost.setBlockMetadata(metadata);
 	}
 
 	public void placeBlock() {
@@ -163,7 +147,9 @@ public class GhostBlockHandler {
 			return;
 		}
 
-		macro.run();
+		if(macro != null) {
+			macro.run();
+		}
 	}
 
 	public void openMacroGui() {
@@ -181,6 +167,7 @@ public class GhostBlockHandler {
 	
 	public void setMacro(String name) {
 		macro = MacroIO.load(name);
+		sendMessage("Macro changed to \"" + macro.getName() + "\"");
 	}
 
 	private void sendPacket(Packet packet) {
@@ -209,5 +196,21 @@ public class GhostBlockHandler {
 	
 	private World getWorld() {
 		return getPlayer().worldObj;
+	}
+	
+	private Vec3 relativeToAbsoluteDirection(Vec3 forward, Direction direction) {
+		if(direction == Direction.BACKWARD) {
+			forward.rotateAroundY((float)Math.PI);
+		} else if(direction == Direction.LEFT) {
+			forward.rotateAroundY((float)Math.PI/2);
+		} else if(direction == Direction.RIGHT) {
+			forward.rotateAroundY((float)-Math.PI/2);
+		} else if(direction == Direction.UP) {
+			forward = Vec3.createVectorHelper(0.0, 1.0, 0.0);
+		} else if(direction == Direction.DOWN) {
+			forward = Vec3.createVectorHelper(0.0, -1.0, 0.0);
+		}
+		
+		return forward;
 	}
 }

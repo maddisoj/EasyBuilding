@@ -58,21 +58,15 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 				stack.stackSize = 1;
 			}
 
-			//world.setBlockAndMetadata(xCoord, yCoord, zCoord, blockID, metadata);
 			stack.tryPlaceItemIntoWorld(entityPlayer, world, x, y - 1, z, 1, x, y, z);
 
 			int blockID = world.getBlockId(x, y, z);
 			int metadata = world.getBlockMetadata(x, y, z);
 			
-			EasyBuilding.sendToPlayer(player, new PacketUpdateGhost(x, y, z, blockID, metadata));
-			
-			/*world.setBlock(xCoord, yCoord, zCoord, Constants.GHOST_BLOCK_ID);
-			TileGhostBlock ghostBlock = Helper.getGhostBlock(world, xCoord, yCoord, zCoord);
-			
-			if(ghostBlock != null) {
-				ghostBlock.setBlockId(blockID);
-				ghostBlock.setBlockMetadata(metadata);
-			}*/
+			if(blockID != 0) {
+				EasyBuilding.sendToPlayer(player, new PacketUpdateGhost(blockID, metadata));
+				System.out.println("Sending update");
+			}
 		}
 	}
 	

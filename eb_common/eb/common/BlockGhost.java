@@ -62,25 +62,7 @@ public class BlockGhost extends BlockContainer {
     }
 	
 	@Override
-	public void onBlockDestroyedByPlayer(World world, int x, int y, int z, int metadata) {
-		destroy(world, x, y, z);
-	}
-	
-	@Override
-	public void onBlockDestroyedByExplosion(World world, int x, int y, int z) {
-		destroy(world, x, y, z);
-	}
-	
-	@Override
     public int getLightValue(IBlockAccess world, int x, int y, int z) {
         return 15;
     }
-	
-	private void destroy(World world, int x, int y, int z) {
-		TileGhostBlock ghostBlock = Helper.getGhostBlock(world, x, y, z);
-		
-		if(ghostBlock != null) {
-			ghostBlock.remove();
-		}
-	}
 }

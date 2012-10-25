@@ -4,10 +4,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
 public enum PacketType {
-	PLACE_GHOST(PacketPlaceGhost.class),
-	REMOVE_GHOST(PacketRemoveGhost.class),
 	PLACE_BLOCK(PacketPlaceBlock.class),
-	MOVE(PacketMoveGhost.class),
 	TILE_UPDATE(PacketUpdateGhost.class);
 
 	private Class<? extends PacketEB> packetClass;
