@@ -50,7 +50,7 @@ public class Macro implements Runnable {
 			((IInstruction)iterator.next()).execute();
 			
 			if(iterator.hasNext()) {
-				scheduler.schedule(this, 250, TimeUnit.MILLISECONDS);
+				scheduler.schedule(this, 100, TimeUnit.MILLISECONDS);
 			} else {
 				playing = false;
 			}
@@ -107,5 +107,9 @@ public class Macro implements Runnable {
 		}
 		
 		return usage;
+	}
+
+	public boolean isPlaying() {
+		return playing;
 	}
 }

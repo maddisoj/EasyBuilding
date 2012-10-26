@@ -49,6 +49,10 @@ public class GhostBlockHandler {
 	
 	public void move(Direction direction) {
 		if(placed) {
+			/*if(isMacroPlaying()) {
+				return;
+			}*/
+			
 			EntityClientPlayerMP player = getPlayer();
 			World world = getWorld();
 			Vec3 moveDirection = relativeToAbsoluteDirection(Helper.getPlayerDirection(player), direction); 
@@ -152,6 +156,8 @@ public class GhostBlockHandler {
 	}
 
 	public void openMacroGui() {
+		if(getPlayer() == null) { return; } //to make sure gui can only be opened in game
+		
 		FMLClientHandler.instance().getClient().displayGuiScreen(new GuiMacro());
 	}
 	
@@ -211,5 +217,9 @@ public class GhostBlockHandler {
 		}
 		
 		return forward;
+	}
+	
+	private boolean isMacroPlaying() {
+		return (macro != null && macro.isPlaying());
 	}
 }
