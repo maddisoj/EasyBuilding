@@ -41,6 +41,8 @@ public class GhostBlockHandler {
 		placed = false;
 		recording = false;
 		macro = null;
+		
+		MacroIO.setUpDirectory();
 	}
 
 	public static GhostBlockHandler instance() {
@@ -48,11 +50,7 @@ public class GhostBlockHandler {
 	}
 	
 	public void move(Direction direction) {
-		if(placed) {
-			/*if(isMacroPlaying()) {
-				return;
-			}*/
-			
+		if(placed) {			
 			EntityClientPlayerMP player = getPlayer();
 			World world = getWorld();
 			Vec3 moveDirection = relativeToAbsoluteDirection(Helper.getPlayerDirection(player), direction); 
@@ -119,7 +117,8 @@ public class GhostBlockHandler {
 		placeBlock(getCurrentItem());
 	}
 	
-	public void placeBlock(int itemID) {		
+	public void placeBlock(int itemID) {
+		
 		if(placed) {
 			if(itemID == -1) {
 				return;
@@ -217,9 +216,5 @@ public class GhostBlockHandler {
 		}
 		
 		return forward;
-	}
-	
-	private boolean isMacroPlaying() {
-		return (macro != null && macro.isPlaying());
 	}
 }

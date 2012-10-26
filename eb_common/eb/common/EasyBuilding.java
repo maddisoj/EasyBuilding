@@ -17,7 +17,7 @@ import eb.common.network.PacketEB;
 import eb.common.network.PacketHandler;
 
 @Mod(modid = "EasyBuilding", name = "Easy Building", version = Constants.VERSION)
-@NetworkMod(channels = { "EasyBuilding" }, clientSideRequired = true, serverSideRequired = false, packetHandler = PacketHandler.class)
+@NetworkMod(channels = { "EasyBuilding" }, clientSideRequired = false, serverSideRequired = false, packetHandler = PacketHandler.class)
 public class EasyBuilding {
 	@Instance("EasyBuilding")
 	public static EasyBuilding instance;

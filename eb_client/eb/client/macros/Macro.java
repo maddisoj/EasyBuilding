@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import eb.client.GhostKeyHandler;
 import eb.common.Helper;
 
 import net.minecraft.src.Block;
@@ -44,6 +45,7 @@ public class Macro implements Runnable {
 		if(!playing) {
 			playing = true;
 			iterator = instructions.iterator();
+			GhostKeyHandler.setControl(false);
 		}
 		
 		if(iterator != null && iterator.hasNext()) {
@@ -53,6 +55,7 @@ public class Macro implements Runnable {
 				scheduler.schedule(this, 100, TimeUnit.MILLISECONDS);
 			} else {
 				playing = false;
+				GhostKeyHandler.setControl(true);
 			}
 		}
 	}

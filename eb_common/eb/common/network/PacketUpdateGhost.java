@@ -3,9 +3,8 @@ package eb.common.network;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.NetworkManager;
+import net.minecraft.src.INetworkManager;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
@@ -41,7 +40,7 @@ public class PacketUpdateGhost extends PacketEB {
 		dos.writeInt(metadata);
 	}
 	
-	public void handle(NetworkManager manager, Player player) {
+	public void handle(INetworkManager manager, Player player) {
 		if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 			GhostBlockHandler.instance().update(blockID, metadata);
 		}

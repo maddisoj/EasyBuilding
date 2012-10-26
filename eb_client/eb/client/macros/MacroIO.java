@@ -119,6 +119,15 @@ public class MacroIO {
 		return file.exists();
 	}
 	
+	public static void setUpDirectory() {
+		File file = new File(Constants.MACROS_PATH);
+		if(file.exists()) {
+			return;
+		}
+		
+		file.mkdirs();
+	}
+	
 	private static String getMacroPath(String name) {
 		return Constants.MACROS_PATH + name.trim().replace(" ", "_") + ".txt";
 	}

@@ -27,15 +27,17 @@ public class GhostKeyHandler extends KeyHandler {
 		new KeyBinding("GhostRight", Keyboard.KEY_NUMPAD3),
 		new KeyBinding("GhostUp", Keyboard.KEY_NUMPAD4),
 		new KeyBinding("GhostDown", Keyboard.KEY_NUMPAD6),
-		new KeyBinding("PlaceBlock", Keyboard.KEY_NUMPADENTER),
+		new KeyBinding("PlaceBlock", Keyboard.KEY_RETURN),
 		new KeyBinding("ToggleRecord", Keyboard.KEY_NUMPAD7),
 		new KeyBinding("PlayMacro", Keyboard.KEY_NUMPAD9),
-		new KeyBinding("LoadSaveMacro", Keyboard.KEY_NUMPADCOMMA),
+		new KeyBinding("LoadSaveMacro", Keyboard.KEY_DECIMAL),
 	};
 	
 	public static boolean repeats[] = {
 		false, false, false, false, false, false, false, true, false, false, false, false
 	};
+	
+	private static boolean controlEnabled = true;
 
 	public GhostKeyHandler() {		
 		super(keyBindings, repeats);
@@ -48,7 +50,7 @@ public class GhostKeyHandler extends KeyHandler {
 
 	@Override
 	public void keyDown(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd, boolean isRepeat) {
-		if(!tickEnd) { return; }
+		if(!tickEnd || !controlEnabled) { return; }
 		
 		Minecraft mc = FMLClientHandler.instance().getClient();
 		EntityClientPlayerMP player = mc.thePlayer;
@@ -89,5 +91,8 @@ public class GhostKeyHandler extends KeyHandler {
 	public EnumSet<TickType> ticks() {
 		return EnumSet.of(TickType.CLIENT);
 	}
-
+	
+	public static void setControl(boolean enabled) {
+		controlEnabled = enabled;
+	}
 }

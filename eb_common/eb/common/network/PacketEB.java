@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import net.minecraft.src.NetworkManager;
+import net.minecraft.src.INetworkManager;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet250CustomPayload;
 
@@ -37,7 +37,7 @@ public class PacketEB {
 	
 	public void read(ByteArrayDataInput bis) {}
 	public void getData(DataOutputStream dos) throws IOException {}
-	public void handle(NetworkManager manager, Player player) {}
+	public void handle(INetworkManager manager, Player player) {}
 	
 	public Packet toCustomPayload() {
 		byte[] data = toByteArray();

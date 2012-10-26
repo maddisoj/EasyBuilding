@@ -5,9 +5,9 @@ import java.io.IOException;
 
 
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.INetworkManager;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.NetworkManager;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
@@ -47,9 +47,8 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 		dos.writeInt(itemID);
 	}	
 	
-	public void handle(NetworkManager manager, Player player) {
-		EntityPlayer entityPlayer = (EntityPlayer)player;
-		
+	public void handle(INetworkManager manager, Player player) {
+		EntityPlayer entityPlayer = (EntityPlayer)player;		
 		if(entityPlayer.inventory.hasItem(itemID)) {
 			World world = entityPlayer.worldObj;
 			ItemStack stack = searchInventory(entityPlayer.inventory, itemID);

@@ -33,7 +33,7 @@ public class BlockGhost extends BlockContainer {
 	
 	@Override
 	public boolean isOpaqueCube() {
-		return true;
+		return false;
 	}
 	
 	@Override
@@ -61,8 +61,8 @@ public class BlockGhost extends BlockContainer {
         return true;
     }
 	
-	@Override
+	/*@Override
     public int getLightValue(IBlockAccess world, int x, int y, int z) {
-        return 15;
-    }
+        return 0;
+    }*/
 }

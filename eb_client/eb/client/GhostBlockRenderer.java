@@ -1,5 +1,8 @@
 package eb.client;
 
+import java.nio.FloatBuffer;
+
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.src.Block;
