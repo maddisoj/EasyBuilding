@@ -2,6 +2,9 @@ package eb.client;
 
 import java.util.Random;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+
 import eb.common.Helper;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
@@ -12,13 +15,20 @@ import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 
+/**
+ * The block class for the Ghost cursor
+ * 
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
+@SideOnly(Side.CLIENT)
 public class BlockGhost extends BlockContainer {
 	public BlockGhost(int id) {		
 		super(id, Material.glass);
 
 		enableStats = false;
 		setBlockName("Ghost");
-		setCreativeTab(CreativeTabs.tabTools);
 	}
 	
 	@Override

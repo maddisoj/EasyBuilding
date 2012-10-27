@@ -1,5 +1,7 @@
 package eb.client;
 
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
 import eb.common.network.PacketUpdateGhost;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
@@ -15,6 +17,12 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 
+/**
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
+@SideOnly(Side.CLIENT)
 public class TileGhostBlock extends TileEntity {
 	private int blockID;
 	private int metadata;

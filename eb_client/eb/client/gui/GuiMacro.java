@@ -29,6 +29,11 @@ import net.minecraft.src.StatCollector;
 import net.minecraft.src.StatList;
 import net.minecraft.src.WorldClient;
 
+/**
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
 @SideOnly(Side.CLIENT)
 public class GuiMacro extends GuiScreen {
 	private int guiLeft, guiTop, guiWidth, guiHeight;

@@ -17,6 +17,11 @@ import cpw.mods.fml.common.TickType;
 import eb.common.Direction;
 import eb.common.Helper;
 
+/**
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
 public class GhostKeyHandler extends KeyHandler {
 	
 	public static KeyBinding keyBindings[] = {

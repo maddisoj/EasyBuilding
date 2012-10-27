@@ -9,6 +9,11 @@ import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import eb.common.CommonProxy;
 
+/**
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
 public class ClientProxy extends CommonProxy {
 	public void registerKeyBindings() {
 		KeyBindingRegistry.registerKeyBinding(new GhostKeyHandler());

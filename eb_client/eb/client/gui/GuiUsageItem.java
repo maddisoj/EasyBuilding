@@ -11,6 +11,13 @@ import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.MinecraftForgeClient;
 
+/**
+ * A list item representing the amount of items used by a macro
+ * 
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
 public class GuiUsageItem implements GuiListItem {
 	private static RenderItem renderer = new RenderItem();
 	private ItemStack stack;

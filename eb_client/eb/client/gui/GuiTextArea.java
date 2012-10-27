@@ -8,6 +8,13 @@ import net.minecraft.src.Gui;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
+/**
+ * A multi-line text area
+ * 
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
 @SideOnly(Side.CLIENT)
 public class GuiTextArea extends Gui {
 	private static final int TEXT_COLOUR = 14737632;

@@ -20,6 +20,11 @@ import eb.common.Helper;
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 
+/**
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
 public class Macro implements Runnable {
 	private String name, description;
 	private LinkedList<IInstruction> instructions;

@@ -15,8 +15,13 @@ import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.network.Player;
 import eb.client.GhostBlockHandler;
 
+/**
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
 public class PacketUpdateGhost extends PacketEB {
-	private int x, y, z, blockID, metadata;
+	private int blockID, metadata;
 	
 	public PacketUpdateGhost() {
 		super(PacketType.TILE_UPDATE, true);

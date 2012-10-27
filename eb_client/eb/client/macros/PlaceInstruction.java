@@ -6,6 +6,13 @@ import eb.common.network.PacketPlaceBlock;
 import net.minecraft.src.EntityClientPlayerMP;
 import net.minecraft.src.InventoryPlayer;
 
+/**
+ * The instruction representing the placing of a block
+ * 
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
 public class PlaceInstruction implements IInstruction {
 	private int itemID;
 	

@@ -10,7 +10,9 @@ import java.util.Map;
 import net.minecraft.src.EntityClientPlayerMP;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.InventoryPlayer;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.Packet;
+import net.minecraft.src.Packet15Place;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
@@ -25,6 +27,13 @@ import eb.common.Constants;
 import eb.common.Direction;
 import eb.common.Helper;
 import eb.common.network.PacketPlaceBlock;
+
+/**
+ * The class responsible for tracking and operating the client's ghost block
+ * 
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
 
 public class GhostBlockHandler {
 	private static GhostBlockHandler INSTANCE = new GhostBlockHandler();
@@ -216,5 +225,15 @@ public class GhostBlockHandler {
 		}
 		
 		return forward;
+	}
+	
+	private ItemStack searchInventory(InventoryPlayer inventory, int itemID) {
+		for(ItemStack itemStack : inventory.mainInventory) {
+			if (itemStack != null && itemStack.itemID == itemID) {
+				return itemStack;
+			}
+		}
+
+		return null;
 	}
 }

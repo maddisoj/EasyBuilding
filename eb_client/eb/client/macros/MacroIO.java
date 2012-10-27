@@ -15,6 +15,13 @@ import java.util.Set;
 
 import eb.common.Constants;
 
+/**
+ * The class responsible for saving and loading macros
+ * 
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
 public class MacroIO {
 	private static Map<String, Macro> loadedMacros = new HashMap<String, Macro>();
 	

@@ -15,6 +15,13 @@ import net.minecraft.src.GuiSlot;
 import net.minecraft.src.RenderEngine;
 import net.minecraft.src.Tessellator;
 
+/**
+ * A list component
+ * 
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
 @SideOnly(Side.CLIENT)
 public class GuiList extends Gui {
 	private Minecraft mc;

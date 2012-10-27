@@ -4,6 +4,12 @@ import java.io.IOException;
 
 import com.google.common.io.ByteArrayDataInput;
 
+/**
+ * A packet that handles position information
+ * 
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
 
 public abstract class PacketGhostPosition extends PacketEB {
 	protected int x, y, z;

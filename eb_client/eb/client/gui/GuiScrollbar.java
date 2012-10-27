@@ -7,6 +7,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.src.Gui;
 import net.minecraft.src.Tessellator;
 
+/**
+ * A generic scrollbar
+ * 
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
 public class GuiScrollbar extends Gui {
 	private Minecraft mc;
 	private int x, y, width, height;

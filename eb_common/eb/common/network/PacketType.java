@@ -3,6 +3,11 @@ package eb.common.network;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
+/**
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
 public enum PacketType {
 	PLACE_BLOCK(PacketPlaceBlock.class),
 	TILE_UPDATE(PacketUpdateGhost.class);

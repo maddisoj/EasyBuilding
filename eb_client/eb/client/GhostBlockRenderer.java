@@ -24,6 +24,11 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
+/**
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
 public class GhostBlockRenderer extends TileEntitySpecialRenderer {
 	public static final int RENDER_ID = RenderingRegistry.getNextAvailableRenderId();
 	private RenderBlocks renderer;

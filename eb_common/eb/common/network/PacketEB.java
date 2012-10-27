@@ -12,6 +12,13 @@ import com.google.common.io.ByteArrayDataInput;
 
 import cpw.mods.fml.common.network.Player;
 
+/**
+ * The basic EasyBuilding packet
+ * 
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
 public class PacketEB {
 	protected PacketType type;
 	protected boolean isChunkDataPacket;

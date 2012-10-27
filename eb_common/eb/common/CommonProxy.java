@@ -13,6 +13,11 @@ import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.Packet;
 import net.minecraft.src.World;
 
+/**
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
 public class CommonProxy {
 	public void registerKeyBindings() {}
 	public void registerRenderInformation() {}

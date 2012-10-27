@@ -10,6 +10,13 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 
+/**
+ * A bunch of helper methods
+ * 
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
 public class Helper {
 	public static int[] getPosition(int x, int y, int z, int side) {
 		if(side == 0) { //bottom

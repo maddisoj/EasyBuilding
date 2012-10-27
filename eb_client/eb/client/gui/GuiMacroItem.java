@@ -7,6 +7,13 @@ import org.lwjgl.opengl.GL11;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 
+/**
+ * A list item representing a macro
+ * 
+ * @author Lerp
+ * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
+ */
+
 @SideOnly(Side.CLIENT)
 public class GuiMacroItem implements GuiListItem {
 	private static final int MAX_STRING_LENGTH = 30;
