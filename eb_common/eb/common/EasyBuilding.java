@@ -36,7 +36,7 @@ public class EasyBuilding {
 	public static BlockGhost ghostBlock;
 	
 	@PreInit
-	public void preInit(FMLPreInitializationEvent event) {
+	public void preInit(FMLPreInitializationEvent event) {		
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		
 		config.load();

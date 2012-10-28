@@ -87,6 +87,10 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 	
 	private int searchInventory(InventoryPlayer inventory, int itemID) {		
 		for(int i = 0; i < inventory.mainInventory.length; ++i) {
+			if(inventory.mainInventory[i] == null) {
+				continue;
+			}
+			
 			if(inventory.mainInventory[i].itemID == itemID) {
 				return i;
 			}

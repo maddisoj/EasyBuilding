@@ -136,6 +136,6 @@ public class MacroIO {
 	}
 	
 	private static String getMacroPath(String name) {
-		return Constants.MACROS_PATH + name.trim().replace(" ", "_") + ".txt";
+		return Constants.MACROS_PATH + File.separator + name.trim().replace(" ", "_") + ".txt";
 	}
 }

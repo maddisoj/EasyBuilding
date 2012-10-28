@@ -1,5 +1,9 @@
 package eb.common;
 
+import java.io.File;
+
+import cpw.mods.fml.common.Loader;
+
 /**
  * Easy access to constants
  * 
@@ -13,5 +17,5 @@ public class Constants {
 	public static int GHOST_BLOCK_ID = 0;
 	
 	public static final String GUI_PATH = "/eb/gui/";
-	public static final String MACROS_PATH = "./eb/macros/";
+	public static final String MACROS_PATH = new File(Loader.instance().getConfigDir().getParent(), "macros").toString();
 }

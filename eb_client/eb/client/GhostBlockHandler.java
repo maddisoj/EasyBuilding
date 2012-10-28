@@ -42,6 +42,8 @@ public class GhostBlockHandler {
 	private Macro macro;
 
 	private GhostBlockHandler() {
+		System.out.println(Constants.MACROS_PATH);
+		
 		x = 0;
 		y = 0;
 		z = 0;

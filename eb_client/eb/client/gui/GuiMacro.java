@@ -199,12 +199,16 @@ public class GuiMacro extends GuiScreen {
 		}
 		
 		Macro selectedMacro = getSelectedMacro();
-		HashMap<Item, Integer> usage = selectedMacro.getBlockUsage();
-		
-		usageList.clear();
-		
-		for(Entry<Item, Integer> item : usage.entrySet()) {
-			usageList.addItem(new GuiUsageItem(item.getKey(), item.getValue()));
+		if(selectedMacro != null) {
+			HashMap<Item, Integer> usage = selectedMacro.getBlockUsage();
+			
+			usageList.clear();
+			
+			for(Entry<Item, Integer> item : usage.entrySet()) {
+				usageList.addItem(new GuiUsageItem(item.getKey(), item.getValue()));
+			}
+		} else {
+			usageList.clear();
 		}
 	}
 	
