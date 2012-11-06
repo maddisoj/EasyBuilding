@@ -35,6 +35,7 @@ public class GuiUsageItem implements GuiListItem {
 	@Override
 	public void draw(GuiList parent, int x, int y, int width) {
 		RenderHelper.enableGUIStandardItemLighting();
+		
 		GL11.glPushMatrix();
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0f, 240.0F);
@@ -47,6 +48,8 @@ public class GuiUsageItem implements GuiListItem {
 		renderer.zLevel = 0.0F;
 		
 		GL11.glPopMatrix();
+		
+		RenderHelper.disableStandardItemLighting();
 	}
 
 	@Override
