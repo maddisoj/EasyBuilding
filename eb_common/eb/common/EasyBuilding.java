@@ -33,26 +33,15 @@ public class EasyBuilding {
 	@SidedProxy(clientSide = "eb.client.ClientProxy", serverSide = "eb.common.CommonProxy")
 	public static CommonProxy proxy;
 	
-	public static BlockGhost ghostBlock;
-	
 	@PreInit
-	public void preInit(FMLPreInitializationEvent event) {		
-		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
-		
-		config.load();
-		
-		Constants.GHOST_BLOCK_ID = config.getBlock("ghostBlock", 2008).getInt(2008);
+	public void preInit(FMLPreInitializationEvent event) {
+		proxy.preInit(event);
 		proxy.registerKeyBindings();
-		
-		config.save();
 	}
 	
 	@Init
 	public void init(FMLInitializationEvent event) {
-		ghostBlock = new BlockGhost(Constants.GHOST_BLOCK_ID);
-		
-		GameRegistry.registerBlock(ghostBlock);
-		
+		proxy.init(event);	
 		proxy.registerTileEntities();
 		proxy.registerRenderInformation();
 	}

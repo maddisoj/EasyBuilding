@@ -114,7 +114,6 @@ public class GuiMacro extends GuiScreen {
 		} else {
 			saveButton.displayString = "Save";
 		}
-		
 
 		macroName.updateCursorCounter();
 		macroDesc.updateCursorCounter();
