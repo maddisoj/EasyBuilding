@@ -47,21 +47,21 @@ public class Macro implements Runnable {
 	
 	@Override
 	public void run() {
+		if(instructions.isEmpty()) {
+			return;
+		}
+		
 		if(!playing) {
 			playing = true;
 			iterator = instructions.iterator();
-			GhostKeyHandler.setControl(false);
 		}
 		
 		if(iterator != null && iterator.hasNext()) {
 			((IInstruction)iterator.next()).execute();
-			
-			if(iterator.hasNext()) {
 				scheduler.schedule(this, 100, TimeUnit.MILLISECONDS);
-			} else {
-				playing = false;
-				GhostKeyHandler.setControl(true);
-			}
+		} else {
+			playing = false;
+			GhostKeyHandler.setControl(true);
 		}
 	}
 	

@@ -129,7 +129,6 @@ public class GhostBlockHandler {
 	}
 	
 	public void placeBlock(int itemID) {
-		
 		if(placed) {
 			if(itemID == -1) {
 				return;
