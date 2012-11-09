@@ -19,6 +19,7 @@ import eb.common.Helper;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
 
 /**
  * @author Lerp
@@ -110,19 +111,31 @@ public class Macro implements Runnable {
 		return description;
 	}
 	
-	public HashMap<Item, Integer> getBlockUsage() {
-		HashMap<Item, Integer> usage = new HashMap<Item, Integer>();
+	public ArrayList<ItemStack> getBlockUsage() {
+		ArrayList<ItemStack> usage = new ArrayList<ItemStack>();
 		
+		//TODO: find a better way to do this
 		for(IInstruction instruction : instructions) {
 			if(instruction instanceof PlaceInstruction) {
-				int id = ((PlaceInstruction)instruction).getItemID();
-				Item item = Item.itemsList[id];
+				PlaceInstruction placeInstruction = (PlaceInstruction)instruction;
+				int id = placeInstruction.getItemID();
+				int metadata = placeInstruction.getMetadata();
+				boolean found = false;
 				
-				Integer count = usage.get(item);
-				if(count == null) {
-					usage.put(item, 1);
-				} else {
-					usage.put(item, count + 1);
+				for(int i = 0; i < usage.size(); ++i) {	
+					ItemStack stack = usage.get(i);
+					
+					if(stack.itemID == id && stack.getItemDamage() == metadata) {
+						++stack.stackSize;
+						found = true;
+						break;
+					}
+				}
+				
+				if(!found) {
+					if(Item.itemsList[id] != null) {
+						usage.add(new ItemStack(Item.itemsList[id], 1, metadata));
+					}
 				}
 			}
 		}

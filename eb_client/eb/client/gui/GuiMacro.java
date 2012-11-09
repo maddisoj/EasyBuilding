@@ -1,6 +1,7 @@
 package eb.client.gui;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -25,6 +26,7 @@ import net.minecraft.src.GuiStats;
 import net.minecraft.src.GuiTextField;
 import net.minecraft.src.GuiYesNo;
 import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.StatCollector;
 import net.minecraft.src.StatList;
 import net.minecraft.src.WorldClient;
@@ -199,12 +201,11 @@ public class GuiMacro extends GuiScreen {
 		
 		Macro selectedMacro = getSelectedMacro();
 		if(selectedMacro != null) {
-			HashMap<Item, Integer> usage = selectedMacro.getBlockUsage();
-			
+			ArrayList<ItemStack> usage = selectedMacro.getBlockUsage();
 			usageList.clear();
 			
-			for(Entry<Item, Integer> item : usage.entrySet()) {
-				usageList.addItem(new GuiUsageItem(item.getKey(), item.getValue()));
+			for(ItemStack stack : usage) {
+				usageList.addItem(new GuiUsageItem(stack));
 			}
 		} else {
 			usageList.clear();

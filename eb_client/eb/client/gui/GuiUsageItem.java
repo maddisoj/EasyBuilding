@@ -22,9 +22,8 @@ public class GuiUsageItem implements GuiListItem {
 	private static RenderItem renderer = new RenderItem();
 	private ItemStack stack;
 	
-	public GuiUsageItem(Item item, int count) {
-		stack = new ItemStack(item);
-		stack.stackSize = count;
+	public GuiUsageItem(ItemStack stack) {
+		this.stack = stack;
 	}
 	
 	@Override
