@@ -42,4 +42,9 @@ public class MoveInstruction implements IInstruction {
 		
 		return true;
 	}
+	
+	@Override
+	public boolean shouldLock() {
+		return false;
+	}
 }
