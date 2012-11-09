@@ -30,30 +30,35 @@ import eb.common.Helper;
 
 public class PacketPlaceBlock extends PacketGhostPosition {
 	private int itemID;
+	private int metadata;
 	
 	public PacketPlaceBlock() {
 		super(PacketType.PLACE_BLOCK, true);
 		itemID = -1;
+		metadata = 0;
 	}
 	
-	public PacketPlaceBlock(int X, int Y, int Z, int itemID) {
+	public PacketPlaceBlock(int X, int Y, int Z, int itemID, int metadata) {
 		super(PacketType.PLACE_BLOCK, true);
 		x = X;
 		y = Y;
 		z = Z;
 		this.itemID = itemID;
+		this.metadata = metadata;
 	}
 	
 	@Override
 	public void read(ByteArrayDataInput bis) {
 		super.read(bis);
 		itemID = bis.readInt();
+		metadata = bis.readInt();
 	}
 	
 	@Override
 	public void getData(DataOutputStream dos) throws IOException {
 		super.getData(dos);
 		dos.writeInt(itemID);
+		dos.writeInt(metadata);
 	}	
 	
 	public void handle(INetworkManager manager, Player player) {
@@ -61,7 +66,7 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 		
 		if(entityPlayer.inventory.hasItem(itemID)) {
 			World world = entityPlayer.worldObj;
-			int slot = searchInventory(entityPlayer.inventory, itemID);
+			int slot = searchInventory(entityPlayer.inventory, itemID, metadata);
 			ItemStack stack = entityPlayer.inventory.mainInventory[slot];
 
 			if(!stack.tryPlaceItemIntoWorld(entityPlayer, world, x, y - 1, z, 1, x, y, z)) {
@@ -85,17 +90,23 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 		}
 	}
 	
-	private int searchInventory(InventoryPlayer inventory, int itemID) {		
+	private int searchInventory(InventoryPlayer inventory, int itemID, int metadata) {
+		int closestMatch = -1;
+		
 		for(int i = 0; i < inventory.mainInventory.length; ++i) {
 			if(inventory.mainInventory[i] == null) {
 				continue;
 			}
 			
 			if(inventory.mainInventory[i].itemID == itemID) {
-				return i;
+				if(inventory.mainInventory[i].getItemDamage() == metadata) {
+					return i;
+				} else {
+					closestMatch = i;
+				}
 			}
 		}
 		
-		return -1;
+		return closestMatch;
 	}
 }

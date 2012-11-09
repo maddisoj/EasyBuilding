@@ -26,10 +26,13 @@ import net.minecraft.src.Item;
  */
 
 public class Macro implements Runnable {
+	//how often to send an instruction in milliseconds
+	private final static int INSTRUCTION_TIME = 50;
+	
 	private String name, description;
 	private LinkedList<IInstruction> instructions;
 	private Iterator iterator;
-	private boolean playing;
+	private boolean playing, locked;
 	private ScheduledExecutorService scheduler;
 	
 	public Macro() {
@@ -38,6 +41,7 @@ public class Macro implements Runnable {
 		instructions = new LinkedList<IInstruction>();
 		iterator = null;
 		playing = false;
+		locked = false;
 		scheduler = Executors.newScheduledThreadPool(1);		
 	}
 	
@@ -54,11 +58,17 @@ public class Macro implements Runnable {
 		if(!playing) {
 			playing = true;
 			iterator = instructions.iterator();
+			GhostKeyHandler.setControl(false);
 		}
 		
 		if(iterator != null && iterator.hasNext()) {
-			((IInstruction)iterator.next()).execute();
-				scheduler.schedule(this, 100, TimeUnit.MILLISECONDS);
+			if(!locked) {
+				IInstruction current = (IInstruction)iterator.next();
+				current.execute();
+				setLocked(current.shouldLock());
+			}
+			
+			scheduler.schedule(this, INSTRUCTION_TIME, TimeUnit.MILLISECONDS);
 		} else {
 			playing = false;
 			GhostKeyHandler.setControl(true);
@@ -119,5 +129,9 @@ public class Macro implements Runnable {
 
 	public boolean isPlaying() {
 		return playing;
+	}
+	
+	public void setLocked(boolean locked) {
+		this.locked = locked;
 	}
 }

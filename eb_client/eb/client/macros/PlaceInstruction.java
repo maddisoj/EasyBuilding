@@ -15,29 +15,35 @@ import net.minecraft.src.InventoryPlayer;
 
 public class PlaceInstruction implements IInstruction {
 	private int itemID;
+	private int metadata;
 	
 	public PlaceInstruction() {
-		this.itemID = -1;
+		this(-1, 0);
 	}
 	
-	public PlaceInstruction(int itemID) {
+	public PlaceInstruction(int itemID, int metadata) {
 		this.itemID = itemID;
+		this.metadata = metadata;
 	}
 	
 	@Override
 	public void execute() {	
-		GhostBlockHandler.instance().placeBlock(itemID);
+		GhostBlockHandler.instance().placeBlock(itemID, metadata);
 	}
 
 	@Override
 	public String getParameters() {
-		return Integer.toString(itemID);
+		return Integer.toString(itemID) + " " + Integer.toString(metadata);
 	}
 
 	@Override
 	public boolean parseParameters(String[] parameters) {
 		try {
 			itemID = Integer.parseInt(parameters[0]);
+			
+			if(parameters.length > 1) { //to accomodate older macros
+				metadata = Integer.parseInt(parameters[1]);
+			}
 		} catch(Exception e) {
 			return false;
 		}
@@ -45,7 +51,16 @@ public class PlaceInstruction implements IInstruction {
 		return true;
 	}
 	
+	@Override
+	public boolean shouldLock() {
+		return true;
+	}
+	
 	public int getItemID() {
 		return itemID;
+	}
+	
+	public int getMetadata() {
+		return metadata;
 	}
 }

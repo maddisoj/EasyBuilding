@@ -115,6 +115,7 @@ public class GhostBlockHandler {
 		World world = getWorld();
 		world.setBlock(x, y, z, Constants.GHOST_BLOCK_ID);
 		TileGhostBlock ghost = Helper.getGhostBlock(world, x, y, z);
+		
 		if(ghost != null) {
 			ghost.setBlockId(blockID);
 			ghost.setBlockMetadata(metadata);
@@ -122,22 +123,26 @@ public class GhostBlockHandler {
 			this.blockID = blockID;
 			this.metadata = metadata;
 		}
+		
+		if(macro != null && macro.isPlaying()) {
+			macro.setLocked(false);
+		}
 	}
 
 	public void placeBlock() {
-		placeBlock(getCurrentItem());
+		placeBlock(getCurrentItemID(), getCurrentItemMetadata());
 	}
 	
-	public void placeBlock(int itemID) {
+	public void placeBlock(int itemID, int metadata) {
 		if(placed) {
 			if(itemID == -1) {
 				return;
 			}
 			
-			sendPacket((new PacketPlaceBlock(x, y, z, itemID)).toCustomPayload());
+			sendPacket((new PacketPlaceBlock(x, y, z, itemID, metadata)).toCustomPayload());
 
 			if(recording && !(macro.getLastInstruction() instanceof PlaceInstruction)) {
-				macro.addInstruction(new PlaceInstruction(itemID));
+				macro.addInstruction(new PlaceInstruction(itemID, metadata));
 			}
 		}
 	}
@@ -192,7 +197,7 @@ public class GhostBlockHandler {
 		return FMLClientHandler.instance().getClient().thePlayer;
 	}
 
-	private int getCurrentItem() {
+	private int getCurrentItemID() {
 		EntityClientPlayerMP player = getPlayer();
 		
 		if(player != null) {
@@ -202,6 +207,18 @@ public class GhostBlockHandler {
 		}
 		
 		return -1;
+	}
+	
+	private int getCurrentItemMetadata() {
+		EntityClientPlayerMP player = getPlayer();
+		
+		if(player != null) {
+			if(player.inventory.getCurrentItem() != null) {
+				return player.inventory.getCurrentItem().getItemDamage();
+			}
+		}
+		
+		return 0;
 	}
 
 	private void sendMessage(String message) {
