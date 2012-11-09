@@ -49,19 +49,27 @@ public class Macro implements Runnable {
 		instructions.add(instruction);
 	}
 	
-	@Override
-	public void run() {
+	public void play() {
 		if(instructions.isEmpty()) {
 			return;
 		}
 		
-		if(!playing) {
-			playing = true;
-			iterator = instructions.iterator();
-			GhostKeyHandler.setControl(false);
-		}
+		playing = true;
+		iterator = instructions.iterator();
+		GhostKeyHandler.setControl(false);
 		
-		if(iterator != null && iterator.hasNext()) {
+		run();
+	}
+	
+	public void stop() {
+		playing = false;
+		iterator = null;
+		GhostKeyHandler.setControl(true);
+	}	
+
+	@Override
+	public void run() {	
+		if(playing && iterator != null && iterator.hasNext()) {
 			if(!locked) {
 				IInstruction current = (IInstruction)iterator.next();
 				current.execute();
@@ -70,13 +78,8 @@ public class Macro implements Runnable {
 			
 			scheduler.schedule(this, INSTRUCTION_TIME, TimeUnit.MILLISECONDS);
 		} else {
-			playing = false;
-			GhostKeyHandler.setControl(true);
+			stop();
 		}
-	}
-	
-	public void stopPlaying() {
-		playing = false;
 	}
 	
 	public LinkedList<IInstruction> getInstructions() {

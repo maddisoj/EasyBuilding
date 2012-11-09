@@ -55,32 +55,32 @@ public class GhostKeyHandler extends KeyHandler {
 
 	@Override
 	public void keyDown(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd, boolean isRepeat) {
-		if(!tickEnd || !controlEnabled) { return; }
+		if(!tickEnd) { return; }
 		
 		Minecraft mc = FMLClientHandler.instance().getClient();
 		EntityClientPlayerMP player = mc.thePlayer;
 
-		if(kb.keyDescription.equals("Place Ghost")) {
+		if(kb.keyDescription.equals("Place Ghost") && controlEnabled) {
 			MovingObjectPosition target = mc.objectMouseOver;
 			if(target == null) { return; }
 			
 			int[] pos = Helper.getPosition(target.blockX, target.blockY, target.blockZ, target.sideHit);
 			GhostBlockHandler.instance().place(pos[0], pos[1], pos[2]);
-		} else if(kb.keyDescription.equals("Ghost Forward")) {
+		} else if(kb.keyDescription.equals("Ghost Forward") && controlEnabled) {
 			GhostBlockHandler.instance().move(Direction.FORWARD);
-		} else if(kb.keyDescription.equals("Ghost Backward")) {
+		} else if(kb.keyDescription.equals("Ghost Backward") && controlEnabled) {
 			GhostBlockHandler.instance().move(Direction.BACKWARD);
-		} else if(kb.keyDescription.equals("Ghost Left")) {
+		} else if(kb.keyDescription.equals("Ghost Left") && controlEnabled) {
 			GhostBlockHandler.instance().move(Direction.LEFT);
-		} else if(kb.keyDescription.equals("Ghost Right")) {
+		} else if(kb.keyDescription.equals("Ghost Right") && controlEnabled) {
 			GhostBlockHandler.instance().move(Direction.RIGHT);
-		} else if(kb.keyDescription .equals("Ghost Up")) {
+		} else if(kb.keyDescription .equals("Ghost Up") && controlEnabled) {
 			GhostBlockHandler.instance().move(Direction.UP);
-		} else if(kb.keyDescription.equals("Ghost Down")) {
+		} else if(kb.keyDescription.equals("Ghost Down") && controlEnabled) {
 			GhostBlockHandler.instance().move(Direction.DOWN);
-		} else if(kb.keyDescription.equals("Place Block")) {
+		} else if(kb.keyDescription.equals("Place Block") && controlEnabled) {
 			GhostBlockHandler.instance().placeBlock();
-		} else if(kb.keyDescription.equals("Toggle Recording")) {
+		} else if(kb.keyDescription.equals("Toggle Recording") && controlEnabled) {
 			GhostBlockHandler.instance().toggleRecording();
 		} else if(kb.keyDescription.equals("Play Macro")) {
 			GhostBlockHandler.instance().playMacro();

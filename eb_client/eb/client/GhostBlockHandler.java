@@ -165,7 +165,11 @@ public class GhostBlockHandler {
 		}
 
 		if(macro != null) {
-			macro.run();
+			if(!macro.isPlaying()) {
+				macro.play();
+			} else {
+				macro.stop();
+			}
 		}
 	}
 
@@ -243,15 +247,5 @@ public class GhostBlockHandler {
 		}
 		
 		return forward;
-	}
-	
-	private ItemStack searchInventory(InventoryPlayer inventory, int itemID) {
-		for(ItemStack itemStack : inventory.mainInventory) {
-			if (itemStack != null && itemStack.itemID == itemID) {
-				return itemStack;
-			}
-		}
-
-		return null;
 	}
 }
