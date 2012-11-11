@@ -163,21 +163,25 @@ public class Macro implements Runnable {
 
 		int moveSequenceStart = -1;
 		for(int i = index; i < instructions.size() - 1; ++i) {
-			IInstruction current = instructions.get(i);
-			IInstruction next = instructions.get(i + 1);
+			MoveInstruction current = getMoveInstructionAt(i);
+			MoveInstruction next = getMoveInstructionAt(i + 1);
+			MoveInstruction peek = getMoveInstructionAt(i + 2);
 
-			if(current instanceof MoveInstruction && next instanceof MoveInstruction) {
+			if(current != null && next != null) {
 				if(moveSequenceStart == -1) {
 					moveSequenceStart = i;
 				}
 				
-				MoveInstruction currentMove = (MoveInstruction)current;
-				MoveInstruction nextMove = (MoveInstruction)next;
-				
-				if(nextMove.getDirection().isOpposite(currentMove.getDirection())) {
+				if(next.getDirection().isOpposite(current.getDirection())) {
 					instructions.remove(i + 1);
 					instructions.remove(i);
-					break; //so that we can reoptimize from start of move sequence
+					break;
+				} else if(peek != null) {
+					if(peek.getDirection().isOpposite(current.getDirection())) {
+						instructions.remove(i + 2);
+						instructions.remove(i);
+						break;
+					}
 				}
 			} else {
 				moveSequenceStart = -1;
@@ -191,5 +195,18 @@ public class Macro implements Runnable {
 		if(moveSequenceStart != -1) {
 			optimizeFrom(moveSequenceStart);
 		}
+	}
+	
+	private MoveInstruction getMoveInstructionAt(int index) {
+		if(index < 0 || index >= instructions.size()) {
+			return null;
+		}
+		
+		IInstruction instruction = instructions.get(index);
+		if(instruction instanceof MoveInstruction) {
+			return (MoveInstruction)instruction;
+		}
+		
+		return null;
 	}
 }
