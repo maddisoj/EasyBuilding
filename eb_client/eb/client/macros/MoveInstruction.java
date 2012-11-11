@@ -43,7 +43,7 @@ public class MoveInstruction implements IInstruction {
 	}
 	
 	@Override
-	public boolean shouldLock() {
+	public boolean shouldSync() {
 		return false;
 	}
 	

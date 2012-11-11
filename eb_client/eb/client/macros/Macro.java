@@ -20,6 +20,7 @@ import eb.common.Helper;
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.Vec3;
 
 /**
  * @author Lerp
@@ -28,12 +29,12 @@ import net.minecraft.src.ItemStack;
 
 public class Macro implements Runnable {
 	//how often to send an instruction in milliseconds
-	private final static int INSTRUCTION_TIME = 50;
+	private final static int PLAYBACK_SPEED = 50;
 	
 	private String name, description;
 	private LinkedList<IInstruction> instructions;
 	private Iterator iterator;
-	private boolean playing, locked;
+	private boolean playing, synced;
 	private ScheduledExecutorService scheduler;
 	
 	public Macro() {
@@ -42,8 +43,8 @@ public class Macro implements Runnable {
 		instructions = new LinkedList<IInstruction>();
 		iterator = null;
 		playing = false;
-		locked = false;
-		scheduler = Executors.newScheduledThreadPool(1);		
+		synced = false;
+		scheduler = Executors.newScheduledThreadPool(1);
 	}
 	
 	public void addInstruction(IInstruction instruction) {
@@ -71,13 +72,13 @@ public class Macro implements Runnable {
 	@Override
 	public void run() {	
 		if(playing && iterator != null && iterator.hasNext()) {
-			if(!locked) {
+			if(!synced) {
 				IInstruction current = (IInstruction)iterator.next();
 				current.execute();
-				setLocked(current.shouldLock());
+				setSynced(current.shouldSync());
 			}
 			
-			scheduler.schedule(this, INSTRUCTION_TIME, TimeUnit.MILLISECONDS);
+			scheduler.schedule(this, PLAYBACK_SPEED, TimeUnit.MILLISECONDS);
 		} else {
 			stop();
 		}
@@ -146,8 +147,8 @@ public class Macro implements Runnable {
 		return playing;
 	}
 	
-	public void setLocked(boolean locked) {
-		this.locked = locked;
+	public void setSynced(boolean synced) {
+		this.synced = synced;
 	}
 	
 	public void optimize() {

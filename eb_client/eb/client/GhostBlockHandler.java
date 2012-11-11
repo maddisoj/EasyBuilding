@@ -40,6 +40,7 @@ public class GhostBlockHandler {
 	private int x, y, z, blockID, metadata;
 	private boolean placed, recording, autoplace;
 	private Macro macro;
+	private Vec3 lockedDirection;
 
 	private GhostBlockHandler() {
 		System.out.println(Constants.MACROS_PATH);
@@ -53,6 +54,7 @@ public class GhostBlockHandler {
 		recording = false;
 		autoplace = false;
 		macro = null;
+		lockedDirection = null;
 		
 		MacroIO.setUpDirectory();
 	}
@@ -62,20 +64,26 @@ public class GhostBlockHandler {
 	}
 	
 	public void move(Direction direction) {
-		if(placed) {			
+		if(placed) {
+			if(autoplace) {
+				placeBlock();
+			}
+			
 			EntityClientPlayerMP player = getPlayer();
 			World world = getWorld();
-			Vec3 moveDirection = relativeToAbsoluteDirection(Helper.getPlayerDirection(player), direction); 
+			Vec3 moveDirection = null;
+			
+			if(macro != null && macro.isPlaying()) {
+				moveDirection = relativeToAbsoluteDirection(lockedDirection, direction); 
+			} else {
+				moveDirection = relativeToAbsoluteDirection(Helper.getPlayerDirection(player), direction);
+			}
 					
 			int newX = x + (int)moveDirection.xCoord;
 			int newY = y + (int)moveDirection.yCoord;
 			int newZ = z + (int)moveDirection.zCoord;
 
 			place(newX, newY, newZ);
-			
-			if(autoplace) {
-				placeBlock();
-			}
 			
 			if(recording) {
 				macro.addInstruction(new MoveInstruction(direction));
@@ -132,7 +140,7 @@ public class GhostBlockHandler {
 		}
 		
 		if(macro != null && macro.isPlaying()) {
-			macro.setLocked(false);
+			macro.setSynced(false);
 		}
 	}
 
@@ -162,13 +170,7 @@ public class GhostBlockHandler {
 			macro = new Macro();
 		} else {
 			sendMessage("Finished Recording");
-			
-			macro.setName("macro");
-			MacroIO.save(macro);
-			
-			macro.setName("optimized macro");
 			macro.optimize();
-			MacroIO.save(macro);
 		}
 	}
 	
@@ -187,13 +189,15 @@ public class GhostBlockHandler {
 			sendMessage("You must stop recording before you can play the macro");
 			return;
 		}
-		
-		if(autoplace) {
-			toggleAutoplace();
-		}
 
 		if(macro != null) {
+			if(autoplace) {
+				toggleAutoplace();
+			}
+			
 			if(!macro.isPlaying()) {
+				lockedDirection = Helper.getPlayerDirection(getPlayer());
+				System.out.println(lockedDirection);
 				macro.play();
 			} else {
 				macro.stop();
@@ -262,18 +266,20 @@ public class GhostBlockHandler {
 	}
 	
 	private Vec3 relativeToAbsoluteDirection(Vec3 forward, Direction direction) {
+		Vec3 result = Vec3.createVectorHelper(forward.xCoord, forward.yCoord, forward.zCoord);
+		
 		if(direction == Direction.BACKWARD) {
-			forward.rotateAroundY((float)Math.PI);
+			result.rotateAroundY((float)Math.PI);
 		} else if(direction == Direction.LEFT) {
-			forward.rotateAroundY((float)Math.PI/2);
+			result.rotateAroundY((float)Math.PI/2);
 		} else if(direction == Direction.RIGHT) {
-			forward.rotateAroundY((float)-Math.PI/2);
+			result.rotateAroundY((float)-Math.PI/2);
 		} else if(direction == Direction.UP) {
-			forward = Vec3.createVectorHelper(0.0, 1.0, 0.0);
+			result = Vec3.createVectorHelper(0.0, 1.0, 0.0);
 		} else if(direction == Direction.DOWN) {
-			forward = Vec3.createVectorHelper(0.0, -1.0, 0.0);
+			result = Vec3.createVectorHelper(0.0, -1.0, 0.0);
 		}
 		
-		return forward;
+		return result;
 	}
 }

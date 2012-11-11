@@ -52,7 +52,7 @@ public class PlaceInstruction implements IInstruction {
 	}
 	
 	@Override
-	public boolean shouldLock() {
+	public boolean shouldSync() {
 		return true;
 	}
 	
