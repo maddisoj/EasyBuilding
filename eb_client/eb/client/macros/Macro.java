@@ -114,7 +114,6 @@ public class Macro implements Runnable {
 	public ArrayList<ItemStack> getBlockUsage() {
 		ArrayList<ItemStack> usage = new ArrayList<ItemStack>();
 		
-		//TODO: find a better way to do this
 		for(IInstruction instruction : instructions) {
 			if(instruction instanceof PlaceInstruction) {
 				PlaceInstruction placeInstruction = (PlaceInstruction)instruction;
@@ -149,5 +148,48 @@ public class Macro implements Runnable {
 	
 	public void setLocked(boolean locked) {
 		this.locked = locked;
+	}
+	
+	public void optimize() {
+		optimizeFrom(0);
+	}
+	
+	private void optimizeFrom(int index) {
+		if(index < 0) {
+			index = 0;
+		} else if(index >= instructions.size()) {
+			return;
+		}
+
+		int moveSequenceStart = -1;
+		for(int i = index; i < instructions.size() - 1; ++i) {
+			IInstruction current = instructions.get(i);
+			IInstruction next = instructions.get(i + 1);
+
+			if(current instanceof MoveInstruction && next instanceof MoveInstruction) {
+				if(moveSequenceStart == -1) {
+					moveSequenceStart = i;
+				}
+				
+				MoveInstruction currentMove = (MoveInstruction)current;
+				MoveInstruction nextMove = (MoveInstruction)next;
+				
+				if(nextMove.getDirection().isOpposite(currentMove.getDirection())) {
+					instructions.remove(i + 1);
+					instructions.remove(i);
+					break; //so that we can reoptimize from start of move sequence
+				}
+			} else {
+				moveSequenceStart = -1;
+			}
+			
+			if(i + 1 == instructions.size() - 1) {
+				moveSequenceStart = -1;
+			}
+		}
+		
+		if(moveSequenceStart != -1) {
+			optimizeFrom(moveSequenceStart);
+		}
 	}
 }

@@ -18,13 +18,13 @@ import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import cpw.mods.fml.client.FMLClientHandler;
 import eb.client.gui.GuiMacro;
+import eb.client.macros.Direction;
 import eb.client.macros.IInstruction;
 import eb.client.macros.Macro;
 import eb.client.macros.MacroIO;
 import eb.client.macros.MoveInstruction;
 import eb.client.macros.PlaceInstruction;
 import eb.common.Constants;
-import eb.common.Direction;
 import eb.common.Helper;
 import eb.common.network.PacketPlaceBlock;
 
@@ -162,6 +162,13 @@ public class GhostBlockHandler {
 			macro = new Macro();
 		} else {
 			sendMessage("Finished Recording");
+			
+			macro.setName("macro");
+			MacroIO.save(macro);
+			
+			macro.setName("optimized macro");
+			macro.optimize();
+			MacroIO.save(macro);
 		}
 	}
 	

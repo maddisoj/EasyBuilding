@@ -16,7 +16,7 @@ import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.asm.SideOnly;
 import cpw.mods.fml.common.Side;
-import eb.common.Direction;
+import eb.client.macros.Direction;
 import eb.common.Helper;
 
 /**

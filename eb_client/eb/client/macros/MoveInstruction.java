@@ -2,7 +2,6 @@ package eb.client.macros;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import eb.client.GhostBlockHandler;
-import eb.common.Direction;
 
 /**
  * The instruction representing the moving of the ghost block
@@ -46,5 +45,9 @@ public class MoveInstruction implements IInstruction {
 	@Override
 	public boolean shouldLock() {
 		return false;
+	}
+	
+	public Direction getDirection() {
+		return dir;
 	}
 }
