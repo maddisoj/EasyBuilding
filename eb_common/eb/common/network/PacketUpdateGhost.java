@@ -21,33 +21,45 @@ import eb.client.GhostBlockHandler;
  */
 
 public class PacketUpdateGhost extends PacketEB {
+	private boolean failed;
 	private int blockID, metadata;
 	
 	public PacketUpdateGhost() {
 		super(PacketType.TILE_UPDATE, true);
-		blockID = 0;
-		metadata = 0;
+		init(0, 0, false);
 	}
 	
 	public PacketUpdateGhost(int blockID, int metadata) {
 		super(PacketType.TILE_UPDATE, true);
-		this.blockID = blockID;
-		this.metadata = metadata;
+		init(blockID, metadata, false);
+	}
+	
+	public PacketUpdateGhost(boolean failed) {
+		super(PacketType.TILE_UPDATE, true);
+		init(0, 0, true);
 	}
 	
 	public void read(ByteArrayDataInput bis) {
 		blockID = bis.readInt();
 		metadata = bis.readInt();
+		failed = bis.readBoolean();
 	}
 	
 	public void getData(DataOutputStream dos) throws IOException {
 		dos.writeInt(blockID);
 		dos.writeInt(metadata);
+		dos.writeBoolean(failed);
 	}
 	
 	public void handle(INetworkManager manager, Player player) {
 		if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-			GhostBlockHandler.instance().update(blockID, metadata);
+			GhostBlockHandler.instance().update(blockID, metadata, failed);
 		}
+	}
+	
+	private void init(int blockID, int metadata, boolean failed) {
+		this.blockID = blockID;
+		this.metadata = metadata;
+		this.failed = failed;
 	}
 }

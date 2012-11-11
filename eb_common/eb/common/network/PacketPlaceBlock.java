@@ -70,6 +70,7 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 			ItemStack stack = entityPlayer.inventory.mainInventory[slot];
 
 			if(!stack.tryPlaceItemIntoWorld(entityPlayer, world, x, y - 1, z, 1, x, y, z)) {
+				EasyBuilding.sendToPlayer(player, new PacketUpdateGhost(true));
 				return;
 			}
 			

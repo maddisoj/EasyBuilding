@@ -62,11 +62,7 @@ public class GhostBlockHandler {
 	}
 	
 	public void move(Direction direction) {
-		if(placed) {
-			if(autoplace) {
-				placeBlock();
-			}
-			
+		if(placed) {			
 			EntityClientPlayerMP player = getPlayer();
 			World world = getWorld();
 			Vec3 moveDirection = relativeToAbsoluteDirection(Helper.getPlayerDirection(player), direction); 
@@ -76,6 +72,10 @@ public class GhostBlockHandler {
 			int newZ = z + (int)moveDirection.zCoord;
 
 			place(newX, newY, newZ);
+			
+			if(autoplace) {
+				placeBlock();
+			}
 			
 			if(recording) {
 				macro.addInstruction(new MoveInstruction(direction));
@@ -116,17 +116,19 @@ public class GhostBlockHandler {
 		}
 	}
 
-	public void update(int blockID, int metadata) {
-		World world = getWorld();
-		world.setBlock(x, y, z, Constants.GHOST_BLOCK_ID);
-		TileGhostBlock ghost = Helper.getGhostBlock(world, x, y, z);
-		
-		if(ghost != null) {
-			ghost.setBlockId(blockID);
-			ghost.setBlockMetadata(metadata);
+	public void update(int blockID, int metadata, boolean failed) {
+		if(!failed) {
+			World world = getWorld();
+			world.setBlock(x, y, z, Constants.GHOST_BLOCK_ID);
+			TileGhostBlock ghost = Helper.getGhostBlock(world, x, y, z);
 			
-			this.blockID = blockID;
-			this.metadata = metadata;
+			if(ghost != null) {
+				ghost.setBlockId(blockID);
+				ghost.setBlockMetadata(metadata);
+				
+				this.blockID = blockID;
+				this.metadata = metadata;
+			}
 		}
 		
 		if(macro != null && macro.isPlaying()) {
@@ -177,6 +179,10 @@ public class GhostBlockHandler {
 		if(recording) {
 			sendMessage("You must stop recording before you can play the macro");
 			return;
+		}
+		
+		if(autoplace) {
+			toggleAutoplace();
 		}
 
 		if(macro != null) {
