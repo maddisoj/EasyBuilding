@@ -14,6 +14,8 @@ import net.minecraft.src.Packet15Place;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
 import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.asm.SideOnly;
+import cpw.mods.fml.common.Side;
 import eb.common.Direction;
 import eb.common.Helper;
 
@@ -22,8 +24,10 @@ import eb.common.Helper;
  * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
  */
 
+@SideOnly(Side.CLIENT)
 public class GhostKeyHandler extends KeyHandler {
 	
+	//TODO: find a better way of doing this
 	public static KeyBinding keyBindings[] = {
 		new KeyBinding("Place Ghost", Keyboard.KEY_NUMPAD0),
 		new KeyBinding("Ghost Forward", Keyboard.KEY_NUMPAD5),
@@ -34,12 +38,13 @@ public class GhostKeyHandler extends KeyHandler {
 		new KeyBinding("Ghost Down", Keyboard.KEY_NUMPAD6),
 		new KeyBinding("Place Block", Keyboard.KEY_RETURN),
 		new KeyBinding("Toggle Recording", Keyboard.KEY_NUMPAD7),
+		new KeyBinding("Toggle Autoplace", Keyboard.KEY_NUMPAD8),
 		new KeyBinding("Play Macro", Keyboard.KEY_NUMPAD9),
 		new KeyBinding("Open Macro UI", Keyboard.KEY_DECIMAL),
 	};
 	
 	public static boolean repeats[] = {
-		false, false, false, false, false, false, false, true, false, false, false, false
+		false, false, false, false, false, false, false, true, false, false, false, false, false
 	};
 	
 	private static boolean controlEnabled = true;
@@ -60,30 +65,36 @@ public class GhostKeyHandler extends KeyHandler {
 		Minecraft mc = FMLClientHandler.instance().getClient();
 		EntityClientPlayerMP player = mc.thePlayer;
 
-		if(kb.keyDescription.equals("Place Ghost") && controlEnabled) {
-			MovingObjectPosition target = mc.objectMouseOver;
-			if(target == null) { return; }
-			
-			int[] pos = Helper.getPosition(target.blockX, target.blockY, target.blockZ, target.sideHit);
-			GhostBlockHandler.instance().place(pos[0], pos[1], pos[2]);
-		} else if(kb.keyDescription.equals("Ghost Forward") && controlEnabled) {
-			GhostBlockHandler.instance().move(Direction.FORWARD);
-		} else if(kb.keyDescription.equals("Ghost Backward") && controlEnabled) {
-			GhostBlockHandler.instance().move(Direction.BACKWARD);
-		} else if(kb.keyDescription.equals("Ghost Left") && controlEnabled) {
-			GhostBlockHandler.instance().move(Direction.LEFT);
-		} else if(kb.keyDescription.equals("Ghost Right") && controlEnabled) {
-			GhostBlockHandler.instance().move(Direction.RIGHT);
-		} else if(kb.keyDescription .equals("Ghost Up") && controlEnabled) {
-			GhostBlockHandler.instance().move(Direction.UP);
-		} else if(kb.keyDescription.equals("Ghost Down") && controlEnabled) {
-			GhostBlockHandler.instance().move(Direction.DOWN);
-		} else if(kb.keyDescription.equals("Place Block") && controlEnabled) {
-			GhostBlockHandler.instance().placeBlock();
-		} else if(kb.keyDescription.equals("Toggle Recording") && controlEnabled) {
-			GhostBlockHandler.instance().toggleRecording();
-		} else if(kb.keyDescription.equals("Play Macro")) {
-			GhostBlockHandler.instance().playMacro();
+		if(controlEnabled) {
+			if(kb.keyDescription.equals("Place Ghost") && controlEnabled) {
+				MovingObjectPosition target = mc.objectMouseOver;
+				if(target == null) { return; }
+				
+				int[] pos = Helper.getPosition(target.blockX, target.blockY, target.blockZ, target.sideHit);
+				GhostBlockHandler.instance().place(pos[0], pos[1], pos[2]);
+			} else if(kb.keyDescription.equals("Ghost Forward")) {
+				GhostBlockHandler.instance().move(Direction.FORWARD);
+			} else if(kb.keyDescription.equals("Ghost Backward")) {
+				GhostBlockHandler.instance().move(Direction.BACKWARD);
+			} else if(kb.keyDescription.equals("Ghost Left")) {
+				GhostBlockHandler.instance().move(Direction.LEFT);
+			} else if(kb.keyDescription.equals("Ghost Right")) {
+				GhostBlockHandler.instance().move(Direction.RIGHT);
+			} else if(kb.keyDescription .equals("Ghost Up")) {
+				GhostBlockHandler.instance().move(Direction.UP);
+			} else if(kb.keyDescription.equals("Ghost Down")) {
+				GhostBlockHandler.instance().move(Direction.DOWN);
+			} else if(kb.keyDescription.equals("Place Block")) {
+				GhostBlockHandler.instance().placeBlock();
+			} else if(kb.keyDescription.equals("Toggle Recording")) {
+				GhostBlockHandler.instance().toggleRecording();
+			}  else if (kb.keyDescription.equals("Toggle Autoplace")) {
+				GhostBlockHandler.instance().toggleAutoplace();
+			}
+		}
+		
+		if(kb.keyDescription.equals("Play Macro")) {
+				GhostBlockHandler.instance().playMacro();
 		} else if(kb.keyDescription.equals("Open Macro UI")) {
 			GhostBlockHandler.instance().openMacroGui();
 		}

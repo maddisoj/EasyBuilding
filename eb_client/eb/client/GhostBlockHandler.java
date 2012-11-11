@@ -38,7 +38,7 @@ import eb.common.network.PacketPlaceBlock;
 public class GhostBlockHandler {
 	private static GhostBlockHandler INSTANCE = new GhostBlockHandler();
 	private int x, y, z, blockID, metadata;
-	private boolean placed, recording;
+	private boolean placed, recording, autoplace;
 	private Macro macro;
 
 	private GhostBlockHandler() {
@@ -51,6 +51,7 @@ public class GhostBlockHandler {
 		metadata = 0;
 		placed = false;
 		recording = false;
+		autoplace = false;
 		macro = null;
 		
 		MacroIO.setUpDirectory();
@@ -61,7 +62,11 @@ public class GhostBlockHandler {
 	}
 	
 	public void move(Direction direction) {
-		if(placed) {			
+		if(placed) {
+			if(autoplace) {
+				placeBlock();
+			}
+			
 			EntityClientPlayerMP player = getPlayer();
 			World world = getWorld();
 			Vec3 moveDirection = relativeToAbsoluteDirection(Helper.getPlayerDirection(player), direction); 
@@ -155,6 +160,16 @@ public class GhostBlockHandler {
 			macro = new Macro();
 		} else {
 			sendMessage("Finished Recording");
+		}
+	}
+	
+	public void toggleAutoplace() {
+		autoplace = !autoplace;
+
+		if(autoplace) {
+			sendMessage("Autoplace enabled");
+		} else {
+			sendMessage("Autoplace disabled");
 		}
 	}
 
