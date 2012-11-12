@@ -43,9 +43,7 @@ public class GhostBlockHandler {
 	private Macro macro;
 	private Vec3 lockedDirection;
 
-	private GhostBlockHandler() {
-		System.out.println(Constants.MACROS_PATH);
-		
+	private GhostBlockHandler() {		
 		x = 0;
 		y = 0;
 		z = 0;
@@ -58,6 +56,7 @@ public class GhostBlockHandler {
 		lockedDirection = null;
 		
 		MacroIO.setUpDirectory();
+		SchematicImporter.importSchematic(Constants.SCHEMATICS_PATH + "TheVoxelboxTicker.schematic");
 	}
 
 	public static GhostBlockHandler instance() {
