@@ -43,7 +43,7 @@ public class Macro implements Runnable {
 		instructions = new LinkedList<IInstruction>();
 		iterator = null;
 		playing = false;
-		synced = false;
+		synced = true;
 		scheduler = Executors.newScheduledThreadPool(1);
 	}
 	
@@ -66,16 +66,17 @@ public class Macro implements Runnable {
 	public void stop() {
 		playing = false;
 		iterator = null;
+		setSynced(true);
 		GhostKeyHandler.setControl(true);
 	}	
 
 	@Override
-	public void run() {	
+	public void run() {
 		if(playing && iterator != null && iterator.hasNext()) {
-			if(!synced) {
+			if(synced) {
 				IInstruction current = (IInstruction)iterator.next();
 				current.execute();
-				setSynced(current.shouldSync());
+				setSynced(!current.shouldSync());
 			}
 			
 			scheduler.schedule(this, PLAYBACK_SPEED, TimeUnit.MILLISECONDS);

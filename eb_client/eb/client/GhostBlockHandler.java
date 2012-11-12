@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityClientPlayerMP;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.InventoryPlayer;
@@ -140,12 +141,14 @@ public class GhostBlockHandler {
 		}
 		
 		if(macro != null && macro.isPlaying()) {
-			macro.setSynced(false);
+			macro.setSynced(true);
 		}
 	}
 
 	public void placeBlock() {
-		placeBlock(getCurrentItemID(), getCurrentItemMetadata());
+		if(getClient().currentScreen == null) {
+			placeBlock(getCurrentItemID(), getCurrentItemMetadata());
+		}
 	}
 	
 	public void placeBlock(int itemID, int metadata) {
@@ -197,7 +200,6 @@ public class GhostBlockHandler {
 			
 			if(!macro.isPlaying()) {
 				lockedDirection = Helper.getPlayerDirection(getPlayer());
-				System.out.println(lockedDirection);
 				macro.play();
 			} else {
 				macro.stop();
@@ -206,9 +208,9 @@ public class GhostBlockHandler {
 	}
 
 	public void openMacroGui() {
-		if(getPlayer() == null) { return; } //to make sure gui can only be opened in game
+		if(getPlayer() == null || getClient().currentScreen != null) { return; }
 		
-		FMLClientHandler.instance().getClient().displayGuiScreen(new GuiMacro());
+		getClient().displayGuiScreen(new GuiMacro());
 	}
 	
 	public boolean saveMacro(String name, String desc) {
@@ -229,8 +231,12 @@ public class GhostBlockHandler {
 		FMLClientHandler.instance().sendPacket(packet);
 	}
 	
+	private Minecraft getClient() {
+		return FMLClientHandler.instance().getClient();
+	}
+	
 	private EntityClientPlayerMP getPlayer() {
-		return FMLClientHandler.instance().getClient().thePlayer;
+		return getClient().thePlayer;
 	}
 
 	private int getCurrentItemID() {
