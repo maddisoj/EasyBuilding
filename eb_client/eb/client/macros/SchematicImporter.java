@@ -98,7 +98,7 @@ public class SchematicImporter {
 			}
 		}
 		
-		//schematic.optimize();		
+		schematic.optimize();		
 		return schematic;
 	}
 }

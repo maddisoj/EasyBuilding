@@ -153,57 +153,54 @@ public class Macro implements Runnable {
 	}
 	
 	public void optimize() {
-		optimizeFrom(0);
+		int index = 0;
+		int moveSequenceStart = 0;
+		
+		while(moveSequenceStart != -1) {
+			index = moveSequenceStart;
+			
+			if(index < 0) {
+				index = 0;
+			} else if(index >= instructions.size()) {
+				return;
+			}
+	
+			for(int i = index; i < instructions.size() - 1; ++i) {
+				MoveInstruction current = getMoveInstructionAt(i);
+				MoveInstruction next = getMoveInstructionAt(i + 1);
+				MoveInstruction peek = getMoveInstructionAt(i + 2);
+	
+				if(current != null && next != null) {
+					if(moveSequenceStart == -1) {
+						moveSequenceStart = i;
+					}
+					
+					if(next.getDirection().isOpposite(current.getDirection())) {
+						instructions.remove(i + 1);
+						instructions.remove(i);
+						break;
+					} else if(peek != null) {
+						if(peek.getDirection().isOpposite(current.getDirection())) {
+							instructions.remove(i + 2);
+							instructions.remove(i);
+							break;
+						}
+					}
+				} else {
+					moveSequenceStart = -1;
+				}
+				
+				if(i + 1 == instructions.size() - 1) {
+					moveSequenceStart = -1;
+				}
+			}
+		}
 	}
 	
 	public double getRuntime() {
 		double milliseconds = instructions.size() * PLAYBACK_SPEED;
 		
 		return (milliseconds / 1000.0);
-	}
-	
-	private void optimizeFrom(int index) {
-		//TODO: make this a loop and not recursive!
-		if(index < 0) {
-			index = 0;
-		} else if(index >= instructions.size()) {
-			return;
-		}
-
-		int moveSequenceStart = -1;
-		for(int i = index; i < instructions.size() - 1; ++i) {
-			MoveInstruction current = getMoveInstructionAt(i);
-			MoveInstruction next = getMoveInstructionAt(i + 1);
-			MoveInstruction peek = getMoveInstructionAt(i + 2);
-
-			if(current != null && next != null) {
-				if(moveSequenceStart == -1) {
-					moveSequenceStart = i;
-				}
-				
-				if(next.getDirection().isOpposite(current.getDirection())) {
-					instructions.remove(i + 1);
-					instructions.remove(i);
-					break;
-				} else if(peek != null) {
-					if(peek.getDirection().isOpposite(current.getDirection())) {
-						instructions.remove(i + 2);
-						instructions.remove(i);
-						break;
-					}
-				}
-			} else {
-				moveSequenceStart = -1;
-			}
-			
-			if(i + 1 == instructions.size() - 1) {
-				moveSequenceStart = -1;
-			}
-		}
-		
-		if(moveSequenceStart != -1) {
-			optimizeFrom(moveSequenceStart);
-		}
 	}
 	
 	private MoveInstruction getMoveInstructionAt(int index) {
