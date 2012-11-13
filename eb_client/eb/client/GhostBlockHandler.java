@@ -25,6 +25,7 @@ import eb.client.macros.Macro;
 import eb.client.macros.MacroIO;
 import eb.client.macros.MoveInstruction;
 import eb.client.macros.PlaceInstruction;
+import eb.client.macros.SchematicImporter;
 import eb.common.Constants;
 import eb.common.Helper;
 import eb.common.network.PacketPlaceBlock;
@@ -56,7 +57,8 @@ public class GhostBlockHandler {
 		lockedDirection = null;
 		
 		MacroIO.setUpDirectory();
-		SchematicImporter.importSchematic(Constants.SCHEMATICS_PATH + "TheVoxelboxTicker.schematic");
+		macro = SchematicImporter.importSchematic(Constants.SCHEMATICS_PATH + "rosegriffon.schematic");
+		System.out.println("Macro will take: " + macro.getRuntime() + " seconds");
 	}
 
 	public static GhostBlockHandler instance() {

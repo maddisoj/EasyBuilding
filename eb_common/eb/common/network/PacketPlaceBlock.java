@@ -7,6 +7,7 @@ import java.io.IOException;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.INetworkManager;
 import net.minecraft.src.InventoryPlayer;
+import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
@@ -63,32 +64,37 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 	
 	public void handle(INetworkManager manager, Player player) {
 		EntityPlayer entityPlayer = (EntityPlayer)player;
+		World world = entityPlayer.worldObj;
+		ItemStack stack = null;
+		int slot = -1;
 		
-		if(entityPlayer.inventory.hasItem(itemID)) {
-			World world = entityPlayer.worldObj;
-			int slot = searchInventory(entityPlayer.inventory, itemID, metadata);
-			ItemStack stack = entityPlayer.inventory.mainInventory[slot];
-
-			if(!stack.tryPlaceItemIntoWorld(entityPlayer, world, x, y - 1, z, 1, x, y, z)) {
+		if(entityPlayer.capabilities.isCreativeMode) {
+			stack = new ItemStack(Item.itemsList[itemID]);
+			stack.setItemDamage(metadata);
+		} else {
+			slot = searchInventory(entityPlayer.inventory, itemID, metadata);
+			
+			if(slot == -1 || slot > entityPlayer.inventory.getSizeInventory()) {
 				EasyBuilding.sendToPlayer(player, new PacketUpdateGhost(true));
 				return;
 			}
 			
-			if(stack.stackSize <= 0) {
-				if(entityPlayer.capabilities.isCreativeMode) {
-					stack.stackSize = 1;
-				} else {
-					entityPlayer.inventory.mainInventory[slot] = null;
-				}
-			}
-
-			int blockID = world.getBlockId(x, y, z);
-			int metadata = world.getBlockMetadata(x, y, z);
-			
-			if(blockID != 0) {
-				EasyBuilding.sendToPlayer(player, new PacketUpdateGhost(blockID, metadata));
-			}
+			stack = entityPlayer.inventory.mainInventory[slot];
 		}
+		
+		if(!stack.tryPlaceItemIntoWorld(entityPlayer, world, x, y - 1, z, 1, x, y, z)) {
+			EasyBuilding.sendToPlayer(player, new PacketUpdateGhost(true));
+			return;
+		}
+
+		if(stack.stackSize <= 0 && !entityPlayer.capabilities.isCreativeMode) {
+			entityPlayer.inventory.mainInventory[slot] = null;
+		}
+
+		int blockID = world.getBlockId(x, y, z);
+		int metadata = world.getBlockMetadata(x, y, z);
+		
+		EasyBuilding.sendToPlayer(player, new PacketUpdateGhost(blockID, metadata));
 	}
 	
 	private int searchInventory(InventoryPlayer inventory, int itemID, int metadata) {
