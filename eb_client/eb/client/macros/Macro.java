@@ -163,6 +163,7 @@ public class Macro implements Runnable {
 	}
 	
 	private void optimizeFrom(int index) {
+		//TODO: make this a loop and not recursive!
 		if(index < 0) {
 			index = 0;
 		} else if(index >= instructions.size()) {
