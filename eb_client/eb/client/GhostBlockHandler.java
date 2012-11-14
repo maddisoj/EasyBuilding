@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,8 +58,21 @@ public class GhostBlockHandler {
 		lockedDirection = null;
 		
 		MacroIO.setUpDirectory();
-		macro = SchematicImporter.importSchematic(Constants.SCHEMATICS_PATH + "rosegriffon.schematic");
-		System.out.println("Macro will take: " + macro.getRuntime() + " seconds");
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				long start = (new Date()).getTime();
+				macro = SchematicImporter.importSchematic(Constants.SCHEMATICS_PATH + "rose-cake.schematic");
+				long end = (new Date()).getTime();
+				
+				System.out.println("Schematic imported in " + (end - start) + " milliseconds");
+				
+				if(macro != null) {
+					System.out.println("Macro will take: " + macro.getRuntime() + " seconds");
+				}
+			}
+		}).start();
 	}
 
 	public static GhostBlockHandler instance() {

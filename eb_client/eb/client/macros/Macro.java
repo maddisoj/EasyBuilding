@@ -187,6 +187,7 @@ public class Macro implements Runnable {
 						}
 					}
 				} else {
+					System.out.println(i + "/" + instructions.size());
 					moveSequenceStart = -1;
 				}
 				

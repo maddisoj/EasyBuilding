@@ -31,7 +31,8 @@ public class SchematicImporter {
 			Macro schematic = createMacro(base.getShort("Width"),
 							   			  base.getShort("Length"),
 							   			  base.getShort("Height"),
-							   			  base.getByteArray("Blocks"));
+							   			  base.getByteArray("Blocks"),
+							   			  base.getByteArray("Data"));
 			
 			if(schematic != null) {
 				schematic.setName(getName(path));
@@ -63,13 +64,14 @@ public class SchematicImporter {
 		return path.substring(start, end);
 	}
 	
-	private static Macro createMacro(short width, short length, short height, byte[] blocks) {
+	private static Macro createMacro(short width, short length, short height, byte[] blocks, byte[] meta) {
 		Macro schematic = new Macro();
 		
 		boolean leftToRight = true;
 		
 		for(int y = 0; y < height; ++y) {
 			for(int z = 0; z < length; ++z) {
+				System.out.println((leftToRight ? 0 : width - 1) + " to " + (leftToRight ? width : -1));
 				for(int x =  (leftToRight ? 0 : width - 1);
 						x != (leftToRight ? width : -1);
 						x += (leftToRight ? 1 : -1)) {
@@ -77,12 +79,12 @@ public class SchematicImporter {
 					int index = y * width * length + z * width + x;
 					
 					if(blocks[index] != 0) {
-						schematic.addInstruction(new PlaceInstruction(blocks[index], 0));
+						schematic.addInstruction(new PlaceInstruction(blocks[index], meta[index]));
 					}
 					
-					if(leftToRight) {
+					if(leftToRight && x != width - 1) {
 						schematic.addInstruction(new MoveInstruction(Direction.RIGHT));
-					} else {
+					} else if(!leftToRight && x != 0) {
 						schematic.addInstruction(new MoveInstruction(Direction.LEFT));
 					}
 				}
