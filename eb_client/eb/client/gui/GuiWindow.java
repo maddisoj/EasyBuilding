@@ -18,6 +18,8 @@ public class GuiWindow extends Gui {
 	private static final int[][] BOTTOM_EDGE = new int[][] { { 4, 5 }, { 8, 16 }, };
 	private static final int[][] RIGHT_EDGE = new int[][] { { 8, 16 }, { 4, 5 }, };
 	
+	private static final int WINDOW_COLOR = (((198 << 8) + 198) << 8) + 198;
+	
 	private Minecraft mc;
 	private int x, y, width, height, edgeWidth, edgeHeight;
 	
@@ -45,6 +47,8 @@ public class GuiWindow extends Gui {
 		drawCorner(x, y + edgeHeight, BOTTOM_LEFT_CORNER);
 		
 		drawEdges();
+		
+		drawRect(x + getCornerSize(), y + getCornerSize(), edgeWidth, edgeHeight, WINDOW_COLOR);
 	}
 	
 	private void drawTexturedRect(int x, int y, int width, int height, int[] u, int[] v) {
@@ -52,11 +56,14 @@ public class GuiWindow extends Gui {
         float vScale = 0.00390625F;
         Tessellator tess = Tessellator.instance;
         
+        float uf[] = new float[] { (float)u[0] * uScale, (float)u[1] * uScale };
+        float vf[] = new float[] { (float)v[0] * vScale, (float)v[1] * vScale };
+        
         tess.startDrawingQuads();
-        tess.addVertexWithUV(x, y + height, this.zLevel, u[0] * uScale, v[1] * vScale);
-        tess.addVertexWithUV(x + width, y + height, this.zLevel, u[1] * uScale, v[1] * vScale);
-        tess.addVertexWithUV(x + width, y, this.zLevel, u[1] * uScale, v[0] * vScale);
-        tess.addVertexWithUV(x, y, this.zLevel, u[0], v[0]);
+        tess.addVertexWithUV(x, y + height, this.zLevel, uf[0], vf[1]);
+        tess.addVertexWithUV(x + width, y + height, this.zLevel, uf[1], vf[1]);
+        tess.addVertexWithUV(x + width, y, this.zLevel, uf[1], vf[0]);
+        tess.addVertexWithUV(x, y, this.zLevel, uf[0], vf[0]);
         tess.draw();
 	}
 	
