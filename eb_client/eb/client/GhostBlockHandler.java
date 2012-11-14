@@ -59,7 +59,7 @@ public class GhostBlockHandler {
 		
 		MacroIO.setUpDirectory();
 		
-		new Thread(new Runnable() {
+		/*new Thread(new Runnable() {
 			@Override
 			public void run() {
 				long start = (new Date()).getTime();
@@ -72,7 +72,7 @@ public class GhostBlockHandler {
 					System.out.println("Macro will take: " + macro.getRuntime() + " seconds");
 				}
 			}
-		}).start();
+		}).start();*/
 	}
 
 	public static GhostBlockHandler instance() {

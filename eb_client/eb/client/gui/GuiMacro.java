@@ -44,6 +44,7 @@ public class GuiMacro extends GuiScreen {
 	private GuiTextArea macroDesc;
 	private GuiButton saveButton, loadButton;
 	private GuiListItem selected;
+	private GuiWindow window;
 	
 	@Override
 	public void initGui() {
@@ -73,11 +74,15 @@ public class GuiMacro extends GuiScreen {
 		
 		controlList.add(saveButton);
 		controlList.add(loadButton);
+		
+		window = new GuiWindow(mc, guiLeft, guiTop, guiWidth, guiHeight);
 	}
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        int texture = mc.renderEngine.getTexture(Constants.GUI_PATH + "background.png");
+		window.draw();
+        
+        /*int texture = mc.renderEngine.getTexture(Constants.GUI_PATH + "background.png");
         mc.renderEngine.bindTexture(texture);
         
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, guiWidth, guiHeight);
@@ -86,7 +91,7 @@ public class GuiMacro extends GuiScreen {
         macroDesc.draw();
         usageList.draw();
         
-		super.drawScreen(mouseX, mouseY, partialTicks);
+		super.drawScreen(mouseX, mouseY, partialTicks);*/
 	}
 	
 	@Override
