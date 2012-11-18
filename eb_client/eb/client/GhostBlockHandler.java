@@ -61,7 +61,7 @@ public class GhostBlockHandler {
 		
 		MacroIO.setUpDirectories();
 		
-		menu = new GuiMenu();
+		menu = new GuiMenu(getClient());
 		menu.initGui();
 		menu.addScreen("Load/Save Macro 0", new GuiMacro());
 		menu.addScreen("Load/Save Macro 1", new GuiMacro());

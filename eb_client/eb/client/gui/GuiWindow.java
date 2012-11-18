@@ -23,12 +23,12 @@ public class GuiWindow extends Gui {
 	private static final int WINDOW_COLOUR[] = { 198, 198, 198 };
 	
 	private Minecraft mc;
-	private int x, y, width, height;
+	private int left, top, width, height;
 	
 	public GuiWindow(Minecraft mc, int x, int y, int width, int height) {
 		this.mc = mc;
-		this.x = x;
-		this.y = y;
+		this.left = x;
+		this.top = y;
 		this.width = width;
 		this.height = height;
 	}
@@ -41,10 +41,10 @@ public class GuiWindow extends Gui {
 		int edgeHeight = getEdgeHeight();
 		
 		drawEdges();
-		drawCorner(x, y, TOP_LEFT_CORNER);
-		drawCorner(x + edgeWidth + getCornerSize(), y, TOP_RIGHT_CORNER);
-		drawCorner(x + edgeWidth + getCornerSize(), y + edgeHeight + getCornerSize(), BOTTOM_RIGHT_CORNER);
-		drawCorner(x, y + edgeHeight + getCornerSize(), BOTTOM_LEFT_CORNER);
+		drawCorner(left, top, TOP_LEFT_CORNER);
+		drawCorner(left + edgeWidth + getCornerSize(), top, TOP_RIGHT_CORNER);
+		drawCorner(left + edgeWidth + getCornerSize(), top + edgeHeight + getCornerSize(), BOTTOM_RIGHT_CORNER);
+		drawCorner(left, top + edgeHeight + getCornerSize(), BOTTOM_LEFT_CORNER);
 		drawBackground();
 	}
 	
@@ -65,11 +65,19 @@ public class GuiWindow extends Gui {
 	}
 	
 	public int getLeft() {
-		return x;
+		return left;
+	}
+	
+	public void setLeft(int left) {
+		this.left = left;
 	}
 	
 	public int getTop() {
-		return y;
+		return top;
+	}
+	
+	public void setTop(int top) {
+		this.top = top;
 	}
 	
 	private void drawTexturedRect(int x, int y, int width, int height, int[] u, int[] v) {        
@@ -93,16 +101,16 @@ public class GuiWindow extends Gui {
 		int edgeWidth = getEdgeWidth();
 		int edgeHeight = getEdgeHeight();
 		
-		drawTexturedRect(x + cornerSize, y, edgeWidth, cornerSize, TOP_EDGE[0], TOP_EDGE[1]);
-		drawTexturedRect(x, y + cornerSize, cornerSize, edgeHeight, LEFT_EDGE[0], LEFT_EDGE[1]);
-		drawTexturedRect(x + cornerSize, y + edgeHeight + cornerSize, edgeWidth, cornerSize, BOTTOM_EDGE[0], BOTTOM_EDGE[1]);
-		drawTexturedRect(x + edgeWidth + cornerSize, y + cornerSize, cornerSize, edgeHeight, RIGHT_EDGE[0], RIGHT_EDGE[1]);
+		drawTexturedRect(left + cornerSize, top, edgeWidth, cornerSize, TOP_EDGE[0], TOP_EDGE[1]);
+		drawTexturedRect(left, top + cornerSize, cornerSize, edgeHeight, LEFT_EDGE[0], LEFT_EDGE[1]);
+		drawTexturedRect(left + cornerSize, top + edgeHeight + cornerSize, edgeWidth, cornerSize, BOTTOM_EDGE[0], BOTTOM_EDGE[1]);
+		drawTexturedRect(left + edgeWidth + cornerSize, top + cornerSize, cornerSize, edgeHeight, RIGHT_EDGE[0], RIGHT_EDGE[1]);
 	}
 	
 	private void drawBackground() {
 		int colour = ((((255 << 8) + WINDOW_COLOUR[0]) << 8) + WINDOW_COLOUR[1] << 8) + WINDOW_COLOUR[2];
-		drawRect(x + getCornerSize(), y + getCornerSize(),
-				 x + getEdgeWidth() + getCornerSize(),  y + getEdgeHeight() + getCornerSize(), colour);
+		drawRect(left + getCornerSize(), top + getCornerSize(),
+				 left + getEdgeWidth() + getCornerSize(),  top + getEdgeHeight() + getCornerSize(), colour);
 		
 	}
 	
