@@ -29,7 +29,7 @@ import net.minecraft.src.Vec3;
 
 public class Macro implements Runnable {
 	//how often to send an instruction in milliseconds
-	private final static int PLAYBACK_SPEED = 1;
+	private final static int PLAYBACK_SPEED = 50;
 	
 	private String name, description;
 	private LinkedList<IInstruction> instructions;

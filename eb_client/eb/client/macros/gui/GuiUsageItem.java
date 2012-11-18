@@ -1,6 +1,9 @@
-package eb.client.gui;
+package eb.client.macros.gui;
 
 import org.lwjgl.opengl.GL11;
+
+import eb.client.gui.GuiList;
+import eb.client.gui.GuiListItem;
 
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;

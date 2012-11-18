@@ -19,14 +19,14 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import cpw.mods.fml.client.FMLClientHandler;
-import eb.client.gui.GuiMacro;
 import eb.client.macros.Direction;
 import eb.client.macros.IInstruction;
 import eb.client.macros.Macro;
 import eb.client.macros.MacroIO;
 import eb.client.macros.MoveInstruction;
 import eb.client.macros.PlaceInstruction;
-import eb.client.macros.SchematicImporter;
+import eb.client.macros.gui.GuiMacro;
+import eb.client.macros.gui.GuiMenu;
 import eb.common.Constants;
 import eb.common.Helper;
 import eb.common.network.PacketPlaceBlock;
@@ -40,10 +40,12 @@ import eb.common.network.PacketPlaceBlock;
 
 public class GhostBlockHandler {
 	private static GhostBlockHandler INSTANCE = new GhostBlockHandler();
+	
 	private int x, y, z, blockID, metadata;
 	private boolean placed, recording, autoplace;
 	private Macro macro;
 	private Vec3 lockedDirection;
+	private GuiMenu menu;
 
 	private GhostBlockHandler() {		
 		x = 0;
@@ -57,13 +59,20 @@ public class GhostBlockHandler {
 		macro = null;
 		lockedDirection = null;
 		
-		MacroIO.setUpDirectory();
+		MacroIO.setUpDirectories();
+		
+		menu = new GuiMenu();
+		menu.initGui();
+		menu.addScreen("Load/Save Macro 0", new GuiMacro());
+		menu.addScreen("Load/Save Macro 1", new GuiMacro());
+		menu.addScreen("Load/Save Macro 2", new GuiMacro());
+		menu.addScreen("Load/Save Macro 3", new GuiMacro());
 		
 		/*new Thread(new Runnable() {
 			@Override
 			public void run() {
 				long start = (new Date()).getTime();
-				macro = SchematicImporter.importSchematic(Constants.SCHEMATICS_PATH + "rose-cake.schematic");
+				macro = MacroIO.importSchematic(Constants.SCHEMATICS_PATH + "TutorialTower.schematic");
 				long end = (new Date()).getTime();
 				
 				System.out.println("Schematic imported in " + (end - start) + " milliseconds");
@@ -225,7 +234,7 @@ public class GhostBlockHandler {
 	public void openMacroGui() {
 		if(getPlayer() == null || getClient().currentScreen != null) { return; }
 		
-		getClient().displayGuiScreen(new GuiMacro());
+		getClient().displayGuiScreen(menu);
 	}
 	
 	public boolean saveMacro(String name, String desc) {

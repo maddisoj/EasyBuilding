@@ -1,4 +1,4 @@
-package eb.client.gui;
+package eb.client.macros.gui;
 
 import net.minecraft.src.FontRenderer;
 
@@ -6,6 +6,8 @@ import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
+import eb.client.gui.GuiList;
+import eb.client.gui.GuiListItem;
 
 /**
  * A list item representing a macro

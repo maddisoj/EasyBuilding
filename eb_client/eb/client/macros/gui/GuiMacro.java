@@ -1,4 +1,4 @@
-package eb.client.gui;
+package eb.client.macros.gui;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -11,6 +11,10 @@ import org.lwjgl.opengl.GL11;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 import eb.client.GhostBlockHandler;
+import eb.client.gui.GuiList;
+import eb.client.gui.GuiListItem;
+import eb.client.gui.GuiTextArea;
+import eb.client.gui.GuiWindow;
 import eb.client.macros.Macro;
 import eb.client.macros.MacroIO;
 import eb.common.Constants;
@@ -38,7 +42,6 @@ import net.minecraft.src.WorldClient;
 
 @SideOnly(Side.CLIENT)
 public class GuiMacro extends GuiScreen {
-	private int guiLeft, guiTop, guiWidth, guiHeight;
 	private GuiList files, usageList;
 	private GuiTextField macroName;
 	private GuiTextArea macroDesc;
@@ -48,10 +51,10 @@ public class GuiMacro extends GuiScreen {
 	
 	@Override
 	public void initGui() {
-		guiWidth = 176;
-		guiHeight = 166;
-		guiLeft = (width - guiWidth) / 2;
-		guiTop = (height - guiHeight) / 2;
+		final int guiWidth = 176;
+		final int guiHeight = 166;
+		final int guiLeft = (width - guiWidth) / 2;
+		final int guiTop = (height - guiHeight) / 2;
 		
 		files = new GuiList(mc, this, guiLeft + 6, guiTop + 6, guiWidth - 12, guiHeight - 60);
 		files.setPadding(2);
@@ -80,23 +83,21 @@ public class GuiMacro extends GuiScreen {
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		files.mouseMoved(mouseX, mouseY);
+
 		window.draw();
-        
-        /*int texture = mc.renderEngine.getTexture(Constants.GUI_PATH + "background.png");
-        mc.renderEngine.bindTexture(texture);
-        
-        drawTexturedModalRect(guiLeft, guiTop, 0, 0, guiWidth, guiHeight);
         files.draw();
         macroName.drawTextBox();
         macroDesc.draw();
         usageList.draw();
         
-		super.drawScreen(mouseX, mouseY, partialTicks);*/
+		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 	
 	@Override
-	public void updateScreen() {		
+	public void updateScreen() {
 		GuiListItem item = files.getSelected();
+		
 		if(item != null && !item.equals(selected)) {
 			selected = item;
 			GuiMacroItem macroItem = (GuiMacroItem)item;
@@ -127,6 +128,11 @@ public class GuiMacro extends GuiScreen {
 		
 		super.updateScreen();
 	}
+	
+	@Override
+	public boolean doesGuiPauseGame() {
+		return false;
+	}
 
 	@Override
 	protected void keyTyped(char key, int keyCode) {
@@ -150,15 +156,6 @@ public class GuiMacro extends GuiScreen {
 		
 		super.mouseClicked(x, y, button);
     }
-
-	@Override
-    protected void mouseMovedOrUp(int x, int y, int event) {
-        if(event != 0) {
-            files.mouseMoved(x, y);
-        }
-        
-        super.mouseMovedOrUp(x, y, event);
-	}
 	
 	@Override
 	protected void actionPerformed(GuiButton button) {

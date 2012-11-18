@@ -2,6 +2,8 @@ package eb.client.gui;
 
 import java.io.File;
 
+import org.lwjgl.opengl.GL11;
+
 import eb.common.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Gui;
@@ -17,11 +19,11 @@ public class GuiWindow extends Gui {
 	private static final int[][] LEFT_EDGE = new int[][] { { 0, 8 }, { 4, 5 }, };
 	private static final int[][] BOTTOM_EDGE = new int[][] { { 4, 5 }, { 8, 16 }, };
 	private static final int[][] RIGHT_EDGE = new int[][] { { 8, 16 }, { 4, 5 }, };
-	
-	private static final int WINDOW_COLOR = (((198 << 8) + 198) << 8) + 198;
+	private static final int TEXTURE_SIZE = 16;
+	private static final int WINDOW_COLOUR[] = { 198, 198, 198 };
 	
 	private Minecraft mc;
-	private int x, y, width, height, edgeWidth, edgeHeight;
+	private int x, y, width, height;
 	
 	public GuiWindow(Minecraft mc, int x, int y, int width, int height) {
 		this.mc = mc;
@@ -29,57 +31,90 @@ public class GuiWindow extends Gui {
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		this.edgeWidth = width - 16;
-		this.edgeHeight = height - 16;
 	}
 	
 	public void draw() {
-		drawBackground();
-	}
-	
-	private void drawBackground() {
 		int texture = mc.renderEngine.getTexture(Constants.GUI_PATH + "window.png");
 		mc.renderEngine.bindTexture(texture);
 		
-		drawCorner(x, y, TOP_LEFT_CORNER);
-		drawCorner(x + edgeWidth, y, TOP_RIGHT_CORNER);
-		drawCorner(x + edgeWidth, y + edgeHeight, BOTTOM_RIGHT_CORNER);
-		drawCorner(x, y + edgeHeight, BOTTOM_LEFT_CORNER);
+		int edgeWidth = getEdgeWidth();
+		int edgeHeight = getEdgeHeight();
 		
 		drawEdges();
-		
-		drawRect(x + getCornerSize(), y + getCornerSize(), edgeWidth, edgeHeight, WINDOW_COLOR);
+		drawCorner(x, y, TOP_LEFT_CORNER);
+		drawCorner(x + edgeWidth + getCornerSize(), y, TOP_RIGHT_CORNER);
+		drawCorner(x + edgeWidth + getCornerSize(), y + edgeHeight + getCornerSize(), BOTTOM_RIGHT_CORNER);
+		drawCorner(x, y + edgeHeight + getCornerSize(), BOTTOM_LEFT_CORNER);
+		drawBackground();
 	}
 	
-	private void drawTexturedRect(int x, int y, int width, int height, int[] u, int[] v) {
-		float uScale = 0.00390625F;
-        float vScale = 0.00390625F;
-        Tessellator tess = Tessellator.instance;
+	public int getHeight() {
+		return height;
+	}
+	
+	public void setHeight(int height) {
+		this.height = height;
+	}
+	
+	public int getWidth() { 
+		return width;
+	}
+	
+	public void setWidth(int width) {
+		this.width = width;
+	}
+	
+	public int getLeft() {
+		return x;
+	}
+	
+	public int getTop() {
+		return y;
+	}
+	
+	private void drawTexturedRect(int x, int y, int width, int height, int[] u, int[] v) {        
+        float uf[] = new float[] { (float)u[0] / (float)TEXTURE_SIZE, (float)u[1] / (float)TEXTURE_SIZE };
+        float vf[] = new float[] { (float)v[0] / (float)TEXTURE_SIZE, (float)v[1] / (float)TEXTURE_SIZE };
         
-        float uf[] = new float[] { (float)u[0] * uScale, (float)u[1] * uScale };
-        float vf[] = new float[] { (float)v[0] * vScale, (float)v[1] * vScale };
-        
-        tess.startDrawingQuads();
-        tess.addVertexWithUV(x, y + height, this.zLevel, uf[0], vf[1]);
-        tess.addVertexWithUV(x + width, y + height, this.zLevel, uf[1], vf[1]);
-        tess.addVertexWithUV(x + width, y, this.zLevel, uf[1], vf[0]);
-        tess.addVertexWithUV(x, y, this.zLevel, uf[0], vf[0]);
-        tess.draw();
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glTexCoord2f(uf[0], vf[0]); GL11.glVertex2i(x, y);
+        GL11.glTexCoord2f(uf[0], vf[1]); GL11.glVertex2i(x, y + height);
+        GL11.glTexCoord2f(uf[1], vf[1]); GL11.glVertex2i(x + width, y + height);
+        GL11.glTexCoord2f(uf[1], vf[0]); GL11.glVertex2i(x + width, y);
+        GL11.glEnd();
 	}
 	
 	private void drawCorner(int x, int y, int uv[][]) {
-		drawTexturedRect(x, y, 8, 8, uv[0], uv[1]);
+		drawTexturedRect(x, y, getCornerSize(), getCornerSize(), uv[0], uv[1]);
 	}
 	
 	private void drawEdges() {
 		int cornerSize = getCornerSize();
+		int edgeWidth = getEdgeWidth();
+		int edgeHeight = getEdgeHeight();
+		
 		drawTexturedRect(x + cornerSize, y, edgeWidth, cornerSize, TOP_EDGE[0], TOP_EDGE[1]);
 		drawTexturedRect(x, y + cornerSize, cornerSize, edgeHeight, LEFT_EDGE[0], LEFT_EDGE[1]);
-		drawTexturedRect(x + cornerSize, y + edgeHeight, edgeWidth, cornerSize, BOTTOM_EDGE[0], BOTTOM_EDGE[1]);
-		drawTexturedRect(x + edgeWidth, y + cornerSize, cornerSize, edgeHeight, RIGHT_EDGE[0], RIGHT_EDGE[1]);
+		drawTexturedRect(x + cornerSize, y + edgeHeight + cornerSize, edgeWidth, cornerSize, BOTTOM_EDGE[0], BOTTOM_EDGE[1]);
+		drawTexturedRect(x + edgeWidth + cornerSize, y + cornerSize, cornerSize, edgeHeight, RIGHT_EDGE[0], RIGHT_EDGE[1]);
+	}
+	
+	private void drawBackground() {
+		int colour = ((((255 << 8) + WINDOW_COLOUR[0]) << 8) + WINDOW_COLOUR[1] << 8) + WINDOW_COLOUR[2];
+		drawRect(x + getCornerSize(), y + getCornerSize(),
+				 x + getEdgeWidth() + getCornerSize(),  y + getEdgeHeight() + getCornerSize(), colour);
+		
 	}
 	
 	private static int getCornerSize() {
-		return 8;
+		return TEXTURE_SIZE / 2;
+	}
+	
+	private int getEdgeWidth() {
+		return width - TEXTURE_SIZE;
+	}
+	
+	private int getEdgeHeight() {
+		return height - TEXTURE_SIZE;
 	}
 }
