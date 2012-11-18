@@ -2,6 +2,7 @@ package eb.client.macros.gui;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 import eb.client.gui.GuiWindow;
 
@@ -10,13 +11,13 @@ import net.minecraft.src.GuiButton;
 import net.minecraft.src.GuiScreen;
 
 public class GuiMenu extends GuiScreen {
-	private HashMap<String, GuiScreen> screens;
+	private HashMap<GuiButton, GuiScreen> buttons;
 	private GuiWindow window;
 	private int buttonHeight, buttonPadding;
 	
 	public GuiMenu(Minecraft mc) {		
 		window = new GuiWindow(mc, 0, 0, 100, 20);
-		screens = new HashMap<String, GuiScreen>();
+		buttons = new HashMap<GuiButton, GuiScreen>();
 		buttonHeight = 20;
 		buttonPadding = 5;
 		
@@ -25,44 +26,44 @@ public class GuiMenu extends GuiScreen {
 	
 	@Override
 	public void initGui() {
-		updateWindowHeight();
-		
-		int left = (width - window.getWidth()) / 2;
-		int top = (height - window.getHeight()) / 2;
-		
-		window.setLeft(left);
-		window.setTop(top);
-		
-		updateButtonPositions();
+		window.setLeft((width - window.getWidth()) / 2);
+		window.setTop((height - window.getHeight()) / 2);
 	}
 	
 	public void addScreen(String name, GuiScreen screen) {
-		screens.put(name, screen);
+		buttons.put(createButton(name), screen);
+		
 		updateWindowHeight();
-		
-		GuiButton button = new GuiButton(screens.size() - 1, 0, 0, window.getWidth() - 2 * buttonPadding, buttonHeight, name);
-		controlList.add(button);
-		
-		updateButtonPositions();
 	}
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		window.draw();
-		super.drawScreen(mouseX, mouseY, partialTicks);
+		
+		for(Entry<GuiButton, GuiScreen> entry : buttons.entrySet()) {
+			entry.getKey().drawButton(mc, mouseX, mouseY);
+		}
 	}
 	
 	@Override
 	protected void actionPerformed(GuiButton button) {
 		if(button.enabled) {
-			GuiScreen screen = screens.get(button.displayString);
+			GuiScreen screen = buttons.get(button);
 			mc.displayGuiScreen(screen);
 		}
 	}
 	
+	private GuiButton createButton(String name) {
+		int x = window.getLeft() + buttonPadding;
+		int y = window.getTop() + buttonPadding;
+		y += buttons.size() * (buttonHeight + buttonPadding);
+		
+		return new GuiButton(buttons.size() - 1, x, y, window.getWidth() - 2 * buttonPadding, buttonHeight, name);
+	}
+	
 	private void updateWindowHeight() {
 		if(window != null) {
-			window.setHeight(screens.size() * (buttonHeight + buttonPadding) + 2 * buttonPadding);
+			window.setHeight(buttons.size() * (buttonHeight + buttonPadding) + 2 * buttonPadding);
 		}
 	}
 	
