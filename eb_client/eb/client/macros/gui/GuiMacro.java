@@ -100,7 +100,7 @@ public class GuiMacro extends GuiScreen {
 		
 		if(item != null && !item.equals(selected)) {
 			selected = item;
-			GuiMacroItem macroItem = (GuiMacroItem)item;
+			GuiLoadableItem macroItem = (GuiLoadableItem)item;
 			
 			if(!macroItem.isLoaded()) {
 				Macro macro = getSelectedMacro();
@@ -162,7 +162,7 @@ public class GuiMacro extends GuiScreen {
 		if(button.enabled) {
 			if(button.id == 0) { //Save button
 				if(button.displayString.equals("Overwrite")) {
-					((GuiMacroItem)selected).setLoaded(false);
+					((GuiLoadableItem)selected).setLoaded(false);
 				}
 				
 				saveMacro(macroName.getText().trim(), macroDesc.getText().trim());
@@ -191,7 +191,7 @@ public class GuiMacro extends GuiScreen {
 			files.clear();
 			
 			for(File file : dir.listFiles()) {
-				files.addItem(new GuiMacroItem(getMacroName(file.getName()), ""));
+				files.addItem(new GuiLoadableItem(getMacroName(file.getName()), ""));
 			}
 		}
 	}
@@ -215,7 +215,7 @@ public class GuiMacro extends GuiScreen {
 	}
 	
 	private Macro getSelectedMacro() {
-		GuiMacroItem item = (GuiMacroItem)selected;
+		GuiLoadableItem item = (GuiLoadableItem)selected;
 		return MacroIO.load(item.getName());
 	}
 	

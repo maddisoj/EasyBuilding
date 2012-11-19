@@ -27,6 +27,7 @@ import eb.client.macros.MoveInstruction;
 import eb.client.macros.PlaceInstruction;
 import eb.client.macros.gui.GuiMacro;
 import eb.client.macros.gui.GuiMenu;
+import eb.client.macros.gui.GuiSchematic;
 import eb.common.Constants;
 import eb.common.Helper;
 import eb.common.network.PacketPlaceBlock;
@@ -59,29 +60,9 @@ public class GhostBlockHandler {
 		macro = null;
 		lockedDirection = null;
 		
-		MacroIO.setUpDirectories();
-		
 		menu = new GuiMenu(getClient());
-		menu.initGui();
-		menu.addScreen("Load/Save Macro 0", new GuiMacro());
-		menu.addScreen("Load/Save Macro 1", new GuiMacro());
-		menu.addScreen("Load/Save Macro 2", new GuiMacro());
-		menu.addScreen("Load/Save Macro 3", new GuiMacro());
-		
-		/*new Thread(new Runnable() {
-			@Override
-			public void run() {
-				long start = (new Date()).getTime();
-				macro = MacroIO.importSchematic(Constants.SCHEMATICS_PATH + "TutorialTower.schematic");
-				long end = (new Date()).getTime();
-				
-				System.out.println("Schematic imported in " + (end - start) + " milliseconds");
-				
-				if(macro != null) {
-					System.out.println("Macro will take: " + macro.getRuntime() + " seconds");
-				}
-			}
-		}).start();*/
+		menu.addScreen("Load/Save Macro", new GuiMacro());
+		menu.addScreen("Import Schematic", new GuiSchematic());
 	}
 
 	public static GhostBlockHandler instance() {
@@ -247,8 +228,20 @@ public class GhostBlockHandler {
 	}
 	
 	public void setMacro(String name) {
-		macro = MacroIO.load(name);
-		sendMessage("Macro changed to \"" + macro.getName() + "\"");
+		setMacro(MacroIO.load(name));
+	}
+	
+	public void setMacro(Macro macro) {
+		this.macro = macro;
+		
+		if(macro != null) {
+			sendMessage("Macro changed to \"" + macro.getName() + "\"");
+			sendMessage(macro.getName() + " has a " + macro.getRuntime() + " second runtime");
+		}
+	}
+
+	public void sendMessage(String message) {
+		getPlayer().addChatMessage(message);
 	}
 
 	private void sendPacket(Packet packet) {
@@ -285,10 +278,6 @@ public class GhostBlockHandler {
 		}
 		
 		return 0;
-	}
-
-	private void sendMessage(String message) {
-		getPlayer().addChatMessage(message);
 	}
 	
 	private World getWorld() {

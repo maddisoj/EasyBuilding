@@ -31,7 +31,7 @@ public class GuiList extends Gui {
 	private GuiListItem hover, selected;
 	private GuiScrollbar scrollbar;
 	private int containedHeight;
-	private boolean drawBackground;
+	private boolean drawBackground, visible;
 	
 	public GuiList(Minecraft mc, GuiScreen parent, int x, int y, int width, int height) {
 		this.mc = mc;
@@ -48,6 +48,7 @@ public class GuiList extends Gui {
 		this.scrollbar = new GuiScrollbar(mc, x + width - 6, y, 6, height);
 		this.scrollbar.setContainedHeight(containedHeight);
 		this.drawBackground = true;
+		this.visible = true;
 	}
 	
 	public void addItem(GuiListItem item) {
@@ -65,7 +66,13 @@ public class GuiList extends Gui {
 		drawBackground = draw;
 	}
 	
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+	
 	public void draw() {
+		if(!visible) { return; }
+		
 		if(drawBackground) {
 			drawRect(x, y, x + width, y + height, Integer.MIN_VALUE);
 		}
