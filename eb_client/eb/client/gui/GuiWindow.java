@@ -108,7 +108,7 @@ public class GuiWindow extends Gui {
 	}
 	
 	private void drawBackground() {
-		int colour = ((((255 << 8) + WINDOW_COLOUR[0]) << 8) + WINDOW_COLOUR[1] << 8) + WINDOW_COLOUR[2];
+		int colour = GuiHelper.RGBtoInt(WINDOW_COLOUR[0], WINDOW_COLOUR[1], WINDOW_COLOUR[2]);
 		drawRect(left + getCornerSize(), top + getCornerSize(),
 				 left + getEdgeWidth() + getCornerSize(),  top + getEdgeHeight() + getCornerSize(), colour);
 		

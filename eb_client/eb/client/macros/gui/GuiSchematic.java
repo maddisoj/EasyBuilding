@@ -14,10 +14,12 @@ import net.minecraft.src.GuiButton;
 import net.minecraft.src.GuiScreen;
 
 public class GuiSchematic extends GuiScreen {
+	private static final long SIZE_THRESHOLD = 7168L;
+	
 	private GuiWindow window;
 	private GuiList files;
 	private GuiButton importButton;
-	private GuiLabel schematicName, stateLabel;
+	private GuiLabel schematicName, stateLabel, sizeWarning;
 	private SchematicImporter importer;
 	private long time;
 	private boolean importing;
@@ -56,6 +58,10 @@ public class GuiSchematic extends GuiScreen {
 		schematicName.setCentered(true);
 		stateLabel = new GuiLabel(fontRenderer, "", guiLeft + guiWidth / 2, guiTop + padding + 10);
 		stateLabel.setCentered(true);
+		sizeWarning = new GuiLabel(fontRenderer, "Warning: Large schematics can take a long time to import", guiLeft + guiWidth / 2, guiTop + guiHeight + 3);
+		sizeWarning.setCentered(true);
+		sizeWarning.setVisible(false);
+		sizeWarning.setColour(255, 0, 0);
 		
 		if(importing) {
 			setImporting(true);
@@ -70,6 +76,7 @@ public class GuiSchematic extends GuiScreen {
 		files.draw();
 		schematicName.draw();
 		stateLabel.draw();
+		sizeWarning.draw();
 		
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
@@ -78,6 +85,17 @@ public class GuiSchematic extends GuiScreen {
 	public void updateScreen() {
 		if(importing) {
 			stateLabel.setText(getProgressString());
+		}
+		
+		if(files.getSelected() != null) {
+			GuiLoadableItem selected = getSelectedItem();
+			long schematicSize = getSchematicSize(selected.getName());
+			
+			if(schematicSize > SIZE_THRESHOLD) {
+				sizeWarning.setVisible(true);
+			} else {
+				sizeWarning.setVisible(false);
+			}
 		}
 		
 		super.updateScreen();
@@ -99,7 +117,7 @@ public class GuiSchematic extends GuiScreen {
 		if(button.enabled) {
 			if(button.id == 0) {
 				if(files.getSelected() != null) {
-					GuiLoadableItem selected = (GuiLoadableItem)files.getSelected();
+					GuiLoadableItem selected = getSelectedItem();
 					importingName = selected.getName();
 					importSchematic(selected.getName());
 				}
@@ -114,6 +132,7 @@ public class GuiSchematic extends GuiScreen {
 			schematicName.setText(importingName);
 			schematicName.setVisible(true);
 			stateLabel.setVisible(true);
+			sizeWarning.setVisible(false);
 			window.setHeight(50);
 			this.importing = true;
 		} else {
@@ -121,6 +140,7 @@ public class GuiSchematic extends GuiScreen {
 			files.setVisible(true);
 			schematicName.setVisible(false);
 			stateLabel.setVisible(false);
+			sizeWarning.setVisible(false);
 			window.setHeight(166);
 			this.importing = false;
 		}
@@ -214,5 +234,15 @@ public class GuiSchematic extends GuiScreen {
 		}
 		
 		return progress;
+	}
+	
+	private long getSchematicSize(String name) {
+		final String path = Constants.SCHEMATICS_PATH + name + ".schematic";
+		
+		return (new File(path)).length();
+	}
+	
+	private GuiLoadableItem getSelectedItem() {
+		return (GuiLoadableItem)files.getSelected();
 	}
 }

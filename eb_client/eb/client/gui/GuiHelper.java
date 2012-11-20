@@ -14,4 +14,8 @@ public class GuiHelper {
 		return (pointY > y && pointY < (y + height)
 				&& pointX > x && pointX < (x + width));
 	}
+	
+	public static int RGBtoInt(int red, int green, int blue) {
+		return (((((255 << 8) + red) << 8) + green) << 8) + blue;
+	}
 }
