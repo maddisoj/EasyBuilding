@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Observable;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -15,6 +16,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import eb.client.GhostKeyHandler;
+import eb.client.macros.SchematicImporter.State;
 import eb.common.Helper;
 
 import net.minecraft.src.Block;
@@ -27,7 +29,7 @@ import net.minecraft.src.Vec3;
  * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
  */
 
-public class Macro implements Runnable {
+public class Macro extends Observable implements Runnable {
 	//how often to send an instruction in milliseconds
 	private final static int PLAYBACK_SPEED = 25;
 	
@@ -194,6 +196,8 @@ public class Macro implements Runnable {
 					moveSequenceStart = -1;
 				}
 			}
+			
+			notifyProgress(moveSequenceStart, instructions.size());
 		}
 	}
 	
@@ -201,6 +205,49 @@ public class Macro implements Runnable {
 		double milliseconds = instructions.size() * PLAYBACK_SPEED;
 		
 		return (milliseconds / 1000.0);
+	}
+	
+	public void translateRawData(short width, short length, short height, byte[] blocks, byte[] meta) {
+		boolean leftToRight = true;
+		
+		int progress = 0;
+		final int maxProgress = width * length * height;
+		
+		for(int y = 0; y < height; ++y) {
+			for(int z = 0; z < length; ++z) {
+				for(int x =  (leftToRight ? 0 : width - 1);
+						x != (leftToRight ? width : -1);
+						x += (leftToRight ? 1 : -1)) {
+					
+					int index = y * width * length + z * width + x;
+					
+					if(blocks[index] != 0) {
+						addInstruction(new PlaceInstruction(blocks[index], meta[index]));
+					}
+					
+					if(leftToRight && x != width - 1) {
+						addInstruction(new MoveInstruction(Direction.RIGHT));
+					} else if(!leftToRight && x != 0) {
+						addInstruction(new MoveInstruction(Direction.LEFT));
+					}
+					
+					notifyProgress(++progress, maxProgress);
+				}
+				
+				leftToRight = !leftToRight;
+				addInstruction(new MoveInstruction(Direction.FORWARD));
+				
+				notifyProgress(++progress, maxProgress);
+			}
+			
+			addInstruction(new MoveInstruction(Direction.UP));
+			
+			for(int i = 0; i < length; ++i) {
+				addInstruction(new MoveInstruction(Direction.BACKWARD));
+			}
+			
+			notifyProgress(++progress, maxProgress);
+		}
 	}
 	
 	private MoveInstruction getMoveInstructionAt(int index) {
@@ -214,5 +261,10 @@ public class Macro implements Runnable {
 		}
 		
 		return null;
+	}
+	
+	private void notifyProgress(int progress, int maxProgress) {
+		setChanged();
+		notifyObservers((float)progress / (float)maxProgress);
 	}
 }

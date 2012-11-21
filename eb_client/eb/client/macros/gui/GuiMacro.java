@@ -84,6 +84,7 @@ public class GuiMacro extends GuiScreen {
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		files.mouseMoved(mouseX, mouseY);
+		usageList.mouseMoved(mouseX, mouseY);
 
 		window.draw();
         files.draw();

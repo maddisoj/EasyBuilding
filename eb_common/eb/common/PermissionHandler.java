@@ -2,16 +2,26 @@ package eb.common;
 
 import java.util.HashSet;
 
+import net.minecraft.server.MinecraftServer;
+
+import cpw.mods.fml.server.FMLServerHandler;
+
 public class PermissionHandler {
 	private static final PermissionHandler INSTANCE = new PermissionHandler();
 	private HashSet<String> permissions;
+	private boolean singlePlayer;
 	
 	private PermissionHandler() {
 		permissions = new HashSet<String>();
+		singlePlayer = false;
 	}
 	
-	public static PermissionHandler instance() {
+	public static PermissionHandler instance() {		
 		return INSTANCE;
+	}
+	
+	public void setSinglePlayer(boolean singlePlayer) {
+		this.singlePlayer = singlePlayer;
 	}
 	
 	public void add(String name) {
@@ -23,6 +33,6 @@ public class PermissionHandler {
 	}
 	
 	public boolean hasPermission(String name) {
-		return permissions.contains(name);
+		return singlePlayer || permissions.contains(name);
 	}
 }

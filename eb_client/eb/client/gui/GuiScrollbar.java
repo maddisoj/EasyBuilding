@@ -14,9 +14,8 @@ import net.minecraft.src.Tessellator;
  * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
  */
 
-public class GuiScrollbar extends Gui {
+public class GuiScrollbar extends GuiComponent {
 	private Minecraft mc;
-	private int x, y, width, height;
 	private int amountScrolled;
 	private int containedHeight;
 	private int scrollbarHeight;
@@ -25,19 +24,19 @@ public class GuiScrollbar extends Gui {
 	
 	public GuiScrollbar(Minecraft mc, int x, int y, int width, int height) {
 		this.mc = mc;
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
 		this.containedHeight = height;
 		this.amountScrolled = 0;
 		this.scrollbarHeight = 0;
 		this.hover = false;
 		this.selected = false;
 		this.lastMouseY = -1;
+		
+		setDimensions(x, y, width, height);
 	}
 	
 	public void draw() {
+		if(!isVisible()) { return; }
+		
 		Tessellator tess = Tessellator.instance;
 		
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -78,10 +77,6 @@ public class GuiScrollbar extends Gui {
 		if(containedHeight != 0) {
 			scrollbarHeight = (int)Math.floor(((float)height / (float)containedHeight) * (float)height);
 		}
-	}
-
-	public int getWidth() {
-		return width;
 	}
 	
 	public void mouseMoved(int mouseX, int mouseY) {

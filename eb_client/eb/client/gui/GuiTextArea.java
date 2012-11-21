@@ -16,11 +16,10 @@ import cpw.mods.fml.common.asm.SideOnly;
  */
 
 @SideOnly(Side.CLIENT)
-public class GuiTextArea extends Gui {
-	private static final int TEXT_COLOUR = 14737632;
+public class GuiTextArea extends GuiComponent {
+	private static final int TEXT_COLOUR = GuiHelper.RGBtoInt(255, 255, 255);
 	
 	private FontRenderer fontRenderer;
-	private int x, y, width, height;
 	private String text;
 	private int lines;
 	private boolean focused, enabled;
@@ -29,16 +28,14 @@ public class GuiTextArea extends Gui {
 	
 	public GuiTextArea(FontRenderer fontRenderer, int x, int y, int width, int height) {
 		this.fontRenderer = fontRenderer;
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
 		this.text = "";
 		this.focused = false;
 		this.enabled = true;
 		this.cursorCounter = 0;
 		this.cursorPosition = 0;
 		this.maxLength = 100;
+		
+		setDimensions(x, y, width, height);
 		
 		lines = (int)Math.floor((double)(this.height - 2) / (double)fontRenderer.FONT_HEIGHT);
 	}
@@ -61,14 +58,6 @@ public class GuiTextArea extends Gui {
 	
 	public void setMaxLength(int length) {
 		maxLength = length;
-	}
-	
-	public int getWidth() {
-		return width;
-	}
-	
-	public int getHeight() {
-		return height;
 	}
 	
 	public void keyTyped(char key, int keyCode) {
@@ -130,6 +119,8 @@ public class GuiTextArea extends Gui {
 	}
 	
 	public void draw() {
+		if(!isVisible()) { return; }
+		
 		drawRect(x - 1, y - 1, x + width + 1, y + height + 1, -6250336);
         drawRect(x, y, x + width, y + height, -16777216);
         

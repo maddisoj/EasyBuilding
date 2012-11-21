@@ -1,11 +1,15 @@
 package eb.client.macros.gui;
 
 import java.io.File;
+import java.util.Observable;
+import java.util.Observer;
 
 import eb.client.GhostBlockHandler;
 import eb.client.gui.GuiLabel;
 import eb.client.gui.GuiList;
+import eb.client.gui.GuiProgressBar;
 import eb.client.gui.GuiWindow;
+import eb.client.macros.Macro;
 import eb.client.macros.MacroIO;
 import eb.client.macros.SchematicImporter;
 import eb.client.macros.SchematicImporter.State;
@@ -13,13 +17,14 @@ import eb.common.Constants;
 import net.minecraft.src.GuiButton;
 import net.minecraft.src.GuiScreen;
 
-public class GuiSchematic extends GuiScreen {
+public class GuiSchematic extends GuiScreen implements Observer {
 	private static final long SIZE_THRESHOLD = 7168L;
 	
 	private GuiWindow window;
 	private GuiList files;
 	private GuiButton importButton;
 	private GuiLabel schematicName, stateLabel, sizeWarning;
+	private GuiProgressBar progress;
 	private SchematicImporter importer;
 	private long time;
 	private boolean importing;
@@ -63,6 +68,9 @@ public class GuiSchematic extends GuiScreen {
 		sizeWarning.setVisible(false);
 		sizeWarning.setColour(255, 0, 0);
 		
+		progress = new GuiProgressBar(guiLeft + padding, 0, guiWidth - 2 * padding, stateLabel.getHeight() + 2);
+		progress.setVisible(false);
+		
 		if(importing) {
 			setImporting(true);
 		}
@@ -75,6 +83,7 @@ public class GuiSchematic extends GuiScreen {
 		window.draw();
 		files.draw();
 		schematicName.draw();
+		progress.draw();
 		stateLabel.draw();
 		sizeWarning.draw();
 		
@@ -87,7 +96,7 @@ public class GuiSchematic extends GuiScreen {
 			stateLabel.setText(getProgressString());
 		}
 		
-		if(files.getSelected() != null) {
+		if(!importing && files.getSelected() != null) {
 			GuiLoadableItem selected = getSelectedItem();
 			long schematicSize = getSchematicSize(selected.getName());
 			
@@ -133,33 +142,41 @@ public class GuiSchematic extends GuiScreen {
 			schematicName.setVisible(true);
 			stateLabel.setVisible(true);
 			sizeWarning.setVisible(false);
+			progress.setVisible(true);
 			window.setHeight(50);
 			this.importing = true;
+			
+			importer.getMacro().addObserver(this);
 		} else {
 			importButton.drawButton = true;
 			files.setVisible(true);
 			schematicName.setVisible(false);
 			stateLabel.setVisible(false);
 			sizeWarning.setVisible(false);
+			progress.setVisible(false);
 			window.setHeight(166);
 			this.importing = false;
+
+			importer.getMacro().deleteObserver(this);
 		}
 		
 		window.setLeft((width - window.getWidth()) / 2);
 		window.setTop((height - window.getHeight()) / 2);
-		schematicName.setY(window.getTop() + window.getHeight() / 2 - 10);
-		stateLabel.setY(window.getTop() + window.getHeight() / 2);
+		schematicName.setY(window.getTop() + window.getHeight() / 2 - schematicName.getHeight());
+		progress.setY(schematicName.getY() + schematicName.getHeight() + 1);
+		stateLabel.setY(progress.getY() + 1);
 	}
 	
 	private void importSchematic(String name) {
 		final String path = Constants.SCHEMATICS_PATH + name + ".schematic";
-		
+				
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				GhostBlockHandler.instance().setMacro(importer.importSchematic(path));
+				importer.importSchematic(path);
 				setImporting(false);
 				GhostBlockHandler.instance().sendMessage("Successfully imported " + importingName);
+				GhostBlockHandler.instance().setMacro(importer.getMacro());
 			}
 		}).start();
 		
@@ -244,5 +261,10 @@ public class GuiSchematic extends GuiScreen {
 	
 	private GuiLoadableItem getSelectedItem() {
 		return (GuiLoadableItem)files.getSelected();
+	}
+
+	@Override
+	public void update(Observable observable, Object arg) {
+		progress.setProgress((Float)arg);
 	}
 }

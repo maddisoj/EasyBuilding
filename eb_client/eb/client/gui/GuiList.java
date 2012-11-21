@@ -23,24 +23,20 @@ import net.minecraft.src.Tessellator;
  */
 
 @SideOnly(Side.CLIENT)
-public class GuiList extends Gui {
+public class GuiList extends GuiComponent {
 	private Minecraft mc;
 	private ArrayList<GuiListItem> items;
 	private GuiScreen parent;
-	private int x, y, width, height, padding;
+	private int padding;
 	private GuiListItem hover, selected;
 	private GuiScrollbar scrollbar;
 	private int containedHeight;
-	private boolean drawBackground, visible;
+	private boolean drawBackground;
 	
 	public GuiList(Minecraft mc, GuiScreen parent, int x, int y, int width, int height) {
 		this.mc = mc;
 		this.items = new ArrayList<GuiListItem>();
 		this.parent = parent;
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
 		this.padding = 0;
 		this.hover = null;
 		this.selected = null;
@@ -48,7 +44,8 @@ public class GuiList extends Gui {
 		this.scrollbar = new GuiScrollbar(mc, x + width - 6, y, 6, height);
 		this.scrollbar.setContainedHeight(containedHeight);
 		this.drawBackground = true;
-		this.visible = true;
+		
+		setDimensions(x, y, width, height);
 	}
 	
 	public void addItem(GuiListItem item) {
@@ -66,12 +63,8 @@ public class GuiList extends Gui {
 		drawBackground = draw;
 	}
 	
-	public void setVisible(boolean visible) {
-		this.visible = visible;
-	}
-	
 	public void draw() {
-		if(!visible) { return; }
+		if(!isVisible()) { return; }
 		
 		if(drawBackground) {
 			drawRect(x, y, x + width, y + height, Integer.MIN_VALUE);
@@ -146,10 +139,6 @@ public class GuiList extends Gui {
 		}
 		
 		scrollbar.mouseMoved(mouseX, mouseY);
-	}
-
-	public int getHeight() {
-		return height;
 	}
 	
 	public void clear() {

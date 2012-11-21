@@ -3,46 +3,35 @@ package eb.client.gui;
 import net.minecraft.src.FontRenderer;
 import net.minecraft.src.Gui;
 
-public class GuiLabel extends Gui {
+public class GuiLabel extends GuiComponent {
 	private FontRenderer fontRenderer;
 	private String text;
-	private boolean visible, centered;
-	private int x, y, red, green, blue;
+	private boolean centered;
+	private int red, green, blue;
 	
 	public GuiLabel(FontRenderer fontRenderer, String text, int x, int y) {
 		this.fontRenderer = fontRenderer;
 		this.text = text;
-		this.x = x;
-		this.y = y;
 		this.red = 255;
 		this.green = 255;
 		this.blue = 255;
 		this.visible = true;
 		this.centered = false;
+		
+		setDimensions(x, y, fontRenderer.getStringWidth(text), fontRenderer.FONT_HEIGHT);
 	}
 	
 	public void setText(String text) {
 		this.text = text;
+		width = fontRenderer.getStringWidth(text);
 	}
 	
 	public String getText() {
 		return text;
 	}
 	
-	public void setVisible(boolean visible) {
-		this.visible = visible;
-	}
-	
 	public void setCentered(boolean centered) {
 		this.centered = centered;
-	}
-	
-	public void setX(int X) {
-		x = X;
-	}
-	
-	public void setY(int Y) {
-		y = Y;
 	}
 	
 	public void setColour(int red, int green, int blue) {
@@ -52,14 +41,14 @@ public class GuiLabel extends Gui {
 	}
 	
 	public void draw() {
-		if(visible) {
-			int colour = GuiHelper.RGBtoInt(red, green, blue);
-			
-			if(centered) {
-				drawCenteredString(fontRenderer, text, x, y, colour);
-			} else {
-				fontRenderer.drawStringWithShadow(text, x, y, colour);
-			}
+		if(!isVisible()) { return; }
+		
+		int colour = GuiHelper.RGBtoInt(red, green, blue);
+
+		if(centered) {
+			drawCenteredString(fontRenderer, text, x, y, colour);
+		} else {
+			fontRenderer.drawStringWithShadow(text, x, y, colour);
 		}
 	}
 }

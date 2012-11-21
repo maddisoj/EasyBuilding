@@ -17,10 +17,12 @@ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import com.google.common.io.ByteArrayDataInput;
 
 import cpw.mods.fml.common.network.Player;
+import cpw.mods.fml.server.FMLServerHandler;
 import eb.client.TileGhostBlock;
 import eb.common.Constants;
 import eb.common.EasyBuilding;
 import eb.common.Helper;
+import eb.common.PermissionHandler;
 
 /**
  * The packet that lets the server know where the ghost block wants to put a block
@@ -64,6 +66,12 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 	
 	public void handle(INetworkManager manager, Player player) {
 		EntityPlayer entityPlayer = (EntityPlayer)player;
+		
+		if(!PermissionHandler.instance().hasPermission(entityPlayer.username)) {
+			EasyBuilding.sendToPlayer(player, new PacketUpdateGhost(true));
+			return;
+		}
+		
 		World world = entityPlayer.worldObj;
 		ItemStack stack = null;
 		int slot = -1;
