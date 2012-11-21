@@ -63,7 +63,7 @@ public class GuiMenu extends GuiScreen {
 	private void createButtons() {
 		int id = 0;
 		int x = window.getLeft() + buttonPadding;
-		int y = window.getTop() + buttonPadding;
+		int y = window.getTop() + (int)(1.5 * buttonPadding);
 		
 		for(Entry<String, GuiScreen> entry : buttons.entrySet()) {
 			controlList.add(new GuiButton(id++, x, y, window.getWidth() - 2 * buttonPadding, buttonHeight, entry.getKey()));
