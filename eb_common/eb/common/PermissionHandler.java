@@ -10,7 +10,7 @@ public class PermissionHandler {
 		permissions = new HashSet<String>();
 	}
 	
-	public PermissionHandler instance() {
+	public static PermissionHandler instance() {
 		return INSTANCE;
 	}
 	
