@@ -23,53 +23,53 @@ public class GuiSchematic extends GuiScreen implements Observer {
 	private GuiWindow window;
 	private GuiList files;
 	private GuiButton importButton;
-	private GuiLabel schematicName, stateLabel, sizeWarning;
+	private GuiLabel schematicName, sizeWarning;
 	private GuiProgressBar progress;
+	private GuiProcessDialog processDialog;
 	private SchematicImporter importer;
 	private long time;
 	private boolean importing;
 	private String importingName;
+	private int windowPadding, componentPadding;
 	
 	public GuiSchematic() {
 		importer = new SchematicImporter();
 		time = 0;
 		importing = false;
+		windowPadding = 6;
+		componentPadding = 2;
 	}
 	
 	@Override
 	public void initGui() {
-		final int guiWidth = 176;
-		final int guiHeight = 166;
-		final int guiLeft = (width - guiWidth) / 2;
-		final int guiTop = (height - guiHeight) / 2;
-		final int padding = 6;
+		window = new GuiWindow(176, 166);
 		
-		window = new GuiWindow(mc, guiLeft, guiTop, guiWidth, guiHeight);
-		files = new GuiList(mc, this, guiLeft + padding, guiTop + padding, guiWidth - 2 * padding, guiHeight - (23 + 2 * padding));
-		files.setPadding(2);
-		populateFilesList();
-		
+		final int x = window.getX();
+		final int y = window.getY();
+		final int w = window.getWidth();
+		final int h = window.getHeight();
+
 		final int buttonWidth = 100;
 		final int buttonHeight = 20;
-		importButton = new GuiButton(0, guiLeft + guiWidth / 2 - buttonWidth / 2,
-										guiTop + guiHeight - (buttonHeight + padding),
-										buttonWidth,
-										buttonHeight,
-										"Import");
 		
+		files = new GuiList(mc, this, x + windowPadding, y + windowPadding,
+									  w - 2 * windowPadding, h - (buttonHeight + componentPadding + 2 * windowPadding));
+		files.setPadding(2);
+		populateFilesList();	
+
+		importButton = new GuiButton(0, x + (w / 2) - (buttonWidth / 2),
+										files.getY() + files.getHeight() + componentPadding,
+										buttonWidth, buttonHeight,
+										"Import");
 		controlList.add(importButton);
 		
-		schematicName = new GuiLabel(fontRenderer, "", guiLeft + guiWidth / 2, guiTop + padding);
-		schematicName.setCentered(true);
-		stateLabel = new GuiLabel(fontRenderer, "", guiLeft + guiWidth / 2, guiTop + padding + 10);
-		stateLabel.setCentered(true);
-		sizeWarning = new GuiLabel(fontRenderer, "Warning: Large schematics can take a long time to import", guiLeft + guiWidth / 2, guiTop + guiHeight + 3);
+		sizeWarning = new GuiLabel("Warning: Large schematics can take a long time to import",
+								   x + w / 2, y + h + componentPadding);
 		sizeWarning.setCentered(true);
 		sizeWarning.setVisible(false);
 		sizeWarning.setColour(255, 0, 0);
 		
-		progress = new GuiProgressBar(guiLeft + padding, 0, guiWidth - 2 * padding, stateLabel.getHeight() + 2);
-		progress.setVisible(false);
+		processDialog = new GuiProcessDialog("");
 		
 		if(importing) {
 			setImporting(true);
@@ -80,20 +80,20 @@ public class GuiSchematic extends GuiScreen implements Observer {
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		files.mouseMoved(mouseX, mouseY);
 		
-		window.draw();
-		files.draw();
-		schematicName.draw();
-		progress.draw();
-		stateLabel.draw();
-		sizeWarning.draw();
-		
-		super.drawScreen(mouseX, mouseY, partialTicks);
+		if(importing) {
+			processDialog.draw();
+		} else {
+			window.draw();
+			files.draw();
+			sizeWarning.draw();
+			super.drawScreen(mouseX, mouseY, partialTicks);
+		}
 	}
 	
 	@Override
 	public void updateScreen() {
 		if(importing) {
-			stateLabel.setText(getProgressString());
+			processDialog.setProgressText(getProgressString());
 		}
 		
 		if(!importing && files.getSelected() != null) {
@@ -136,35 +136,13 @@ public class GuiSchematic extends GuiScreen implements Observer {
 	
 	private void setImporting(boolean importing) {
 		if(importing) {
-			importButton.drawButton = false;
-			files.setVisible(false);
-			schematicName.setText(importingName);
-			schematicName.setVisible(true);
-			stateLabel.setVisible(true);
-			sizeWarning.setVisible(false);
-			progress.setVisible(true);
-			window.setHeight(50);
 			this.importing = true;
-			
+			processDialog.setLabelText(importingName);
 			importer.getMacro().addObserver(this);
 		} else {
-			importButton.drawButton = true;
-			files.setVisible(true);
-			schematicName.setVisible(false);
-			stateLabel.setVisible(false);
-			sizeWarning.setVisible(false);
-			progress.setVisible(false);
-			window.setHeight(166);
 			this.importing = false;
-
 			importer.getMacro().deleteObserver(this);
 		}
-		
-		window.setLeft((width - window.getWidth()) / 2);
-		window.setTop((height - window.getHeight()) / 2);
-		schematicName.setY(window.getTop() + window.getHeight() / 2 - schematicName.getHeight());
-		progress.setY(schematicName.getY() + schematicName.getHeight() + 1);
-		stateLabel.setY(progress.getY() + 1);
 	}
 	
 	private void importSchematic(String name) {
@@ -265,6 +243,6 @@ public class GuiSchematic extends GuiScreen implements Observer {
 
 	@Override
 	public void update(Observable observable, Object arg) {
-		progress.setProgress((Float)arg);
+		processDialog.setProgress((Float)arg);
 	}
 }

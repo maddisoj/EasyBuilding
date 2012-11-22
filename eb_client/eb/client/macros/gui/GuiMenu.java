@@ -28,7 +28,9 @@ public class GuiMenu extends GuiScreen {
 		final int guiLeft = (width - guiWidth) / 2;
 		final int guiTop = (height - guiHeight) / 2;
 		
-		window = new GuiWindow(mc, guiLeft, guiTop, guiWidth, guiHeight);
+		System.out.println(width);
+		
+		window = new GuiWindow(100, getWindowHeight());
 		createButtons();
 	}
 	
@@ -62,8 +64,8 @@ public class GuiMenu extends GuiScreen {
 	
 	private void createButtons() {
 		int id = 0;
-		int x = window.getLeft() + buttonPadding;
-		int y = window.getTop() + (int)(1.5 * buttonPadding);
+		int x = window.getX() + buttonPadding;
+		int y = window.getY() + (int)(1.5 * buttonPadding);
 		
 		for(Entry<String, GuiScreen> entry : buttons.entrySet()) {
 			controlList.add(new GuiButton(id++, x, y, window.getWidth() - 2 * buttonPadding, buttonHeight, entry.getKey()));

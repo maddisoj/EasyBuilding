@@ -4,12 +4,15 @@ import java.io.File;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.client.FMLClientHandler;
+
 import eb.common.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Gui;
+import net.minecraft.src.ScaledResolution;
 import net.minecraft.src.Tessellator;
 
-public class GuiWindow extends Gui {
+public class GuiWindow extends GuiComponent {
 	//UV coords of each window part
 	private static final int[][] TOP_LEFT_CORNER = new int[][] { { 0, 8 }, { 0, 8 }, };
 	private static final int[][] TOP_RIGHT_CORNER = new int[][] { { 8, 16 }, { 0, 8 }, };
@@ -23,17 +26,20 @@ public class GuiWindow extends Gui {
 	private static final int WINDOW_COLOUR[] = { 198, 198, 198 };
 	
 	private Minecraft mc;
-	private int left, top, width, height;
 	
-	public GuiWindow(Minecraft mc, int x, int y, int width, int height) {
-		this.mc = mc;
-		this.left = x;
-		this.top = y;
-		this.width = width;
-		this.height = height;
+	public GuiWindow(int width, int height) {
+		this(0, 0, width, height);
+		center();
+	}
+	
+	public GuiWindow(int x, int y, int width, int height) {
+		super(x, y, width, height);
+		mc = FMLClientHandler.instance().getClient();
 	}
 	
 	public void draw() {
+		if(!isVisible()) { return; }
+		
 		int texture = mc.renderEngine.getTexture(Constants.GUI_PATH + "window.png");
 		mc.renderEngine.bindTexture(texture);
 		
@@ -41,43 +47,18 @@ public class GuiWindow extends Gui {
 		int edgeHeight = getEdgeHeight();
 		
 		drawEdges();
-		drawCorner(left, top, TOP_LEFT_CORNER);
-		drawCorner(left + edgeWidth + getCornerSize(), top, TOP_RIGHT_CORNER);
-		drawCorner(left + edgeWidth + getCornerSize(), top + edgeHeight + getCornerSize(), BOTTOM_RIGHT_CORNER);
-		drawCorner(left, top + edgeHeight + getCornerSize(), BOTTOM_LEFT_CORNER);
+		drawCorner(x, y, TOP_LEFT_CORNER);
+		drawCorner(x + edgeWidth + getCornerSize(), y, TOP_RIGHT_CORNER);
+		drawCorner(x + edgeWidth + getCornerSize(), y + edgeHeight + getCornerSize(), BOTTOM_RIGHT_CORNER);
+		drawCorner(x, y + edgeHeight + getCornerSize(), BOTTOM_LEFT_CORNER);
 		drawBackground();
 	}
 	
-	public int getHeight() {
-		return height;
-	}
-	
-	public void setHeight(int height) {
-		this.height = height;
-	}
-	
-	public int getWidth() { 
-		return width;
-	}
-	
-	public void setWidth(int width) {
-		this.width = width;
-	}
-	
-	public int getLeft() {
-		return left;
-	}
-	
-	public void setLeft(int left) {
-		this.left = left;
-	}
-	
-	public int getTop() {
-		return top;
-	}
-	
-	public void setTop(int top) {
-		this.top = top;
+	public void center() {
+		ScaledResolution res = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
+		
+		x = (res.getScaledWidth() - width) / 2;
+		y = (res.getScaledHeight() - height) / 2;
 	}
 	
 	private void drawTexturedRect(int x, int y, int width, int height, int[] u, int[] v) {        
@@ -101,16 +82,16 @@ public class GuiWindow extends Gui {
 		int edgeWidth = getEdgeWidth();
 		int edgeHeight = getEdgeHeight();
 		
-		drawTexturedRect(left + cornerSize, top, edgeWidth, cornerSize, TOP_EDGE[0], TOP_EDGE[1]);
-		drawTexturedRect(left, top + cornerSize, cornerSize, edgeHeight, LEFT_EDGE[0], LEFT_EDGE[1]);
-		drawTexturedRect(left + cornerSize, top + edgeHeight + cornerSize, edgeWidth, cornerSize, BOTTOM_EDGE[0], BOTTOM_EDGE[1]);
-		drawTexturedRect(left + edgeWidth + cornerSize, top + cornerSize, cornerSize, edgeHeight, RIGHT_EDGE[0], RIGHT_EDGE[1]);
+		drawTexturedRect(x + cornerSize, y, edgeWidth, cornerSize, TOP_EDGE[0], TOP_EDGE[1]);
+		drawTexturedRect(x, y + cornerSize, cornerSize, edgeHeight, LEFT_EDGE[0], LEFT_EDGE[1]);
+		drawTexturedRect(x + cornerSize, y + edgeHeight + cornerSize, edgeWidth, cornerSize, BOTTOM_EDGE[0], BOTTOM_EDGE[1]);
+		drawTexturedRect(x + edgeWidth + cornerSize, y + cornerSize, cornerSize, edgeHeight, RIGHT_EDGE[0], RIGHT_EDGE[1]);
 	}
 	
 	private void drawBackground() {
 		int colour = GuiHelper.RGBtoInt(WINDOW_COLOUR[0], WINDOW_COLOUR[1], WINDOW_COLOUR[2]);
-		drawRect(left + getCornerSize(), top + getCornerSize(),
-				 left + getEdgeWidth() + getCornerSize(),  top + getEdgeHeight() + getCornerSize(), colour);
+		drawRect(x + getCornerSize(), y + getCornerSize(),
+				 x + getEdgeWidth() + getCornerSize(),  y + getEdgeHeight() + getCornerSize(), colour);
 		
 	}
 	

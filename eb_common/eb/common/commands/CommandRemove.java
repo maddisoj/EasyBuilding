@@ -15,7 +15,6 @@ public class CommandRemove extends CommandBase {
 		return "/" + getCommandName() + " <player>";
 	}
 	
-	@Override
     public int getRequiredPermissionLevel() {
         return 2;
     }

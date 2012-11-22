@@ -42,12 +42,12 @@ import net.minecraft.src.WorldClient;
 
 @SideOnly(Side.CLIENT)
 public class GuiMacro extends GuiScreen {
+	private GuiWindow window;
 	private GuiList files, usageList;
 	private GuiTextField macroName;
 	private GuiTextArea macroDesc;
 	private GuiButton saveButton, loadButton;
 	private GuiListItem selected;
-	private GuiWindow window;
 	
 	@Override
 	public void initGui() {
@@ -78,7 +78,7 @@ public class GuiMacro extends GuiScreen {
 		controlList.add(saveButton);
 		controlList.add(loadButton);
 		
-		window = new GuiWindow(mc, guiLeft, guiTop, guiWidth, guiHeight);
+		window = new GuiWindow(guiLeft, guiTop, guiWidth, guiHeight);
 	}
 
 	@Override

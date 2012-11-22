@@ -27,6 +27,7 @@ import eb.client.macros.MoveInstruction;
 import eb.client.macros.PlaceInstruction;
 import eb.client.macros.gui.GuiMacro;
 import eb.client.macros.gui.GuiMenu;
+import eb.client.macros.gui.GuiSubBlock;
 import eb.client.macros.gui.GuiSchematic;
 import eb.common.Constants;
 import eb.common.Helper;
@@ -63,6 +64,7 @@ public class GhostBlockHandler {
 		menu = new GuiMenu(getClient());
 		menu.addScreen("Load/Save Macro", new GuiMacro());
 		menu.addScreen("Import Schematic", new GuiSchematic());
+		menu.addScreen("Substitute Block", new GuiSubBlock());
 	}
 
 	public static GhostBlockHandler instance() {

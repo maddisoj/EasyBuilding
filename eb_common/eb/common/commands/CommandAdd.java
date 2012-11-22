@@ -17,8 +17,7 @@ public class CommandAdd extends CommandBase {
 		return "/" + getCommandName() + " <player>";
 	}
 	
-	@Override
-    public int getRequiredPermissionLevel() {
+	public int getRequiredPermissionLevel() {
         return 2;
     }
 
