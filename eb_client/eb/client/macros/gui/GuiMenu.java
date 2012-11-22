@@ -22,14 +22,7 @@ public class GuiMenu extends GuiScreen {
 	}
 	
 	@Override
-	public void initGui() {
-		final int guiWidth = 100;
-		final int guiHeight = getWindowHeight();
-		final int guiLeft = (width - guiWidth) / 2;
-		final int guiTop = (height - guiHeight) / 2;
-		
-		System.out.println(width);
-		
+	public void initGui() {		
 		window = new GuiWindow(100, getWindowHeight());
 		createButtons();
 	}

@@ -44,6 +44,7 @@ public class SchematicImporter {
 								   base.getByteArray("Blocks"),
 								   base.getByteArray("Data"));
 			macro.setName(getFileName(path));
+			macro.setDescription("Imported from " + path);
 			
 			state = State.OPTIMZING;
 			macro.optimize();

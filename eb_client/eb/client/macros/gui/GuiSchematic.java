@@ -52,8 +52,8 @@ public class GuiSchematic extends GuiScreen implements Observer {
 		final int buttonWidth = 100;
 		final int buttonHeight = 20;
 		
-		files = new GuiList(mc, this, x + windowPadding, y + windowPadding,
-									  w - 2 * windowPadding, h - (buttonHeight + componentPadding + 2 * windowPadding));
+		files = new GuiList(x + windowPadding, y + windowPadding,
+							w - 2 * windowPadding, h - (buttonHeight + componentPadding + 2 * windowPadding));
 		files.setPadding(2);
 		populateFilesList();	
 
@@ -97,7 +97,7 @@ public class GuiSchematic extends GuiScreen implements Observer {
 		}
 		
 		if(!importing && files.getSelected() != null) {
-			GuiLoadableItem selected = getSelectedItem();
+			GuiFileItem selected = getSelectedItem();
 			long schematicSize = getSchematicSize(selected.getName());
 			
 			if(schematicSize > SIZE_THRESHOLD) {
@@ -126,7 +126,7 @@ public class GuiSchematic extends GuiScreen implements Observer {
 		if(button.enabled) {
 			if(button.id == 0) {
 				if(files.getSelected() != null) {
-					GuiLoadableItem selected = getSelectedItem();
+					GuiFileItem selected = getSelectedItem();
 					importingName = selected.getName();
 					importSchematic(selected.getName());
 				}
@@ -170,7 +170,7 @@ public class GuiSchematic extends GuiScreen implements Observer {
 			
 			for(File file : dir.listFiles()) {
 				if(getFileExtension(file.getName()).equals("schematic")) {
-					files.addItem(new GuiLoadableItem(getFileName(file.getName()), ""));
+					files.addItem(new GuiFileItem(getFileName(file.getName()), ""));
 				}
 			}
 		}
@@ -237,8 +237,8 @@ public class GuiSchematic extends GuiScreen implements Observer {
 		return (new File(path)).length();
 	}
 	
-	private GuiLoadableItem getSelectedItem() {
-		return (GuiLoadableItem)files.getSelected();
+	private GuiFileItem getSelectedItem() {
+		return (GuiFileItem)files.getSelected();
 	}
 
 	@Override

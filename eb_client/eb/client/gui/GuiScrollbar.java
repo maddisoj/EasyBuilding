@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Gui;
+import net.minecraft.src.ScaledResolution;
 import net.minecraft.src.Tessellator;
 
 /**
@@ -15,91 +16,135 @@ import net.minecraft.src.Tessellator;
  */
 
 public class GuiScrollbar extends GuiComponent {
-	private Minecraft mc;
-	private int amountScrolled;
-	private int containedHeight;
-	private int scrollbarHeight;
-	private boolean hover, selected;
-	private int lastMouseY;
+	public static final int HORIZONTAL = 0;
+	public static final int VERTICAL = 1;
 	
-	public GuiScrollbar(Minecraft mc, int x, int y, int width, int height) {
-		this.mc = mc;
-		this.containedHeight = height;
+	private int mode;
+	private int amountScrolled;
+	private int scrollbarLength;
+	private boolean hover, selected;
+	private int deltaMouse;
+	private int step, min, max, value;
+	
+	public GuiScrollbar(int mode, int step, int min, int max) {
+		this.mode = mode;
 		this.amountScrolled = 0;
-		this.scrollbarHeight = 0;
+		this.scrollbarLength = 0;
 		this.hover = false;
 		this.selected = false;
-		this.lastMouseY = -1;
-		
-		setDimensions(x, y, width, height);
+		this.deltaMouse = -1;
+		this.step = step;
+		this.min = min;
+		this.max = max;
+		this.value = 0;
+	}
+	
+	@Override
+	public void setDimensions(int x, int y, int width, int height) {
+		super.setDimensions(x, y, width, height);
+
+		updateScrollbarLength();
+	}
+	
+	public int getValue() {
+		return value;
+	}
+	
+	public int getMax() {
+		return max;
+	}
+	
+	public void setMax(int max) {
+		this.max = max;
+		updateScrollbarLength();
 	}
 	
 	public void draw() {
 		if(!isVisible()) { return; }
-		
-		Tessellator tess = Tessellator.instance;
-		
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		
-		int left = x;
-		int right = x + width;
-		int top = y + amountScrolled;
-		int bottom = y + amountScrolled + scrollbarHeight;
-		
+
+		int[] rect = getScrollbarRect();
+
 		if(selected || hover) {
-			GL11.glColor4f(0.1f, 0.1f, 0.1f, 1.0f);
+			drawRect(rect[0], rect[1], rect[0] + rect[2], rect[1] + rect[3], GuiHelper.RGBtoInt(26, 26, 26));
 		} else {
-			GL11.glColor4f(0.3f, 0.3f, 0.3f, 1.0f);
+			drawRect(rect[0], rect[1], rect[0] + rect[2], rect[1] + rect[3], GuiHelper.RGBtoInt(76, 76, 76));
 		}
-		
-        tess.startDrawingQuads();
-        tess.addVertex(right, top, 0.0);
-        tess.addVertex(left, top, 0.0);
-        tess.addVertex(left, bottom, 0.0);
-        tess.addVertex(right, bottom, 0.0);
-        tess.draw();
-        
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
 	}
 	
 	public void scroll(int amount) { 
 		amountScrolled += amount;
 		
 		amountScrolled = Math.max(0, amountScrolled);
-		amountScrolled = Math.min(height - scrollbarHeight, amountScrolled);
-	}
-
-	public void setContainedHeight(int containedHeight) {
-		containedHeight = Math.max(height, containedHeight);
-		this.containedHeight = containedHeight;
 		
-		scrollbarHeight = containedHeight;
-		if(containedHeight != 0) {
-			scrollbarHeight = (int)Math.floor(((float)height / (float)containedHeight) * (float)height);
+		if(mode == HORIZONTAL) {
+			amountScrolled = Math.min(width - scrollbarLength, amountScrolled);
+		} else {
+			amountScrolled = Math.min(height - scrollbarLength, amountScrolled);
 		}
+		
+		updateValue();
 	}
 	
 	public void mouseMoved(int mouseX, int mouseY) {
-		if(GuiHelper.pointInRect(mouseX, mouseY, x, y + amountScrolled, width, scrollbarHeight)) {
+		int[] rect = getScrollbarRect();
+		
+		if(GuiHelper.pointInRect(mouseX, mouseY, rect[0], rect[1], rect[2], rect[3])) {
 			hover = true;
 			selected = Mouse.isButtonDown(0);
 			
 			if(selected) {
-				scroll(mouseY - lastMouseY);
+				if(mode == HORIZONTAL) {
+					scroll(mouseX - deltaMouse);
+				} else {
+					scroll(mouseY - deltaMouse);
+				}
 			}
 		} else {
 			hover = false;
 			selected = false;
 		}
 		
-		lastMouseY = mouseY;
+		if(mode == HORIZONTAL) {
+			deltaMouse = mouseX;
+		} else {
+			deltaMouse = mouseY;
+		}
 	}
-
-	public float getScroll() {
-		return (float)amountScrolled / (float)height;
+	
+	private int[] getScrollbarRect() {
+		if(mode == HORIZONTAL) {
+			return new int[] { x + amountScrolled, y, scrollbarLength, height };
+		} else {
+			return new int[] { x, y + amountScrolled, width, scrollbarLength };
+		}
 	}
-
-	public float getLength() {
-		return (float)scrollbarHeight / (float)height;
+	
+	private void updateScrollbarLength() {
+		if(max == 0) {
+			if(mode == HORIZONTAL) {
+				scrollbarLength = width;
+			} else {
+				scrollbarLength = height;
+			}
+		} else {
+			if(mode == HORIZONTAL) {
+				scrollbarLength = (int)(width * (step / (float)max));
+			} else {
+				scrollbarLength = (int)(height * (step / (float)max));
+			}
+		}
+	}
+	
+	private void updateValue() {
+		int[] rect = getScrollbarRect();
+		
+		float t = 0;
+		if(mode == HORIZONTAL) {
+			t = (rect[0] / (float)width);
+		} else {
+			t = (rect[1] / (float)height);
+		}
+		
+		value = min + (int)((max - min) * t);
 	}
 }

@@ -9,8 +9,8 @@ public class GuiLabel extends GuiComponent {
 	private boolean centered;
 	private int red, green, blue;
 	
-	public GuiLabel(FontRenderer fontRenderer, String text, int x, int y) {
-		this.fontRenderer = fontRenderer;
+	public GuiLabel(String text, int x, int y) {
+		this.fontRenderer = GuiHelper.getFontRenderer();
 		this.text = text;
 		this.red = 255;
 		this.green = 255;

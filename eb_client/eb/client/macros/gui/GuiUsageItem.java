@@ -2,6 +2,7 @@ package eb.client.macros.gui;
 
 import org.lwjgl.opengl.GL11;
 
+import eb.client.gui.GuiHelper;
 import eb.client.gui.GuiList;
 import eb.client.gui.GuiListItem;
 
@@ -35,7 +36,7 @@ public class GuiUsageItem implements GuiListItem {
 	}
 
 	@Override
-	public void draw(GuiList parent, int x, int y, int width) {
+	public void draw(int x, int y, int width) {
 		RenderHelper.enableGUIStandardItemLighting();
 		
 		GL11.glPushMatrix();
@@ -45,8 +46,8 @@ public class GuiUsageItem implements GuiListItem {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		
 		renderer.zLevel = 200.0F;
-		renderer.renderItemIntoGUI(parent.getFontRenderer(), parent.getRenderEngine(), stack, x, y);
-		renderer.renderItemOverlayIntoGUI(parent.getFontRenderer(), parent.getRenderEngine(), stack, x, y);
+		renderer.renderItemIntoGUI(GuiHelper.getFontRenderer(), GuiHelper.getRenderEngine(), stack, x, y);
+		renderer.renderItemOverlayIntoGUI(GuiHelper.getFontRenderer(), GuiHelper.getRenderEngine(), stack, x, y);
 		renderer.zLevel = 0.0F;
 		
 		GL11.glPopMatrix();

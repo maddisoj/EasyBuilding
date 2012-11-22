@@ -7,7 +7,7 @@ public class GuiSubBlock extends GuiScreen {
 	private GuiWindow window;
 	
 	public GuiSubBlock() {
-		
+		window = new GuiWindow(176, 166);
 	}
 	
 	@Override

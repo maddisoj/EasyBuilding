@@ -1,5 +1,6 @@
 package eb.client.macros.gui;
 
+import java.awt.Scrollbar;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import cpw.mods.fml.common.asm.SideOnly;
 import eb.client.GhostBlockHandler;
 import eb.client.gui.GuiList;
 import eb.client.gui.GuiListItem;
+import eb.client.gui.GuiScrollbar;
 import eb.client.gui.GuiTextArea;
 import eb.client.gui.GuiWindow;
 import eb.client.macros.Macro;
@@ -48,60 +50,62 @@ public class GuiMacro extends GuiScreen {
 	private GuiTextArea macroDesc;
 	private GuiButton saveButton, loadButton;
 	private GuiListItem selected;
+	private GuiScrollbar scrollbar;
 	
 	@Override
 	public void initGui() {
-		final int guiWidth = 176;
-		final int guiHeight = 166;
-		final int guiLeft = (width - guiWidth) / 2;
-		final int guiTop = (height - guiHeight) / 2;
+		final int padding = 6;
+		window = new GuiWindow(176, 166);
 		
-		files = new GuiList(mc, this, guiLeft + 6, guiTop + 6, guiWidth - 12, guiHeight - 60);
+		files = new GuiList(padding, padding,
+							window.getWidth() - 2 * padding, window.getHeight() - 60);
 		files.setPadding(2);
 		populateFilesList();
+		window.addComponent(files);
 		
-		usageList = new GuiList(mc, this, guiLeft + guiWidth + 5, guiTop + 6, 48, guiHeight);
+		usageList = new GuiList(window.getWidth() + padding, padding,
+								48, window.getHeight() - padding);
 		usageList.setPadding(2);
 		usageList.setDrawBackground(false);
 		populateUsageList();
+		window.addComponent(usageList);
 		
-		macroName = new GuiTextField(fontRenderer, guiLeft + 7, guiTop + files.getHeight() + 8, guiWidth - 65, 11);
+		macroName = new GuiTextField(fontRenderer, window.getX() + padding + 1,
+												   window.getY() + files.getHeight() + 8,
+												   window.getWidth() - 65, 11);
 		macroName.setFocused(false);
 		
-		macroDesc = new GuiTextArea(fontRenderer, guiLeft + 7, guiTop + files.getHeight() + 22, guiWidth - 65, 32);
+		macroDesc = new GuiTextArea(fontRenderer, padding + 1, files.getHeight() + 22,
+												  window.getWidth() - 65, 33);
 		macroDesc.setFocused(false);
 		macroDesc.setMaxLength(65);
+		window.addComponent(macroDesc);
 		
-		saveButton = new GuiButton(0, guiLeft + guiWidth - 55, guiTop + files.getHeight() + 10, 50, 20, "Save");
-		loadButton = new GuiButton(1, guiLeft + guiWidth - 55, guiTop + files.getHeight() + 32, 50, 20, "Load");
+		saveButton = new GuiButton(0, window.getX() + macroDesc.getWidth() + (int)(1.5 * padding), window.getY() + files.getHeight() + 10,
+									  50, 20, "Save");
+		loadButton = new GuiButton(1, saveButton.xPosition, saveButton.yPosition + 22, 50, 20, "Load");
 		
 		controlList.add(saveButton);
 		controlList.add(loadButton);
-		
-		window = new GuiWindow(guiLeft, guiTop, guiWidth, guiHeight);
 	}
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		files.mouseMoved(mouseX, mouseY);
-		usageList.mouseMoved(mouseX, mouseY);
+		window.mouseMoved(mouseX, mouseY);
 
 		window.draw();
-        files.draw();
         macroName.drawTextBox();
-        macroDesc.draw();
-        usageList.draw();
         
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 	
 	@Override
-	public void updateScreen() {
+	public void updateScreen() {		
 		GuiListItem item = files.getSelected();
 		
 		if(item != null && !item.equals(selected)) {
 			selected = item;
-			GuiLoadableItem macroItem = (GuiLoadableItem)item;
+			GuiFileItem macroItem = (GuiFileItem)item;
 			
 			if(!macroItem.isLoaded()) {
 				Macro macro = getSelectedMacro();
@@ -163,7 +167,7 @@ public class GuiMacro extends GuiScreen {
 		if(button.enabled) {
 			if(button.id == 0) { //Save button
 				if(button.displayString.equals("Overwrite")) {
-					((GuiLoadableItem)selected).setLoaded(false);
+					((GuiFileItem)selected).setLoaded(false);
 				}
 				
 				saveMacro(macroName.getText().trim(), macroDesc.getText().trim());
@@ -192,7 +196,7 @@ public class GuiMacro extends GuiScreen {
 			files.clear();
 			
 			for(File file : dir.listFiles()) {
-				files.addItem(new GuiLoadableItem(getMacroName(file.getName()), ""));
+				files.addItem(new GuiFileItem(getMacroName(file.getName()), ""));
 			}
 		}
 	}
@@ -216,7 +220,7 @@ public class GuiMacro extends GuiScreen {
 	}
 	
 	private Macro getSelectedMacro() {
-		GuiLoadableItem item = (GuiLoadableItem)selected;
+		GuiFileItem item = (GuiFileItem)selected;
 		return MacroIO.load(item.getName());
 	}
 	

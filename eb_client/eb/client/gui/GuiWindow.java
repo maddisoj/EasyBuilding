@@ -1,6 +1,7 @@
 package eb.client.gui;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 
@@ -26,17 +27,21 @@ public class GuiWindow extends GuiComponent {
 	private static final int WINDOW_COLOUR[] = { 198, 198, 198 };
 	
 	private Minecraft mc;
+	private ArrayList<GuiComponent> components;
 	
 	public GuiWindow(int width, int height) {
 		this(0, 0, width, height);
-		center();
+		centerOnScreen();
 	}
 	
 	public GuiWindow(int x, int y, int width, int height) {
 		super(x, y, width, height);
+		
 		mc = FMLClientHandler.instance().getClient();
+		components = new ArrayList<GuiComponent>();
 	}
 	
+	@Override
 	public void draw() {
 		if(!isVisible()) { return; }
 		
@@ -52,13 +57,26 @@ public class GuiWindow extends GuiComponent {
 		drawCorner(x + edgeWidth + getCornerSize(), y + edgeHeight + getCornerSize(), BOTTOM_RIGHT_CORNER);
 		drawCorner(x, y + edgeHeight + getCornerSize(), BOTTOM_LEFT_CORNER);
 		drawBackground();
+		
+		drawComponents();
 	}
 	
-	public void center() {
+	@Override
+	public void mouseMoved(int mouseX, int mouseY) {
+		for(GuiComponent component : components) {
+			component.mouseMoved(mouseX - x, mouseY - y);
+		}
+	}
+	
+	public void centerOnScreen() {
 		ScaledResolution res = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
 		
 		x = (res.getScaledWidth() - width) / 2;
 		y = (res.getScaledHeight() - height) / 2;
+	}
+	
+	public void addComponent(GuiComponent component) {
+		components.add(component);
 	}
 	
 	private void drawTexturedRect(int x, int y, int width, int height, int[] u, int[] v) {        
@@ -93,6 +111,17 @@ public class GuiWindow extends GuiComponent {
 		drawRect(x + getCornerSize(), y + getCornerSize(),
 				 x + getEdgeWidth() + getCornerSize(),  y + getEdgeHeight() + getCornerSize(), colour);
 		
+	}
+	
+	private void drawComponents() {
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x, y, 0.0f);
+		
+		for(GuiComponent component : components) {
+			component.draw();
+		}
+		
+		GL11.glPopMatrix();
 	}
 	
 	private static int getCornerSize() {

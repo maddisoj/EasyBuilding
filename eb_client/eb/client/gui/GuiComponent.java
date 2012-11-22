@@ -1,5 +1,7 @@
 package eb.client.gui;
 
+import cpw.mods.fml.client.FMLClientHandler;
+import net.minecraft.src.FontRenderer;
 import net.minecraft.src.Gui;
 
 public abstract class GuiComponent extends Gui {
@@ -61,6 +63,8 @@ public abstract class GuiComponent extends Gui {
 	public void setHeight(int height) {
 		this.height = height;
 	}
+	
+	public void mouseMoved(int mouseX, int mouseY) {}
 	
 	public abstract void draw();
 }

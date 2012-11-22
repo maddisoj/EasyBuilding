@@ -1,11 +1,13 @@
 package eb.client.macros.gui;
 
 import net.minecraft.src.FontRenderer;
+import net.minecraft.src.Gui;
 
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
+import eb.client.gui.GuiHelper;
 import eb.client.gui.GuiList;
 import eb.client.gui.GuiListItem;
 
@@ -17,13 +19,13 @@ import eb.client.gui.GuiListItem;
  */
 
 @SideOnly(Side.CLIENT)
-public class GuiLoadableItem implements GuiListItem {
+public class GuiFileItem extends Gui implements GuiListItem {
 	private static final int MAX_STRING_LENGTH = 30;
 	private String name, desc;
 	private boolean mouseover, selected;
 	private boolean loaded;
 	
-	public GuiLoadableItem(String name, String desc) {
+	public GuiFileItem(String name, String desc) {
 		this.name = name;
 		this.desc = desc;
 		this.loaded = false;
@@ -35,12 +37,12 @@ public class GuiLoadableItem implements GuiListItem {
 	}
 
 	@Override
-	public void draw(GuiList parent, int x, int y, int width) {
+	public void draw(int x, int y, int width) {
 		if(mouseover || selected) {
-			parent.drawRect(x, y - 1, x + width, y + getHeight() - 2, Integer.MIN_VALUE);
+			drawRect(x, y - 1, x + width, y + getHeight() - 2, Integer.MIN_VALUE);
 		}
 		
-		FontRenderer font = parent.getFontRenderer();
+		FontRenderer font = GuiHelper.getFontRenderer();
 		
 		String renderedName = name;
 		if(font.getStringWidth(renderedName) > width) {
