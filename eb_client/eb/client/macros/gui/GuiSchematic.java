@@ -4,18 +4,16 @@ import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 
+import net.minecraft.src.GuiButton;
+import net.minecraft.src.GuiScreen;
 import eb.client.GhostBlockHandler;
 import eb.client.gui.GuiLabel;
 import eb.client.gui.GuiList;
 import eb.client.gui.GuiProgressBar;
 import eb.client.gui.GuiWindow;
-import eb.client.macros.Macro;
-import eb.client.macros.MacroIO;
 import eb.client.macros.SchematicImporter;
 import eb.client.macros.SchematicImporter.State;
 import eb.common.Constants;
-import net.minecraft.src.GuiButton;
-import net.minecraft.src.GuiScreen;
 
 public class GuiSchematic extends GuiScreen implements Observer {
 	private static final long SIZE_THRESHOLD = 7168L;

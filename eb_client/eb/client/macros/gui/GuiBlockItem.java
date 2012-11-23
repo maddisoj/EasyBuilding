@@ -7,31 +7,29 @@ import net.minecraft.src.RenderItem;
 
 import org.lwjgl.opengl.GL11;
 
+import eb.client.gui.GuiGridItem;
 import eb.client.gui.GuiHelper;
-import eb.client.gui.GuiListItem;
 
-/**
- * A list item representing the amount of items used by a macro
- * 
- * @author Lerp
- * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
- */
-
-public class GuiUsageItem implements GuiListItem {
+public class GuiBlockItem implements GuiGridItem {
 	private static RenderItem renderer = new RenderItem();
 	private ItemStack stack;
 	
-	public GuiUsageItem(ItemStack stack) {
+	public GuiBlockItem(ItemStack stack) {
 		this.stack = stack;
 	}
 	
+	@Override
+	public int getWidth() {
+		return 20;
+	}
+
 	@Override
 	public int getHeight() {
 		return 20;
 	}
 
 	@Override
-	public void draw(int x, int y, int width) {
+	public void draw(int x, int y) {
 		RenderHelper.enableGUIStandardItemLighting();
 		
 		GL11.glPushMatrix();
@@ -42,17 +40,11 @@ public class GuiUsageItem implements GuiListItem {
 		
 		renderer.zLevel = 200.0F;
 		renderer.renderItemIntoGUI(GuiHelper.getFontRenderer(), GuiHelper.getRenderEngine(), stack, x, y);
-		renderer.renderItemOverlayIntoGUI(GuiHelper.getFontRenderer(), GuiHelper.getRenderEngine(), stack, x, y);
 		renderer.zLevel = 0.0F;
 		
 		GL11.glPopMatrix();
 		
 		RenderHelper.disableStandardItemLighting();
 	}
-
-	@Override
-	public void setMouseOver(boolean mouseover) {}
-
-	@Override
-	public void setSelected(boolean selected) {}
+	
 }

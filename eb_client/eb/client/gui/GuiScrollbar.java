@@ -1,12 +1,6 @@
 package eb.client.gui;
 
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.src.Gui;
-import net.minecraft.src.ScaledResolution;
-import net.minecraft.src.Tessellator;
 
 /**
  * A generic scrollbar

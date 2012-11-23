@@ -1,21 +1,19 @@
 package eb.client;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
-
-import org.lwjgl.input.Keyboard;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityClientPlayerMP;
-import net.minecraft.src.ItemStack;
 import net.minecraft.src.KeyBinding;
 import net.minecraft.src.MovingObjectPosition;
-import net.minecraft.src.Packet15Place;
+
+import org.lwjgl.input.Keyboard;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
+import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.asm.SideOnly;
-import cpw.mods.fml.common.Side;
 import eb.client.macros.Direction;
 import eb.common.Helper;
 

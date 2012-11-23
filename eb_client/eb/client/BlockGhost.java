@@ -2,18 +2,14 @@ package eb.client;
 
 import java.util.Random;
 
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
-
-import eb.common.Helper;
 import net.minecraft.src.AxisAlignedBB;
-import net.minecraft.src.Block;
 import net.minecraft.src.BlockContainer;
-import net.minecraft.src.CreativeTabs;
-import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Material;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+import eb.common.Helper;
 
 /**
  * The block class for the Ghost cursor

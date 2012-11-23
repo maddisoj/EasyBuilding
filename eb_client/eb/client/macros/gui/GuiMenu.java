@@ -1,14 +1,12 @@
 package eb.client.macros.gui;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map.Entry;
-
-import eb.client.gui.GuiWindow;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.GuiButton;
 import net.minecraft.src.GuiScreen;
+import eb.client.gui.GuiWindow;
 
 public class GuiMenu extends GuiScreen {
 	private HashMap<String, GuiScreen> buttons;

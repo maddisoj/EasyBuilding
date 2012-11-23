@@ -1,6 +1,5 @@
 package eb.client.macros;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import eb.client.GhostBlockHandler;
 
 /**

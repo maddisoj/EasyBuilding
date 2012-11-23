@@ -1,34 +1,20 @@
 package eb.client;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityClientPlayerMP;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.InventoryPlayer;
-import net.minecraft.src.ItemStack;
 import net.minecraft.src.Packet;
-import net.minecraft.src.Packet15Place;
-import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import cpw.mods.fml.client.FMLClientHandler;
 import eb.client.macros.Direction;
-import eb.client.macros.IInstruction;
 import eb.client.macros.Macro;
 import eb.client.macros.MacroIO;
 import eb.client.macros.MoveInstruction;
 import eb.client.macros.PlaceInstruction;
 import eb.client.macros.gui.GuiMacro;
 import eb.client.macros.gui.GuiMenu;
-import eb.client.macros.gui.GuiSubBlock;
 import eb.client.macros.gui.GuiSchematic;
+import eb.client.macros.gui.GuiSubBlock;
 import eb.common.Constants;
 import eb.common.Helper;
 import eb.common.network.PacketPlaceBlock;
@@ -240,6 +226,10 @@ public class GhostBlockHandler {
 			sendMessage("Macro changed to \"" + macro.getName() + "\"");
 			sendMessage(macro.getName() + " has a " + macro.getRuntime() + " second runtime");
 		}
+	}
+	
+	public Macro getMacro() {
+		return macro;
 	}
 
 	public void sendMessage(String message) {

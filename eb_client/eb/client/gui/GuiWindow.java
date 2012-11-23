@@ -1,17 +1,14 @@
 package eb.client.gui;
 
-import java.io.File;
 import java.util.ArrayList;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.src.ScaledResolution;
 
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.client.FMLClientHandler;
-
 import eb.common.Constants;
-import net.minecraft.client.Minecraft;
-import net.minecraft.src.Gui;
-import net.minecraft.src.ScaledResolution;
-import net.minecraft.src.Tessellator;
 
 public class GuiWindow extends GuiComponent {
 	//UV coords of each window part

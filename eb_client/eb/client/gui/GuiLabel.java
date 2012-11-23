@@ -1,7 +1,6 @@
 package eb.client.gui;
 
 import net.minecraft.src.FontRenderer;
-import net.minecraft.src.Gui;
 
 public class GuiLabel extends GuiComponent {
 	private FontRenderer fontRenderer;

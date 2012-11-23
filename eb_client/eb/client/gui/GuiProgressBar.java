@@ -2,9 +2,6 @@ package eb.client.gui;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import net.minecraft.src.Gui;
-
 public class GuiProgressBar extends GuiComponent {
 	private float progress;
 	private GuiLabel label;

@@ -2,18 +2,8 @@ package eb.client.gui;
 
 import java.util.ArrayList;
 
-import org.lwjgl.input.Mouse;
-
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.src.FontRenderer;
-import net.minecraft.src.Gui;
-import net.minecraft.src.GuiScreen;
-import net.minecraft.src.GuiSlot;
-import net.minecraft.src.RenderEngine;
-import net.minecraft.src.Tessellator;
 
 /**
  * A list component

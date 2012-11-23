@@ -1,27 +1,13 @@
 package eb.client;
 
-import java.nio.FloatBuffer;
-
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.src.Block;
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModelBase;
-import net.minecraft.src.ModelRenderer;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntitySpecialRenderer;
 import net.minecraft.src.World;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.IItemRenderer;
-import net.minecraftforge.client.IItemRenderer.ItemRenderType;
-import net.minecraftforge.client.MinecraftForgeClient;
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+
+import org.lwjgl.opengl.GL11;
+
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
 /**

@@ -3,7 +3,6 @@ package eb.client.macros.gui;
 import eb.client.gui.GuiLabel;
 import eb.client.gui.GuiProgressBar;
 import eb.client.gui.GuiWindow;
-import net.minecraft.src.GuiScreen;
 
 public class GuiProcessDialog {
 	private GuiWindow window;

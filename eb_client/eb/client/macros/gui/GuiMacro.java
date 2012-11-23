@@ -1,13 +1,14 @@
 package eb.client.macros.gui;
 
-import java.awt.Scrollbar;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
+
+import net.minecraft.src.GuiButton;
+import net.minecraft.src.GuiScreen;
+import net.minecraft.src.GuiTextField;
+import net.minecraft.src.ItemStack;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
@@ -20,22 +21,6 @@ import eb.client.gui.GuiWindow;
 import eb.client.macros.Macro;
 import eb.client.macros.MacroIO;
 import eb.common.Constants;
-import net.minecraft.client.Minecraft;
-import net.minecraft.src.FontRenderer;
-import net.minecraft.src.GuiAchievements;
-import net.minecraft.src.GuiButton;
-import net.minecraft.src.GuiMainMenu;
-import net.minecraft.src.GuiOptions;
-import net.minecraft.src.GuiScreen;
-import net.minecraft.src.GuiShareToLan;
-import net.minecraft.src.GuiStats;
-import net.minecraft.src.GuiTextField;
-import net.minecraft.src.GuiYesNo;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.StatCollector;
-import net.minecraft.src.StatList;
-import net.minecraft.src.WorldClient;
 
 /**
  * @author Lerp
@@ -45,7 +30,8 @@ import net.minecraft.src.WorldClient;
 @SideOnly(Side.CLIENT)
 public class GuiMacro extends GuiScreen {
 	private GuiWindow window;
-	private GuiList files, usageList;
+	private GuiList<GuiFileItem> files;
+	private GuiList<GuiUsageItem> usageList;
 	private GuiTextField macroName;
 	private GuiTextArea macroDesc;
 	private GuiButton saveButton, loadButton;
@@ -57,14 +43,14 @@ public class GuiMacro extends GuiScreen {
 		final int padding = 6;
 		window = new GuiWindow(176, 166);
 		
-		files = new GuiList(padding, padding,
-							window.getWidth() - 2 * padding, window.getHeight() - 60);
+		files = new GuiList<GuiFileItem>(padding, padding,
+										 window.getWidth() - 2 * padding, window.getHeight() - 60);
 		files.setPadding(2);
 		populateFilesList();
 		window.addComponent(files);
 		
-		usageList = new GuiList(window.getWidth() + padding, padding,
-								48, window.getHeight() - padding);
+		usageList = new GuiList<GuiUsageItem>(window.getWidth() + padding, padding,
+											  48, window.getHeight() - padding);
 		usageList.setPadding(2);
 		usageList.setDrawBackground(false);
 		usageList.setScrollbarMode(GuiList.OVERFLOW);

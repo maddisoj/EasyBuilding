@@ -1,24 +1,12 @@
 package eb.client.macros;
 
 import java.io.BufferedWriter;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
-import java.util.zip.GZIPInputStream;
-
-import net.minecraft.src.NBTBase;
-import net.minecraft.src.NBTTagCompound;
 
 import eb.common.Constants;
 

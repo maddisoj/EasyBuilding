@@ -1,10 +1,10 @@
 package eb.client.gui;
 
-import org.lwjgl.input.Keyboard;
-
 import net.minecraft.src.ChatAllowedCharacters;
 import net.minecraft.src.FontRenderer;
-import net.minecraft.src.Gui;
+
+import org.lwjgl.input.Keyboard;
+
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 

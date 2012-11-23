@@ -2,13 +2,9 @@ package eb.client.macros.gui;
 
 import net.minecraft.src.FontRenderer;
 import net.minecraft.src.Gui;
-
-import org.lwjgl.opengl.GL11;
-
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
 import eb.client.gui.GuiHelper;
-import eb.client.gui.GuiList;
 import eb.client.gui.GuiListItem;
 
 /**

@@ -1,7 +1,5 @@
 package eb.client.gui;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import net.minecraft.src.FontRenderer;
 import net.minecraft.src.Gui;
 
 public abstract class GuiComponent extends Gui {

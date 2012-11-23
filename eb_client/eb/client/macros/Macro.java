@@ -1,28 +1,16 @@
 package eb.client.macros;
 
-import java.io.File;
-import java.io.PrintStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Observable;
-import java.util.Scanner;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import eb.client.GhostKeyHandler;
-import eb.client.macros.SchematicImporter.State;
-import eb.common.Helper;
-
-import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.Vec3;
+import eb.client.GhostKeyHandler;
 
 /**
  * @author Lerp

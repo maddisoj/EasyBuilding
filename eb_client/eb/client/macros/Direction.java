@@ -1,7 +1,5 @@
 package eb.client.macros;
 
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.Vec3;
 
 /**
  * @author Lerp
