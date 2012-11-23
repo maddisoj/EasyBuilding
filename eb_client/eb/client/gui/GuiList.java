@@ -24,11 +24,15 @@ import net.minecraft.src.Tessellator;
 
 @SideOnly(Side.CLIENT)
 public class GuiList<T extends GuiListItem> extends GuiComponent {
+	public static final int ALWAYS = 0;
+	public static final int OVERFLOW = 1;
+	
 	private ArrayList<T> items;
 	private GuiListItem hover, selected;
 	private boolean drawBackground;
 	private GuiScrollbar scrollbar;
 	private int padding;
+	private int scrollbarMode;
 	
 	public GuiList(int x, int y, int width, int height) {
 		this.items = new ArrayList<T>();
@@ -42,9 +46,8 @@ public class GuiList<T extends GuiListItem> extends GuiComponent {
 	}
 
 	public void addItem(T item) {
-		items.add(item);
-		
-		updateMaxValue();
+		items.add(item);		
+		updateScrollbar();
 	}
 	
 	public void setPadding(int padding) {
@@ -55,6 +58,12 @@ public class GuiList<T extends GuiListItem> extends GuiComponent {
 		drawBackground = draw;
 	}
 	
+	public void setScrollbarMode(int mode) {
+		scrollbarMode = mode;
+		updateScrollbar();
+	}
+	
+	@Override
 	public void draw() {
 		if(!isVisible()) { return; }
 		
@@ -131,6 +140,7 @@ public class GuiList<T extends GuiListItem> extends GuiComponent {
 	private void setupScrollbar() {
 		scrollbar = new GuiScrollbar(GuiScrollbar.VERTICAL, 1, 0, 0);
 		scrollbar.setDimensions(x + width - 6, y, 6, height);
+		scrollbarMode = ALWAYS;
 	}
 	
 	private void setHoverItem(GuiListItem item) {
@@ -155,6 +165,21 @@ public class GuiList<T extends GuiListItem> extends GuiComponent {
 			return;
 		}
 		
-		//int itemsPerView = (height)
+		GuiListItem item = items.get(0);
+		
+		int itemsPerView = (int)Math.floor(height / (double)item.getHeight());
+		int max = Math.max(0, items.size() - itemsPerView + 1);
+		
+		scrollbar.setMax(max);
+	}
+	
+	private void updateScrollbar() {
+		updateMaxValue();
+		
+		if(scrollbarMode == ALWAYS) {
+			scrollbar.setVisible(true);
+		} else {
+			scrollbar.setVisible(scrollbar.getMax() >= 1);
+		}
 	}
 }

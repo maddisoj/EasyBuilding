@@ -67,6 +67,7 @@ public class GuiMacro extends GuiScreen {
 								48, window.getHeight() - padding);
 		usageList.setPadding(2);
 		usageList.setDrawBackground(false);
+		usageList.setScrollbarMode(GuiList.OVERFLOW);
 		populateUsageList();
 		window.addComponent(usageList);
 		
