@@ -50,7 +50,7 @@ public class GhostBlockHandler {
 		menu = new GuiMenu(getClient());
 		menu.addScreen("Load/Save Macro", new GuiMacro());
 		menu.addScreen("Import Schematic", new GuiSchematic());
-		menu.addScreen("Substitute Block", new GuiSubBlock());
+		//menu.addScreen("Substitute Block", new GuiSubBlock());
 	}
 
 	public static GhostBlockHandler instance() {
