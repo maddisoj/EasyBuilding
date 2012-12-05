@@ -107,8 +107,8 @@ public class Macro extends Observable implements Runnable {
 		ArrayList<ItemStack> usage = new ArrayList<ItemStack>();
 		
 		for(IInstruction instruction : instructions) {
-			if(instruction instanceof PlaceInstruction) {
-				PlaceInstruction placeInstruction = (PlaceInstruction)instruction;
+			if(instruction instanceof UseInstruction) {
+				UseInstruction placeInstruction = (UseInstruction)instruction;
 				int id = placeInstruction.getItemID();
 				int metadata = placeInstruction.getMetadata();
 				boolean found = false;
@@ -210,7 +210,7 @@ public class Macro extends Observable implements Runnable {
 					int index = y * width * length + z * width + x;
 					
 					if(blocks[index] != 0) {
-						addInstruction(new PlaceInstruction(blocks[index], meta[index]));
+						addInstruction(new UseInstruction(blocks[index], meta[index]));
 					}
 					
 					if(leftToRight && x != width - 1) {

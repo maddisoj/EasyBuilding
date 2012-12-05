@@ -9,15 +9,15 @@ import eb.client.GhostBlockHandler;
  * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
  */
 
-public class PlaceInstruction implements IInstruction {
+public class UseInstruction implements IInstruction {
 	private int itemID;
 	private int metadata;
 	
-	public PlaceInstruction() {
+	public UseInstruction() {
 		this(-1, 0);
 	}
 	
-	public PlaceInstruction(int itemID, int metadata) {
+	public UseInstruction(int itemID, int metadata) {
 		this.itemID = itemID;
 		this.metadata = metadata;
 	}
