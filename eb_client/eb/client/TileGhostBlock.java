@@ -17,6 +17,7 @@ import cpw.mods.fml.common.asm.SideOnly;
 public class TileGhostBlock extends TileEntity {
 	private int blockID;
 	private int metadata;
+	private int mode;
 
 	public TileGhostBlock() {
 		blockID = 0;
@@ -54,6 +55,10 @@ public class TileGhostBlock extends TileEntity {
 		}
 
 		return null;
+	}
+	
+	public void render(double x, double y, double z) {
+		GhostBlockHandler.instance().render(this, x, y, z);
 	}
 
 	private ItemStack searchInventory(InventoryPlayer inventory, int itemID) {

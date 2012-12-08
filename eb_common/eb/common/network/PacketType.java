@@ -10,7 +10,8 @@ import com.google.common.io.ByteStreams;
 
 public enum PacketType {
 	PLACE_BLOCK(PacketPlaceBlock.class),
-	TILE_UPDATE(PacketUpdateGhost.class);
+	TILE_UPDATE(PacketUpdateGhost.class),
+	REMOVE_BLOCK(PacketRemoveBlock.class);
 
 	private Class<? extends PacketEB> packetClass;
 

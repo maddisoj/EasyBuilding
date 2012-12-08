@@ -1,19 +1,10 @@
 package eb.common;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
-import cpw.mods.fml.common.registry.GameRegistry;
-import eb.client.TileGhostBlock;
 import eb.common.network.PacketEB;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.EntityClientPlayerMP;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.Packet;
-import net.minecraft.src.World;
 
 /**
  * @author Lerp

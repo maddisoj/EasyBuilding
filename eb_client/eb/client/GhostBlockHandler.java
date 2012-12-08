@@ -1,11 +1,6 @@
 package eb.client;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.src.EntityClientPlayerMP;
-import net.minecraft.src.Packet;
-import net.minecraft.src.Vec3;
-import net.minecraft.src.World;
-import cpw.mods.fml.client.FMLClientHandler;
+import net.minecraft.src.ItemStack;
 import eb.client.macros.Direction;
 import eb.client.macros.Macro;
 import eb.client.macros.MacroIO;
@@ -14,12 +9,12 @@ import eb.client.macros.UseInstruction;
 import eb.client.macros.gui.GuiMacro;
 import eb.client.macros.gui.GuiMenu;
 import eb.client.macros.gui.GuiSchematic;
-import eb.client.macros.gui.GuiSubBlock;
 import eb.client.mode.BuildMode;
+import eb.client.mode.DuplicatorMode;
 import eb.client.mode.GhostBlockMode;
+import eb.client.mode.RemoveMode;
 import eb.common.Constants;
-import eb.common.Helper;
-import eb.common.network.PacketPlaceBlock;
+import eb.common.EBHelper;
 
 /**
  * The class responsible for tracking and operating the client's ghost block
@@ -39,7 +34,9 @@ public class GhostBlockHandler {
 	private GhostBlockHandler() {
 		autoplace = false;
 		recording = false;
-		mode = new BuildMode();
+		//mode = new RemoveMode();
+		//mode = new BuildMode();
+		mode = new DuplicatorMode();
 		
 		menu = new GuiMenu(EBHelper.getClient());
 		menu.addScreen("Load/Save Macro", new GuiMacro());
@@ -49,6 +46,10 @@ public class GhostBlockHandler {
 
 	public static GhostBlockHandler instance() {
 		return INSTANCE;
+	}
+	
+	public void render(TileGhostBlock ghost, double x, double y, double z) {
+		mode.render(ghost, x, y, z);
 	}
 	
 	public void move(Direction direction) {
@@ -68,13 +69,13 @@ public class GhostBlockHandler {
 	}
 
 	public void update(int blockID, int metadata, boolean failed) {
-		if(!failed) {
+		if(!failed) {			
 			if(mode.isGhostPlaced()) {
 				int x = mode.getGhostX();
 				int y = mode.getGhostY();
 				int z = mode.getGhostZ();
 				
-				TileGhostBlock ghost = Helper.getGhostBlock(EBHelper.getWorld(), x, y, z);
+				TileGhostBlock ghost = EBHelper.getGhostBlock(EBHelper.getWorld(), x, y, z);
 				
 				if(ghost != null) {
 					ghost.setBlockId(blockID);
@@ -93,11 +94,10 @@ public class GhostBlockHandler {
 	}
 
 	public void placeBlock() {
-		mode.clearItem();
-		mode.use();
+		ItemStack current = EBHelper.getCurrentItem();
 		
-		if(recording) {
-			macro.addInstruction(new UseInstruction(mode.getItemID(), mode.getItemMetadata()));
+		if(current != null) {
+			placeBlock(current.itemID, current.getItemDamage());
 		}
 	}
 	
@@ -106,7 +106,7 @@ public class GhostBlockHandler {
 		mode.use();
 		
 		if(recording) {
-			macro.addInstruction(new UseInstruction(mode.getItemID(), mode.getItemMetadata()));
+			macro.addInstruction(new UseInstruction(itemID, metadata));
 		}
 	}
 
@@ -144,7 +144,7 @@ public class GhostBlockHandler {
 			}
 			
 			if(!macro.isPlaying()) {
-				mode.setLockedDirection(Helper.getPlayerDirection(EBHelper.getPlayer()));
+				mode.setLockedDirection(EBHelper.getPlayerDirection(EBHelper.getPlayer()));
 				macro.play();
 			} else {
 				macro.stop();

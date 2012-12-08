@@ -2,10 +2,6 @@ package eb.common;
 
 import java.util.HashSet;
 
-import net.minecraft.server.MinecraftServer;
-
-import cpw.mods.fml.server.FMLServerHandler;
-
 public class PermissionHandler {
 	private static final PermissionHandler INSTANCE = new PermissionHandler();
 	private HashSet<String> permissions;

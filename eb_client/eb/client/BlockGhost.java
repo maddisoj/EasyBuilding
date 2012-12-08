@@ -9,7 +9,7 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
-import eb.common.Helper;
+import eb.common.EBHelper;
 
 /**
  * The block class for the Ghost cursor
@@ -29,7 +29,7 @@ public class BlockGhost extends BlockContainer {
 	
 	@Override
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
-        TileGhostBlock ghostBlock = Helper.getGhostBlock(world, x, y, z);
+        TileGhostBlock ghostBlock = EBHelper.getGhostBlock(world, x, y, z);
         if(ghostBlock == null) {
         	return null;
         }

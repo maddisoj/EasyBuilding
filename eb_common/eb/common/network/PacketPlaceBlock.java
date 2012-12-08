@@ -3,25 +3,18 @@ package eb.common.network;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.INetworkManager;
 import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 
 import com.google.common.io.ByteArrayDataInput;
 
 import cpw.mods.fml.common.network.Player;
-import cpw.mods.fml.server.FMLServerHandler;
-import eb.client.TileGhostBlock;
-import eb.common.Constants;
+import eb.common.EBHelper;
 import eb.common.EasyBuilding;
-import eb.common.Helper;
 import eb.common.PermissionHandler;
 
 /**
@@ -41,11 +34,11 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 		metadata = 0;
 	}
 	
-	public PacketPlaceBlock(int X, int Y, int Z, int itemID, int metadata) {
+	public PacketPlaceBlock(int x, int y, int z, int itemID, int metadata) {
 		super(PacketType.PLACE_BLOCK, true);
-		x = X;
-		y = Y;
-		z = Z;
+		this.x = x;
+		this.y = y;
+		this.z = z;
 		this.itemID = itemID;
 		this.metadata = metadata;
 	}
@@ -64,14 +57,9 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 		dos.writeInt(metadata);
 	}	
 	
+	@Override
 	public void handle(INetworkManager manager, Player player) {
-		EntityPlayer entityPlayer = (EntityPlayer)player;
-		
-		if(!PermissionHandler.instance().hasPermission(entityPlayer.username)) {
-			EasyBuilding.sendToPlayer(player, new PacketUpdateGhost(true));
-			return;
-		}
-		
+		EntityPlayer entityPlayer = (EntityPlayer)player;		
 		World world = entityPlayer.worldObj;
 		ItemStack stack = null;
 		int slot = -1;
@@ -83,7 +71,7 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 			slot = searchInventory(entityPlayer.inventory, itemID, metadata);
 			
 			if(slot == -1 || slot > entityPlayer.inventory.getSizeInventory()) {
-				EasyBuilding.sendToPlayer(player, new PacketUpdateGhost(true));
+				EBHelper.sendToPlayer(player, new PacketUpdateGhost(true));
 				return;
 			}
 			
@@ -91,7 +79,7 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 		}
 		
 		if(!stack.tryPlaceItemIntoWorld(entityPlayer, world, x, y - 1, z, 1, x, y, z)) {
-			EasyBuilding.sendToPlayer(player, new PacketUpdateGhost(true));
+			EBHelper.sendToPlayer(player, new PacketUpdateGhost(true));
 			return;
 		}
 
@@ -102,7 +90,7 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 		int blockID = world.getBlockId(x, y, z);
 		int metadata = world.getBlockMetadata(x, y, z);
 		
-		EasyBuilding.sendToPlayer(player, new PacketUpdateGhost(blockID, metadata));
+		EBHelper.sendToPlayer(player, new PacketUpdateGhost(blockID, metadata));
 	}
 	
 	private int searchInventory(InventoryPlayer inventory, int itemID, int metadata) {

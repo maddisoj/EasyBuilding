@@ -1,10 +1,8 @@
 package eb.common;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.ICommandManager;
 import net.minecraft.src.ServerCommandManager;
 import net.minecraft.src.ServerConfigurationManager;
-import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
@@ -17,12 +15,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.Player;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.server.FMLServerHandler;
-import eb.client.BlockGhost;
 import eb.common.commands.CommandAdd;
 import eb.common.commands.CommandRemove;
 import eb.common.network.PacketEB;
@@ -71,15 +64,6 @@ public class EasyBuilding {
 				PermissionHandler.instance().add((String)username);
 			}
 		}
-	}
-	
-	@ServerStarted
-	public void serverStarted(FMLServerStartedEvent event) {
-		
-	}
-	
-	public static void sendToPlayer(Player player, PacketEB packet) {
-		proxy.sendToPlayer(player, packet);
 	}
 	
 	private void addCommands(ServerCommandManager manager) {

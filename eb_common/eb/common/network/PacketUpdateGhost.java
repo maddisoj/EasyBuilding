@@ -5,8 +5,6 @@ import java.io.IOException;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.INetworkManager;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 
 import com.google.common.io.ByteArrayDataInput;
 

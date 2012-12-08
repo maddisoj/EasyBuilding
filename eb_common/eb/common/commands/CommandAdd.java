@@ -1,11 +1,9 @@
 package eb.common.commands;
 
-import cpw.mods.fml.server.FMLServerHandler;
-import eb.common.PermissionHandler;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.CommandBase;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.ICommandSender;
+import eb.common.PermissionHandler;
 
 public class CommandAdd extends CommandBase {
 	@Override

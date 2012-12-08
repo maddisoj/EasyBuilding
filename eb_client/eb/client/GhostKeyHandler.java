@@ -15,7 +15,7 @@ import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.asm.SideOnly;
 import eb.client.macros.Direction;
-import eb.common.Helper;
+import eb.common.EBHelper;
 
 /**
  * @author Lerp
@@ -68,7 +68,7 @@ public class GhostKeyHandler extends KeyHandler {
 				MovingObjectPosition target = mc.objectMouseOver;
 				if(target == null) { return; }
 				
-				int[] pos = Helper.getPosition(target.blockX, target.blockY, target.blockZ, target.sideHit);
+				int[] pos = EBHelper.getPosition(target.blockX, target.blockY, target.blockZ, target.sideHit);
 				GhostBlockHandler.instance().place(pos[0], pos[1], pos[2]);
 			} else if(kb.keyDescription.equals("Ghost Forward")) {
 				GhostBlockHandler.instance().move(Direction.FORWARD);
