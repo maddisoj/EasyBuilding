@@ -14,6 +14,7 @@ import eb.client.gui.GuiWindow;
 import eb.client.macros.SchematicImporter;
 import eb.client.macros.SchematicImporter.State;
 import eb.common.Constants;
+import eb.common.EBHelper;
 
 public class GuiSchematic extends GuiScreen implements Observer {
 	private static final long SIZE_THRESHOLD = 7168L;
@@ -53,7 +54,7 @@ public class GuiSchematic extends GuiScreen implements Observer {
 		files = new GuiList(x + windowPadding, y + windowPadding,
 							w - 2 * windowPadding, h - (buttonHeight + componentPadding + 2 * windowPadding));
 		files.setPadding(2);
-		populateFilesList();	
+		populateFilesList();
 
 		importButton = new GuiButton(0, x + (w / 2) - (buttonWidth / 2),
 										files.getY() + files.getHeight() + componentPadding,
@@ -110,7 +111,7 @@ public class GuiSchematic extends GuiScreen implements Observer {
 	
 	@Override
 	protected void mouseClicked(int x, int y, int button) {
-		files.mouseClicked(x, y, button);		
+		files.mouseClicked(x, y, button);
 		super.mouseClicked(x, y, button);
     }
 	
@@ -151,7 +152,7 @@ public class GuiSchematic extends GuiScreen implements Observer {
 			public void run() {
 				importer.importSchematic(path);
 				setImporting(false);
-				GhostBlockHandler.instance().sendMessage("Successfully imported " + importingName);
+				EBHelper.printMessage("Successfully imported " + importingName);
 				GhostBlockHandler.instance().setMacro(importer.getMacro());
 			}
 		}).start();

@@ -1,5 +1,7 @@
 package eb.client;
 
+import java.util.EnumSet;
+
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.TileEntity;
@@ -9,32 +11,34 @@ import net.minecraft.src.World;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.ITickHandler;
+import cpw.mods.fml.common.TickType;
+import eb.common.Constants;
 
 /**
  * @author Lerp
  * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
  */
 
-public class GhostBlockRenderer extends TileEntitySpecialRenderer {
-	public static final int RENDER_ID = RenderingRegistry.getNextAvailableRenderId();
-	private RenderBlocks renderer;
-	
-	public GhostBlockRenderer() {
-		renderer = new RenderBlocks();
-	}
-	
+public class GhostBlockRenderer implements ITickHandler {
 	@Override
-	public void onWorldChange(World world) {
-		renderer.blockAccess = world;
+	public void tickStart(EnumSet<TickType> type, Object... tickData) {}
+
+	@Override
+	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
+		if(type.contains(TickType.RENDER)) {
+			//GhostBlockHandler.instance().render();
+		}
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTick) {
-		render((TileGhostBlock)te, x, y, z, partialTick);
+	public EnumSet<TickType> ticks() {
+		return EnumSet.of(TickType.RENDER);
 	}
-	
-	public void render(TileGhostBlock entity, double x, double y, double z, float partialTick) {		
-		entity.render(x, y, z);
+
+	@Override
+	public String getLabel() {
+		return Constants.MOD_NAME + ".render";
 	}
 	
 	private void renderTopFace(double[] min, double[] max) {

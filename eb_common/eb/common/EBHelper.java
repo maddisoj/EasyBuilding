@@ -4,15 +4,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityClientPlayerMP;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.TileEntity;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
-import eb.client.TileGhostBlock;
 import eb.common.network.PacketEB;
 
 /**
@@ -53,16 +49,6 @@ public class EBHelper {
 		
 		return playerDirection;
 	}
-	
-	@SideOnly(Side.CLIENT)
-	public static TileGhostBlock getGhostBlock(World world, int x, int y, int z) {
-		TileEntity entity = world.getBlockTileEntity(x, y, z);
-		if(!(entity instanceof TileGhostBlock)) {
-			return null;
-		}
-		
-		return (TileGhostBlock)entity;
-	}
 
 	public static void sendToServer(PacketEB packet) {
 		if(packet != null) {
@@ -74,7 +60,7 @@ public class EBHelper {
 		if(packet != null) {
 			 PacketDispatcher.sendPacketToPlayer(packet.toCustomPayload(), player);
 		}
-	}	
+	}
 	
 	public static Minecraft getClient() {
 		return FMLClientHandler.instance().getClient();
@@ -102,5 +88,11 @@ public class EBHelper {
 		}
 		
 		return null;
+	}
+	
+	public static void printMessage(String message) {
+		if(getPlayer() != null) {
+			getPlayer().addChatMessage(message);
+		}
 	}
 }

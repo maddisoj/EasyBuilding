@@ -1,5 +1,4 @@
-package eb.client.macros;
-
+package eb.client;
 
 /**
  * @author Lerp

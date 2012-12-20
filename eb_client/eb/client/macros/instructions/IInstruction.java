@@ -1,4 +1,4 @@
-package eb.client.macros;
+package eb.client.macros.instructions;
 
 /**
  * The interface for a macro instruction
@@ -11,5 +11,4 @@ public interface IInstruction {
 	public abstract void execute();
 	public abstract String getParameters();
 	public abstract boolean parseParameters(String[] parameters);
-	public abstract boolean shouldSync();
 }

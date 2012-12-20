@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import eb.client.macros.instructions.IInstruction;
 import eb.common.Constants;
 
 /**

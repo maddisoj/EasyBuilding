@@ -55,11 +55,11 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 		super.getData(dos);
 		dos.writeInt(itemID);
 		dos.writeInt(metadata);
-	}	
+	}
 	
 	@Override
 	public void handle(INetworkManager manager, Player player) {
-		EntityPlayer entityPlayer = (EntityPlayer)player;		
+		EntityPlayer entityPlayer = (EntityPlayer)player;
 		World world = entityPlayer.worldObj;
 		ItemStack stack = null;
 		int slot = -1;
@@ -71,7 +71,6 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 			slot = searchInventory(entityPlayer.inventory, itemID, metadata);
 			
 			if(slot == -1 || slot > entityPlayer.inventory.getSizeInventory()) {
-				EBHelper.sendToPlayer(player, new PacketUpdateGhost(true));
 				return;
 			}
 			
@@ -79,7 +78,6 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 		}
 		
 		if(!stack.tryPlaceItemIntoWorld(entityPlayer, world, x, y - 1, z, 1, x, y, z)) {
-			EBHelper.sendToPlayer(player, new PacketUpdateGhost(true));
 			return;
 		}
 
@@ -89,8 +87,6 @@ public class PacketPlaceBlock extends PacketGhostPosition {
 
 		int blockID = world.getBlockId(x, y, z);
 		int metadata = world.getBlockMetadata(x, y, z);
-		
-		EBHelper.sendToPlayer(player, new PacketUpdateGhost(blockID, metadata));
 	}
 	
 	private int searchInventory(InventoryPlayer inventory, int itemID, int metadata) {

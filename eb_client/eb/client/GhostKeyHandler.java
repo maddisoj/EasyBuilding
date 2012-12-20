@@ -14,7 +14,7 @@ import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.asm.SideOnly;
-import eb.client.macros.Direction;
+import eb.common.Constants;
 import eb.common.EBHelper;
 
 /**
@@ -36,7 +36,6 @@ public class GhostKeyHandler extends KeyHandler {
 		new KeyBinding("Ghost Down", Keyboard.KEY_NUMPAD6),
 		new KeyBinding("Place Block", Keyboard.KEY_RETURN),
 		new KeyBinding("Toggle Recording", Keyboard.KEY_NUMPAD7),
-		new KeyBinding("Toggle Autoplace", Keyboard.KEY_NUMPAD8),
 		new KeyBinding("Play Macro", Keyboard.KEY_NUMPAD9),
 		new KeyBinding("Open Macro UI", Keyboard.KEY_DECIMAL),
 	};
@@ -47,29 +46,25 @@ public class GhostKeyHandler extends KeyHandler {
 	
 	private static boolean controlEnabled = true;
 
-	public GhostKeyHandler() {		
+	public GhostKeyHandler() {
 		super(keyBindings, repeats);
 	}
 
 	@Override
 	public String getLabel() {
-		return "GhostKeyHandler";
-	}	
+		return Constants.MOD_NAME + ".KeyHandler";
+	}
 
 	@Override
 	public void keyDown(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd, boolean isRepeat) {
-		if(!tickEnd) { return; }
+		if(!tickEnd && EBHelper.getWorld() != null) { return; }
 		
 		Minecraft mc = FMLClientHandler.instance().getClient();
 		EntityClientPlayerMP player = mc.thePlayer;
 
 		if(controlEnabled) {
-			if(kb.keyDescription.equals("Place Ghost") && controlEnabled) {
-				MovingObjectPosition target = mc.objectMouseOver;
-				if(target == null) { return; }
-				
-				int[] pos = EBHelper.getPosition(target.blockX, target.blockY, target.blockZ, target.sideHit);
-				GhostBlockHandler.instance().place(pos[0], pos[1], pos[2]);
+			if(kb.keyDescription.equals("Place Ghost")) {
+				GhostBlockHandler.instance().place();
 			} else if(kb.keyDescription.equals("Ghost Forward")) {
 				GhostBlockHandler.instance().move(Direction.FORWARD);
 			} else if(kb.keyDescription.equals("Ghost Backward")) {
@@ -83,16 +78,14 @@ public class GhostKeyHandler extends KeyHandler {
 			} else if(kb.keyDescription.equals("Ghost Down")) {
 				GhostBlockHandler.instance().move(Direction.DOWN);
 			} else if(kb.keyDescription.equals("Place Block")) {
-				GhostBlockHandler.instance().placeBlock();
+				GhostBlockHandler.instance().use();
 			} else if(kb.keyDescription.equals("Toggle Recording")) {
 				GhostBlockHandler.instance().toggleRecording();
-			}  else if (kb.keyDescription.equals("Toggle Autoplace")) {
-				GhostBlockHandler.instance().toggleAutoplace();
 			}
 		}
 		
 		if(kb.keyDescription.equals("Play Macro")) {
-				GhostBlockHandler.instance().playMacro();
+			GhostBlockHandler.instance().playMacro();
 		} else if(kb.keyDescription.equals("Open Macro UI")) {
 			GhostBlockHandler.instance().openMacroGui();
 		}

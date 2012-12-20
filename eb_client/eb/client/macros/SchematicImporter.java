@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 
+import eb.client.mode.BuildMode;
+
 import net.minecraft.src.NBTBase;
 import net.minecraft.src.NBTTagCompound;
 
@@ -18,7 +20,7 @@ public class SchematicImporter {
 	private State state;
 	
 	public SchematicImporter() {
-		macro = new Macro();
+		macro = null;
 		state = State.IDLE;
 	}
 	
@@ -36,13 +38,13 @@ public class SchematicImporter {
 		
 		try {
 			NBTTagCompound base = (NBTTagCompound)NBTBase.readNamedTag(input);
-			short width = base.getShort("Width");			
+			short width = base.getShort("Width");
 			short length = base.getShort("Length");
 			short height = base.getShort("Height");
 			
-			macro.translateRawData(base.getShort("Width"), base.getShort("Length"), base.getShort("Height"),
-								   base.getByteArray("Blocks"),
-								   base.getByteArray("Data"));
+			macro = BuildMode.translateRawData(base.getShort("Width"), base.getShort("Length"), base.getShort("Height"),
+											   base.getByteArray("Blocks"),
+											   base.getByteArray("Data"));
 			macro.setName(getFileName(path));
 			macro.setDescription("Imported from " + path);
 			

@@ -1,13 +1,10 @@
 package eb.client;
 
-import net.minecraftforge.common.Configuration;
-import cpw.mods.fml.client.registry.ClientRegistry;
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.registry.TickRegistry;
 import eb.common.CommonProxy;
-import eb.common.Constants;
 
 /**
  * @author Lerp
@@ -15,32 +12,14 @@ import eb.common.Constants;
  */
 
 public class ClientProxy extends CommonProxy {
-	public static BlockGhost ghostBlock;
-	
-	public void preInit(FMLPreInitializationEvent event) {
-		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
-		
-		config.load();
-		
-		Constants.GHOST_BLOCK_ID = config.getBlock("ghostBlock", 2008).getInt(2008);
-		
-		config.save();
-	}
-	
-	public void init(FMLInitializationEvent event) {
-		ghostBlock = new BlockGhost(Constants.GHOST_BLOCK_ID);
-		GameRegistry.registerBlock(ghostBlock);
-	}
-	
-	public void registerKeyBindings() {
+	@Override
+	public void registerKeyHandler() {
 		KeyBindingRegistry.registerKeyBinding(new GhostKeyHandler());
+		//TickRegistry.registerTickHandler(new GhostBlockRenderer(), Side.CLIENT);
 	}
 	
-	public void registerRenderInformation() {
-		ClientRegistry.bindTileEntitySpecialRenderer(TileGhostBlock.class, new GhostBlockRenderer());
-	}
-	
-	public void registerTileEntities() {
-		GameRegistry.registerTileEntity(TileGhostBlock.class, "tileGhostBlock");
+	@Override
+	public void registerRenderEvent() {
+		MinecraftForge.EVENT_BUS.register(GhostBlockHandler.instance());
 	}
 }

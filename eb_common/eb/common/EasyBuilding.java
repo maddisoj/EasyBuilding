@@ -32,22 +32,19 @@ import eb.common.network.PacketHandler;
 @NetworkMod(channels = { "EasyBuilding" }, clientSideRequired = false, serverSideRequired = false, packetHandler = PacketHandler.class)
 public class EasyBuilding {
 	@Instance("EasyBuilding")
-	public static EasyBuilding instance;	
+	public static EasyBuilding instance;
 	
 	@SidedProxy(clientSide = "eb.client.ClientProxy", serverSide = "eb.common.CommonProxy")
 	public static CommonProxy proxy;
 	
 	@PreInit
 	public void preInit(FMLPreInitializationEvent event) {
-		proxy.preInit(event);
-		proxy.registerKeyBindings();
+		proxy.registerKeyHandler();
 	}
 	
 	@Init
 	public void init(FMLInitializationEvent event) {
-		proxy.init(event);	
-		proxy.registerTileEntities();
-		proxy.registerRenderInformation();
+		proxy.registerRenderEvent();
 	}
 	
 	@ServerStarting
@@ -58,7 +55,7 @@ public class EasyBuilding {
 		
 		if(server.isSinglePlayer()) {
 			PermissionHandler.instance().setSinglePlayer(true);
-		} else {			
+		} else {
 			ServerConfigurationManager configManager = server.getConfigurationManager();
 			for(Object username : configManager.getOps()) {
 				PermissionHandler.instance().add((String)username);

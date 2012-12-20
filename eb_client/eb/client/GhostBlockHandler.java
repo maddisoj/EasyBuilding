@@ -1,19 +1,20 @@
 package eb.client;
 
 import net.minecraft.src.ItemStack;
-import eb.client.macros.Direction;
+import net.minecraft.src.MovingObjectPosition;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.event.ForgeSubscribe;
 import eb.client.macros.Macro;
 import eb.client.macros.MacroIO;
-import eb.client.macros.MoveInstruction;
-import eb.client.macros.UseInstruction;
 import eb.client.macros.gui.GuiMacro;
 import eb.client.macros.gui.GuiMenu;
 import eb.client.macros.gui.GuiSchematic;
+import eb.client.macros.instructions.IInstruction;
+import eb.client.macros.instructions.MoveInstruction;
+import eb.client.macros.instructions.UseInstruction;
 import eb.client.mode.BuildMode;
-import eb.client.mode.DuplicatorMode;
 import eb.client.mode.GhostBlockMode;
-import eb.client.mode.RemoveMode;
-import eb.common.Constants;
 import eb.common.EBHelper;
 
 /**
@@ -34,115 +35,66 @@ public class GhostBlockHandler {
 	private GhostBlockHandler() {
 		autoplace = false;
 		recording = false;
-		//mode = new RemoveMode();
-		//mode = new BuildMode();
-		mode = new DuplicatorMode();
+		mode = new BuildMode();
 		
 		menu = new GuiMenu(EBHelper.getClient());
 		menu.addScreen("Load/Save Macro", new GuiMacro());
 		menu.addScreen("Import Schematic", new GuiSchematic());
-		//menu.addScreen("Substitute Block", new GuiSubBlock());
 	}
 
 	public static GhostBlockHandler instance() {
 		return INSTANCE;
 	}
 	
-	public void render(TileGhostBlock ghost, double x, double y, double z) {
-		mode.render(ghost, x, y, z);
+	@ForgeSubscribe
+	public void render(RenderWorldLastEvent event) {
+		mode.render(event.partialTicks);
+	}
+	
+	public GhostBlockMode getMode() {
+		return mode;
 	}
 	
 	public void move(Direction direction) {
-		if(autoplace) {
-			placeBlock();
-		}
+		addInstruction(mode.move(direction));
+	}
+
+	public void place() {
+		MovingObjectPosition target = EBHelper.getClient().objectMouseOver;
 		
-		mode.move(direction);
-		
-		if(recording) {
-			macro.addInstruction(new MoveInstruction(direction));
+		if(target != null) {
+			int[] pos = EBHelper.getPosition(target.blockX, target.blockY, target.blockZ, target.sideHit);
+			
+			mode.setGhostPosition(pos[0], pos[1], pos[2]);
+			mode.setGhostPlaced(true);
 		}
 	}
 
-	public void place(int x, int y, int z) {
-		mode.setGhostPosition(x, y, z);
-	}
-
-	public void update(int blockID, int metadata, boolean failed) {
-		if(!failed) {			
-			if(mode.isGhostPlaced()) {
-				int x = mode.getGhostX();
-				int y = mode.getGhostY();
-				int z = mode.getGhostZ();
-				
-				TileGhostBlock ghost = EBHelper.getGhostBlock(EBHelper.getWorld(), x, y, z);
-				
-				if(ghost != null) {
-					ghost.setBlockId(blockID);
-					ghost.setBlockMetadata(metadata);
-				}
-			}
-		}
-		
-		if(macro != null) {
-			if(macro.isPlaying()) {
-				macro.setSynced(true);
-			} else {
-				mode.setLockedDirection(null);
-			}
-		}
-	}
-
-	public void placeBlock() {
-		ItemStack current = EBHelper.getCurrentItem();
-		
-		if(current != null) {
-			placeBlock(current.itemID, current.getItemDamage());
-		}
-	}
-	
-	public void placeBlock(int itemID, int metadata) {
-		mode.setItem(itemID, metadata);
-		mode.use();
-		
-		if(recording) {
-			macro.addInstruction(new UseInstruction(itemID, metadata));
-		}
+	public void use() {
+		addInstruction(mode.use());
 	}
 
 	public void toggleRecording() {
-		recording = !recording;
-
-		if(recording) {
-			sendMessage("Started Recording");
-			macro = new Macro();
-		} else {
-			sendMessage("Finished Recording");
-			macro.optimize();
-		}
-	}
+		if(mode.allowsMacros()) {
+			recording = !recording;
 	
-	public void toggleAutoplace() {
-		autoplace = !autoplace;
-
-		if(autoplace) {
-			sendMessage("Autoplace enabled");
-		} else {
-			sendMessage("Autoplace disabled");
+			if(recording) {
+				EBHelper.printMessage("Started Recording");
+				macro = new Macro(mode.getClass());
+			} else {
+				EBHelper.printMessage("Finished Recording");
+				macro.optimize();
+			}
 		}
 	}
 
 	public void playMacro() {
 		if(recording) {
-			sendMessage("You must stop recording before you can play the macro.");
+			EBHelper.printMessage("You must stop recording before you can play the macro.");
 			return;
 		}
 
 		if(macro != null) {
-			if(autoplace) {
-				toggleAutoplace();
-			}
-			
 			if(!macro.isPlaying()) {
 				mode.setLockedDirection(EBHelper.getPlayerDirection(EBHelper.getPlayer()));
 				macro.play();
@@ -158,31 +110,24 @@ public class GhostBlockHandler {
 		EBHelper.getClient().displayGuiScreen(menu);
 	}
 	
-	public boolean saveMacro(String name, String desc) {
-		if(macro != null) { return false; }
-		
-		macro.setName(name);
-		macro.setDescription(desc);
-		
-		return MacroIO.save(macro);
-	}
-	
 	public void setMacro(String name) {
 		setMacro(MacroIO.load(name));
 	}
 	
-	public void setMacro(Macro macro) {		
+	public void setMacro(Macro macro) {
 		if(macro != null) {
-			sendMessage("Macro changed to \"" + macro.getName() + "\"");
-			sendMessage(macro.getName() + " has a " + macro.getRuntime() + " second runtime");
+			EBHelper.printMessage("Macro changed to \"" + macro.getName() + "\"");
+			EBHelper.printMessage(macro.getName() + " has a " + macro.getRuntime() + " second runtime");
 		}
 	}
 	
 	public Macro getMacro() {
 		return macro;
 	}
-
-	public void sendMessage(String message) {
-		EBHelper.getPlayer().addChatMessage(message);
+	
+	private void addInstruction(IInstruction instruction) {
+		if(recording && macro != null && instruction != null) {
+			macro.addInstruction(instruction);
+		}
 	}
 }

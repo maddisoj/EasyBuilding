@@ -1,6 +1,8 @@
 @echo off
-cd /D "E:\MCP\src\"
-mklink /D "common\eb" "E:\Eclipse\EasyBuilding\eb_common\eb"
-mklink /D "minecraft\eb" "E:\Eclipse\EasyBuilding\eb_client\eb"
-cd "E:\MCP\eclipse\Minecraft\bin"
-mklink /D eb\gui "E:\Eclipse\EasyBuilding\resources\eb\gui"
+set MCP_LOC="E:\MCP"
+set EB_LOC=%CD%
+cd /D "%MCP_LOC%\src\"
+mklink /D "common\eb" "%EB_LOC%\eb_common\eb"
+mklink /D "minecraft\eb" "%EB_LOC%\eb_client\eb"
+cd "%MCP_LOC%\eclipse\Minecraft\bin"
+mklink /D eb\gui "%EB_LOC%\resources\eb\gui"

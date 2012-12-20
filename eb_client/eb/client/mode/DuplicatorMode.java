@@ -1,32 +1,39 @@
 package eb.client.mode;
 
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glLineWidth;
+import static org.lwjgl.opengl.GL11.glVertex3d;
+import eb.client.macros.instructions.UseInstruction;
+import net.minecraft.src.Tessellator;
 import net.minecraft.src.Vec3;
-import eb.client.TileGhostBlock;
-import static org.lwjgl.opengl.GL11.*;
 
 public class DuplicatorMode extends GhostBlockMode {
 	private int startX, startY, startZ;
-	private Vec3 lastWorldPos, startWorldPos;
 	
 	public DuplicatorMode() {
 		super();
 		startX = -1;
 		startY = -1;
 		startZ = -1;
-		lastWorldPos = Vec3.createVectorHelper(0, 0, 0);
-		startWorldPos = null;
 	}
 	
 	@Override
-	public void use() {
+	public UseInstruction use() {
 		if(startX == -1 || startY == -1 || startZ == -1) {
 			startX = x;
 			startY = y;
 			startZ = z;
-			startWorldPos = lastWorldPos;
 		} else {
 			
 		}
+		
+		return null;
 	}
 
 	@Override
@@ -34,21 +41,9 @@ public class DuplicatorMode extends GhostBlockMode {
 		return false;
 	}
 
-	public void render(TileGhostBlock ghost, double x, double y, double z)  {
-		lastWorldPos.xCoord = x;
-		lastWorldPos.yCoord = y;
-		lastWorldPos.zCoord = z;
-		
-		if(startWorldPos != null) {
-			glColor3f(1.0f, 0.0f, 0.0f);
-			glBegin(GL_LINE_STRIP);
-			
-			glVertex3d(startWorldPos.xCoord, startWorldPos.yCoord, startWorldPos.zCoord);
-			glVertex3d(x, startWorldPos.yCoord, startWorldPos.zCoord);
-			glVertex3d(x, y, startWorldPos.zCoord);
-			glVertex3d(startWorldPos.xCoord, y, startWorldPos.zCoord);
-			
-			glEnd();
-		}
+	@Override
+	public void render(float partialTicks)  {
+		Tessellator tess = Tessellator.instance;
+		tess.setColorRGBA_F(1.0f, 1.0f, 1.0f, 0.7f);
 	}
 }

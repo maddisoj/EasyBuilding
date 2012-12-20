@@ -24,7 +24,6 @@ public class PacketHandler implements IPacketHandler {
 			EntityPlayer entityPlayer = (EntityPlayer)player;
 			
 			if(!PermissionHandler.instance().hasPermission(entityPlayer.username)) {
-				EBHelper.sendToPlayer(player, new PacketUpdateGhost(true));
 				return;
 			}
 			

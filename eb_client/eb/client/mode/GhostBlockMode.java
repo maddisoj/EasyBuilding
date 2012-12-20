@@ -1,19 +1,25 @@
 package eb.client.mode;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.src.EntityClientPlayerMP;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.Vec3;
 import net.minecraft.src.World;
-import eb.client.TileGhostBlock;
-import eb.client.macros.Direction;
+import net.minecraftforge.common.ForgeDirection;
+import eb.client.Direction;
+import eb.client.macros.instructions.MoveInstruction;
+import eb.client.macros.instructions.UseInstruction;
 import eb.common.Constants;
 import eb.common.EBHelper;
 import static org.lwjgl.opengl.GL11.*;
 
 public abstract class GhostBlockMode {
+	protected final float[] DEFAULT_COLOUR = { 1.0f, 1.0f, 1.0f, 0.5f };
+	
 	protected int x, y, z;
 	protected boolean ghostPlaced;
-	protected int itemID, itemMetadata;
 	protected boolean recording;
 	private Vec3 lockedDirection;
 	
@@ -26,15 +32,9 @@ public abstract class GhostBlockMode {
 	}
 	
 	public void setGhostPosition(int x, int y, int z) {
-		if(isGhostPlaced()) {
-			removeGhost();
-		}
-		
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		
-		placeGhost();
 	}
 	
 	public int getGhostX() {
@@ -49,86 +49,47 @@ public abstract class GhostBlockMode {
 		return z;
 	}
 	
-	public void setItem(int itemID, int itemMetadata) {
-		this.itemID = itemID;
-		this.itemMetadata = itemMetadata;
-	}
-	
-	public int getItemID() {
-		return itemID;
-	}
-	
-	public int getItemMetadata() {
-		return itemMetadata;
-	}
-	
 	public void setLockedDirection(Vec3 direction) {
 		this.lockedDirection = direction;
 	}
 	
-	public void move(Direction direction) {
-		moveBy(direction, 1);
-	}
-	
-	public void placeGhost() {
+	public MoveInstruction move(Direction direction) {
 		if(isGhostPlaced()) {
-			removeGhost();
-		}
-		
-		World world = EBHelper.getWorld();
-		
-		int blockID = world.getBlockId(x, y, z);
-		int metadata = world.getBlockMetadata(x, y, z);
-
-		world.setBlock(x, y, z, Constants.GHOST_BLOCK_ID);
-		TileGhostBlock ghost = EBHelper.getGhostBlock(world, x, y, z);
-		
-		if(ghost != null) {
-			ghost.setBlockId(blockID);
-			ghost.setBlockMetadata(metadata);
-		}
-		
-		setGhostPlaced(true);
-	}
-	
-	public void removeGhost() {
-		if(isGhostPlaced()) {			
-			TileGhostBlock ghost = EBHelper.getGhostBlock(EBHelper.getWorld(), x, y, z);
+			moveBy(direction, 1);
 			
-			if(ghost != null) {
-				ghost.remove();
-			}
-
-			setGhostPlaced(false);
+			return new MoveInstruction(direction);
 		}
+		
+		return null;
 	}
 	
-	public abstract void use();
+	public abstract UseInstruction use();
 	public abstract boolean allowsMacros();
 	
-	public void render(TileGhostBlock ghost, double x, double y, double z) {
-		Tessellator t = Tessellator.instance;
-
+	public void render(float partialTicks) {
+		if(!isGhostPlaced()) { return; }
+		
+		double size = 1.1;
+		double[] min = new double[] { 0, 0, 0 };
+		double[] max = new double[] { size, size, size };
+		
+        double centering = (size - 1.0) / 2.0;
+		EntityPlayer player = EBHelper.getPlayer();
+		double xOffset = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks + centering;
+        double yOffset = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks + centering;
+        double zOffset = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks + centering;
+		
 		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_CULL_FACE);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		
-		double[] min = new double[3];
-		double[] max = new double[3];
-		min[0] = x;
-		min[1] = y;
-		min[2] = z;
-		max[0] = x + 1.0;
-		max[1] = y + 1.0;
-		max[2] = z + 1.0;
-		t.startDrawingQuads();
-		
-		if(ghost.getBlockId() == 0) {			
-			t.setColorRGBA_F(1.0f, 1.0f, 1.0f, 0.9f);
-		} else {
-			t.setColorRGBA_F(1.0f, 0.0f, 0.0f, 0.9f);
-		}
+		glPushMatrix();
+		glTranslated(-xOffset, -yOffset, -zOffset);
+
+		Tessellator tess = Tessellator.instance;
+		tess.startDrawingQuads();
+		tess.setTranslation(x, y, z);
+		tess.setColorRGBA_F(DEFAULT_COLOUR[0], DEFAULT_COLOUR[1], DEFAULT_COLOUR[2], DEFAULT_COLOUR[3]);
 		
 		renderTopFace(min, max);
 		renderBottomFace(min, max);
@@ -137,21 +98,22 @@ public abstract class GhostBlockMode {
 		renderLeftFace(min, max);
 		renderRightFace(min, max);
 		
-		t.draw();
+		tess.draw();
+		tess.setTranslation(0.0, 0.0, 0.0);
 		
 		glDisable(GL_BLEND);
-		glEnable(GL_CULL_FACE);
 		glEnable(GL_TEXTURE_2D);
+		glPopMatrix();
 	}
 	
 	protected final void moveBy(Direction direction, int amount) {
-		if(isGhostPlaced()) {			
+		if(isGhostPlaced()) {
 			EntityClientPlayerMP player = EBHelper.getPlayer();
 			World world = EBHelper.getWorld();
 			Vec3 moveDirection = null;
 			
 			if(lockedDirection != null) {
-				moveDirection = relativeToAbsoluteDirection(lockedDirection, direction); 
+				moveDirection = relativeToAbsoluteDirection(lockedDirection, direction);
 			} else {
 				moveDirection = relativeToAbsoluteDirection(EBHelper.getPlayerDirection(player), direction);
 			}
@@ -195,9 +157,9 @@ public abstract class GhostBlockMode {
 		
 		t.setNormal(0.0f, -1.0f, 0.0f);
 		t.addVertex(min[0], min[1], min[2]);
-		t.addVertex(min[0], min[1], max[2]);
-		t.addVertex(max[0], min[1], max[2]);
 		t.addVertex(max[0], min[1], min[2]);
+		t.addVertex(max[0], min[1], max[2]);
+		t.addVertex(min[0], min[1], max[2]);
 	}
 	
 	private void renderFrontFace(double[] min, double[] max) {
@@ -215,9 +177,9 @@ public abstract class GhostBlockMode {
 		
 		t.setNormal(0.0f, 0.0f, -1.0f);
 		t.addVertex(max[0], min[1], min[2]);
-		t.addVertex(max[0], min[1], max[2]);
-		t.addVertex(max[0], max[1], max[2]);
 		t.addVertex(max[0], max[1], min[2]);
+		t.addVertex(max[0], max[1], max[2]);
+		t.addVertex(max[0], min[1], max[2]);
 	}
 	
 	private void renderLeftFace(double[] min, double[] max) {
@@ -235,8 +197,8 @@ public abstract class GhostBlockMode {
 		
 		t.setNormal(-1.0f, 0.0f, 0.0f);
 		t.addVertex(min[0], min[1], min[2]);
-		t.addVertex(max[0], min[1], min[2]);
-		t.addVertex(max[0], max[1], min[2]);
 		t.addVertex(min[0], max[1], min[2]);
+		t.addVertex(max[0], max[1], min[2]);
+		t.addVertex(max[0], min[1], min[2]);
 	}
 }

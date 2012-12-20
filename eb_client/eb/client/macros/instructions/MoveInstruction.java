@@ -1,5 +1,7 @@
-package eb.client.macros;
+package eb.client.macros.instructions;
 
+import net.minecraftforge.common.ForgeDirection;
+import eb.client.Direction;
 import eb.client.GhostBlockHandler;
 
 /**
@@ -39,11 +41,6 @@ public class MoveInstruction implements IInstruction {
 		}
 		
 		return true;
-	}
-	
-	@Override
-	public boolean shouldSync() {
-		return false;
 	}
 	
 	public Direction getDirection() {

@@ -19,7 +19,7 @@ public class PacketRemoveBlock extends PacketGhostPosition {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-	}	
+	}
 
 	@Override
 	public void handle(INetworkManager manager, Player player) {
@@ -30,7 +30,6 @@ public class PacketRemoveBlock extends PacketGhostPosition {
 			Block block = Block.blocksList[world.getBlockId(x, y, z)];
 			
 			if(block == null) {
-				EBHelper.sendToPlayer(player, new PacketUpdateGhost(true));
 				return;
 			} else {
 				int metadata = world.getBlockMetadata(x, y, z);
@@ -41,12 +40,9 @@ public class PacketRemoveBlock extends PacketGhostPosition {
 					int newID = world.getBlockId(x, y, z);
 					int newMetadata = world.getBlockMetadata(x, y, z);
 					
-					EBHelper.sendToPlayer(player, new PacketUpdateGhost(newID, newMetadata));
 					return;
-				}			
+				}
 			}
 		}
-		
-		EBHelper.sendToPlayer(player, new PacketUpdateGhost(true));
 	}
 }

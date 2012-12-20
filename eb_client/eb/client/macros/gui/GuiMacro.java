@@ -87,7 +87,7 @@ public class GuiMacro extends GuiScreen {
 	}
 	
 	@Override
-	public void updateScreen() {		
+	public void updateScreen() {
 		GuiListItem item = files.getSelected();
 		
 		if(item != null && !item.equals(selected)) {
@@ -166,9 +166,15 @@ public class GuiMacro extends GuiScreen {
 
 	private void saveMacro(String name, String description) {
 		if(name.length() > 0) {
-			if(GhostBlockHandler.instance().saveMacro(name, description)) {
-				populateFilesList();
+			Macro macro = GhostBlockHandler.instance().getMacro();
+			
+			if(macro != null) {
+				macro.setName(name);
+				macro.setDescription(description);
+				MacroIO.save(macro);
 			}
+			
+			populateFilesList();
 		}
 	}
 	
@@ -189,7 +195,7 @@ public class GuiMacro extends GuiScreen {
 	}
 	
 	private void populateUsageList() {
-		if(selected == null) {
+		/*if(selected == null) {
 			return;
 		}
 		
@@ -203,7 +209,7 @@ public class GuiMacro extends GuiScreen {
 			}
 		} else {
 			usageList.clear();
-		}
+		}*/
 	}
 	
 	private Macro getSelectedMacro() {
