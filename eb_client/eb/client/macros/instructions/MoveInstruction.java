@@ -28,8 +28,8 @@ public class MoveInstruction implements IInstruction {
 	}
 
 	@Override
-	public String getParameters() {
-		return dir.name();
+	public String[] getParameters() {
+		return new String[] { dir.name() };
 	}
 
 	@Override

@@ -14,7 +14,7 @@ import eb.client.macros.instructions.IInstruction;
 import eb.client.macros.instructions.MoveInstruction;
 import eb.client.macros.instructions.UseInstruction;
 import eb.client.mode.BuildMode;
-import eb.client.mode.GhostBlockMode;
+import eb.client.mode.GhostMode;
 import eb.common.EBHelper;
 
 /**
@@ -30,7 +30,7 @@ public class GhostBlockHandler {
 	private Macro macro;
 	private boolean autoplace, recording;
 	private GuiMenu menu;
-	private GhostBlockMode mode;
+	private GhostMode mode;
 
 	private GhostBlockHandler() {
 		autoplace = false;
@@ -51,7 +51,7 @@ public class GhostBlockHandler {
 		mode.render(event.partialTicks);
 	}
 	
-	public GhostBlockMode getMode() {
+	public GhostMode getMode() {
 		return mode;
 	}
 	
@@ -110,12 +110,9 @@ public class GhostBlockHandler {
 		EBHelper.getClient().displayGuiScreen(menu);
 	}
 	
-	public void setMacro(String name) {
-		setMacro(MacroIO.load(name));
-	}
-	
 	public void setMacro(Macro macro) {
 		if(macro != null) {
+			this.macro = macro;
 			EBHelper.printMessage("Macro changed to \"" + macro.getName() + "\"");
 			EBHelper.printMessage(macro.getName() + " has a " + macro.getRuntime() + " second runtime");
 		}

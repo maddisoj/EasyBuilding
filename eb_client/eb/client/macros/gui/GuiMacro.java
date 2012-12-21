@@ -21,6 +21,7 @@ import eb.client.gui.GuiWindow;
 import eb.client.macros.Macro;
 import eb.client.macros.MacroIO;
 import eb.common.Constants;
+import eb.common.EBHelper;
 
 /**
  * @author Lerp
@@ -165,7 +166,7 @@ public class GuiMacro extends GuiScreen {
 	}
 
 	private void saveMacro(String name, String description) {
-		if(name.length() > 0) {
+		if(!name.isEmpty()) {
 			Macro macro = GhostBlockHandler.instance().getMacro();
 			
 			if(macro != null) {
@@ -179,7 +180,15 @@ public class GuiMacro extends GuiScreen {
 	}
 	
 	private void loadMacro(String name) {
-		GhostBlockHandler.instance().setMacro(macroName.getText());
+		if(!name.isEmpty()) {
+			Macro macro = MacroIO.load(name);
+			
+			if(macro != null) {
+				GhostBlockHandler.instance().setMacro(macro);
+			} else {
+				EBHelper.printMessage("Problem loading macro \"" + name + "\"");
+			}
+		}
 	}
 	
 	private void populateFilesList() {

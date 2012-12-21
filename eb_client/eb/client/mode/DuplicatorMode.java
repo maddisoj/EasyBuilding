@@ -13,7 +13,7 @@ import eb.client.macros.instructions.UseInstruction;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.Vec3;
 
-public class DuplicatorMode extends GhostBlockMode {
+public class DuplicatorMode extends GhostMode {
 	private int startX, startY, startZ;
 	
 	public DuplicatorMode() {

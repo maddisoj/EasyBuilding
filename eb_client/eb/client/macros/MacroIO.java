@@ -1,14 +1,24 @@
 package eb.client.macros;
 
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import net.minecraft.src.NBTBase;
+import net.minecraft.src.NBTTagCompound;
+
 import eb.client.macros.instructions.IInstruction;
+import eb.client.mode.GhostMode;
 import eb.common.Constants;
 
 /**
@@ -20,27 +30,38 @@ import eb.common.Constants;
 
 public class MacroIO {
 	private static Map<String, Macro> loadedMacros = new HashMap<String, Macro>();
+
+	static {
+		setUpDirectories();
+	}
 	
 	public static boolean save(Macro macro) {
 		try {
 			String path = getMacroPath(macro.getName());
 			
-			FileWriter writer = new FileWriter(path);
-			BufferedWriter out = new BufferedWriter(writer);
+			FileOutputStream fileOS = new FileOutputStream(path);
+			DataOutputStream dataOS = new DataOutputStream(fileOS);
 			
-			out.write("DESC " + macro.getDescription());
-			out.newLine();
-			out.write("MACRO");
-			out.newLine();
+			NBTTagCompound instructionsTag = new NBTTagCompound();
 
 			List<IInstruction> instructions = macro.getInstructions();
-			for(IInstruction instruction : instructions) {				
-				out.write(instruction.getClass().getCanonicalName() + ", ");
-				out.write(instruction.getParameters());
-				out.newLine();
+			for(int i = 0; i < instructions.size(); ++i) {
+				instructionsTag.setCompoundTag("instruction" + i, instructionToTag(instructions.get(i)));
 			}
+			
+			instructionsTag.setInteger("size", instructions.size());
 
-			out.close();
+			NBTTagCompound macroTag = new NBTTagCompound();
+			macroTag.setString("requiredMode", macro.getRequiredMode().getName());
+			macroTag.setString("name", macro.getName());
+			macroTag.setString("description", macro.getDescription());
+			macroTag.setCompoundTag("instructions", instructionsTag);
+			
+			NBTBase.writeNamedTag(macroTag, dataOS);
+
+			dataOS.close();
+			fileOS.close();
+			
 			loadedMacros.put(path, macro);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -57,65 +78,17 @@ public class MacroIO {
 		requested = loadedMacros.get(path);
 		if(requested != null) {
 			return requested;
-		}
-		
-		try {
-			requested = new Macro();
-			File file = new File(path);
-			Scanner scanner = new Scanner(file);
-			boolean inMacro = false;
-			
-			requested.setName(name);
-
-			while(scanner.hasNextLine()) {
-				String line = scanner.nextLine();
-
-				if(line.isEmpty()) { continue; }
-
-				if(inMacro) {
-					int splitPoint = line.indexOf(',');
-					String instructionName = line.substring(0, splitPoint);
-					String[] parameters = line.substring(splitPoint + 1).trim().split(" ");
-					
-					Class klass = Class.forName(instructionName);
-					
-					if(IInstruction.class.isAssignableFrom(klass)) {
-						IInstruction instruction = (IInstruction)klass.newInstance();
-						
-						if(instruction == null) {
-							scanner.close();
-							return null;
-						}
-						
-						if(instruction.parseParameters(parameters)) {
-							requested.addInstruction(instruction);
-						} else {
-							scanner.close();
-							return null;
-						}
-					}
-				} else {
-					String[] tokens = line.split(" ");
-					
-					if(tokens[0].toLowerCase().equals("macro")) {
-						inMacro = true;
-					} else if(tokens[0].toLowerCase().equals("desc")) {
-						requested.setDescription(line.substring(5)); //rest of the line after "desc "
-					}
-				}
+		} else {
+			try {
+				return loadFromNBT(path);
+			} catch(Exception e) {
+				e.printStackTrace();
 			}
-
-			scanner.close();
-			loadedMacros.put(path, requested);
-			return requested;
-			
-		} catch(Exception e) {
-			e.printStackTrace();
 		}
 
 		return null;
 	}
-	
+
 	public static boolean macroExists(String name) {
 		String path = getMacroPath(name);
 		File file = new File(path);
@@ -136,10 +109,87 @@ public class MacroIO {
 	}
 	
 	private static String getMacroPath(String name) {
-		return Constants.MACROS_PATH + File.separator + name.trim().replace(" ", "_") + ".txt";
+		return Constants.MACROS_PATH + File.separator + name.trim().replace(" ", "_") + ".macro";
 	}
 	
-	static {
-		setUpDirectories();
+	private static NBTTagCompound instructionToTag(IInstruction instruction) {
+		NBTTagCompound instructionTag = new NBTTagCompound();
+		
+		instructionTag.setString("class", instruction.getClass().getName());
+		
+		String[] parameters = instruction.getParameters();
+		
+		if(parameters != null) {
+			instructionTag.setInteger("numParameters", parameters.length);
+			
+			for(int i = 0; i < parameters.length; ++i) {
+				instructionTag.setString("parameter" + i, parameters[i]);
+			}
+		}
+		
+		return instructionTag;
+	}
+	
+	private static Macro loadFromNBT(String path) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+		FileInputStream fileIS = new FileInputStream(path);
+		DataInputStream dataIS = new DataInputStream(fileIS);
+		NBTTagCompound macroTag = (NBTTagCompound) NBTBase.readNamedTag(dataIS);
+		
+		String name = macroTag.getString("name");
+		String description = macroTag.getString("description");
+		NBTTagCompound instructions = macroTag.getCompoundTag("instructions");
+		int numInstructions = instructions.getInteger("size");
+		
+		Macro macro = new Macro(getRequriedModeFromName(macroTag.getString("requiredMode")));
+		macro.setName(name);
+		macro.setDescription(description);
+		
+		for(int i = 0; i < numInstructions; ++i) {
+			NBTTagCompound instructionTag = instructions.getCompoundTag("instruction" + i);
+			String instructionClassName = instructionTag.getString("class");
+			
+			Class instructionClass = Class.forName(instructionClassName);
+			
+			if(IInstruction.class.isAssignableFrom(instructionClass)) {
+				IInstruction instruction = (IInstruction)instructionClass.newInstance();
+				
+				if(instruction == null) {
+					dataIS.close();
+					fileIS.close();
+					return null;
+				}
+				
+				String[] params = convertTagToParameters(instructionTag);
+				
+				if(instruction.parseParameters(params)) {
+					macro.addInstruction(instruction);
+				} else {
+					dataIS.close();
+					fileIS.close();
+					return null;
+				}
+			}
+		}
+		
+		dataIS.close();
+		fileIS.close();
+		
+		return macro;
+	}
+	
+	private static Class<? extends GhostMode> getRequriedModeFromName(String name) throws ClassNotFoundException {
+		return (Class<? extends GhostMode>) Class.forName(name);
+	}
+	
+	private static String[] convertTagToParameters(NBTTagCompound instructionTag) {
+		int numParams = instructionTag.getInteger("numParameters");
+		
+		String[] parameters = new String[numParams];
+		
+		for(int i = 0; i < numParams; ++i) {
+			parameters[i] = instructionTag.getString("parameter" + i);
+		}
+		
+		return parameters;
 	}
 }

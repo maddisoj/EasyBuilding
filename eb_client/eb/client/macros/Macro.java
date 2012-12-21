@@ -16,7 +16,7 @@ import eb.client.macros.instructions.IInstruction;
 import eb.client.macros.instructions.MoveInstruction;
 import eb.client.macros.instructions.UseInstruction;
 import eb.client.mode.BuildMode;
-import eb.client.mode.GhostBlockMode;
+import eb.client.mode.GhostMode;
 
 /**
  * @author Lerp
@@ -27,7 +27,7 @@ public class Macro extends Observable implements Runnable {
 	//how often to send an instruction in milliseconds
 	private final static int PLAYBACK_SPEED = 25;
 	
-	private Class<? extends GhostBlockMode> forMode;
+	private Class<? extends GhostMode> requiredMode;
 	private String name, description;
 	private LinkedList<IInstruction> instructions;
 	private Iterator iterator;
@@ -38,14 +38,18 @@ public class Macro extends Observable implements Runnable {
 		this(null);
 	}
 	
-	public Macro(Class<? extends GhostBlockMode> mode) {
-		forMode = mode;
+	public Macro(Class<? extends GhostMode> mode) {
+		requiredMode = mode;
 		name = "Unnamed";
 		description = "No Description";
 		instructions = new LinkedList<IInstruction>();
 		iterator = null;
 		playing = false;
 		scheduler = Executors.newScheduledThreadPool(1);
+	}
+	
+	public Class<? extends GhostMode> getRequiredMode() {
+		return requiredMode;
 	}
 	
 	public void addInstruction(IInstruction instruction) {
@@ -108,37 +112,6 @@ public class Macro extends Observable implements Runnable {
 	public String getDescription() {
 		return description;
 	}
-	
-	/*public ArrayList<ItemStack> getBlockUsage() {
-		ArrayList<ItemStack> usage = new ArrayList<ItemStack>();
-		
-		for(IInstruction instruction : instructions) {
-			if(instruction instanceof UseInstruction) {
-				UseInstruction placeInstruction = (UseInstruction)instruction;
-				int id = placeInstruction.getItemID();
-				int metadata = placeInstruction.getMetadata();
-				boolean found = false;
-				
-				for(int i = 0; i < usage.size(); ++i) {
-					ItemStack stack = usage.get(i);
-					
-					if(stack.itemID == id && stack.getItemDamage() == metadata) {
-						++stack.stackSize;
-						found = true;
-						break;
-					}
-				}
-				
-				if(!found) {
-					if(Item.itemsList[id] != null) {
-						usage.add(new ItemStack(Item.itemsList[id], 1, metadata));
-					}
-				}
-			}
-		}
-		
-		return usage;
-	}*/
 
 	public boolean isPlaying() {
 		return playing;

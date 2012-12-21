@@ -15,7 +15,7 @@ import eb.common.Constants;
 import eb.common.EBHelper;
 import static org.lwjgl.opengl.GL11.*;
 
-public abstract class GhostBlockMode {
+public abstract class GhostMode {
 	protected final float[] DEFAULT_COLOUR = { 1.0f, 1.0f, 1.0f, 0.5f };
 	
 	protected int x, y, z;

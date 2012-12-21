@@ -9,7 +9,7 @@ import eb.client.macros.instructions.UseInstruction;
 import eb.common.EBHelper;
 import eb.common.network.PacketPlaceBlock;
 
-public class BuildMode extends GhostBlockMode {
+public class BuildMode extends GhostMode {
 	public static class BuildUseInstruction extends UseInstruction {
 		private int itemID;
 		private int itemMetadata;
@@ -25,7 +25,7 @@ public class BuildMode extends GhostBlockMode {
 
 		@Override
 		public void execute() {
-			GhostBlockMode mode = GhostBlockHandler.instance().getMode();
+			GhostMode mode = GhostBlockHandler.instance().getMode();
 
 			if(!(mode instanceof BuildMode)) {
 				return;
@@ -35,8 +35,8 @@ public class BuildMode extends GhostBlockMode {
 		}
 
 		@Override
-		public String getParameters() {
-			return Integer.toString(itemID) + " " + Integer.toString(itemMetadata);
+		public String[] getParameters() {
+			return new String[] { Integer.toString(itemID), Integer.toString(itemMetadata) };
 		}
 
 		@Override

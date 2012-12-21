@@ -16,7 +16,7 @@ public class UseInstruction implements IInstruction {
 	}
 
 	@Override
-	public String getParameters() {
+	public String[] getParameters() {
 		return null;
 	}
 

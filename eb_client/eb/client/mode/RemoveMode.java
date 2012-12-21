@@ -5,7 +5,7 @@ import eb.common.EBHelper;
 import eb.common.network.PacketRemoveBlock;
 
 
-public class RemoveMode extends GhostBlockMode {
+public class RemoveMode extends GhostMode {
 	@Override
 	public UseInstruction use() {
 		if(isGhostPlaced()) {
