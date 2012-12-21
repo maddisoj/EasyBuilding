@@ -56,6 +56,10 @@ public class GhostBlockHandler {
 	}
 	
 	public void move(Direction direction) {
+		if(!macro.isPlaying()) {
+			mode.setLockedDirection(null);
+		}
+		
 		addInstruction(mode.move(direction));
 	}
 
