@@ -17,7 +17,7 @@ import eb.mode.RemoveMode;
 import eb.mode.SelectionMode;
 
 /**
- * The class responsible for tracking and operating the client's ghost block
+ * The class responsible for tracking and operating the ghost
  * 
  * @author Lerp
  * @license Lesser GNU Public License v3 http://www.gnu.org/licenses/lgpl.html
@@ -34,7 +34,7 @@ public class GhostHandler {
 		GhostModeManager.addMode(new RemoveMode());
 		GhostModeManager.addMode(new SelectionMode());
 		
-		mode = GhostModeManager.getMode(BuildMode.class);
+		mode = GhostModeManager.getMode(SelectionMode.class);
 		
 		menu = new GuiMenu(EBHelper.getClient());
 		menu.addScreen("Load/Save Macro", new GuiMacro());

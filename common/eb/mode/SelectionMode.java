@@ -14,7 +14,15 @@ import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glTranslatef;
+
+import org.lwjgl.input.Keyboard;
+
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
+import eb.core.Direction;
+import eb.core.EBHelper;
 import eb.core.mode.GhostMode;
 import eb.macro.instruction.UseInstruction;
 
@@ -30,13 +38,9 @@ public class SelectionMode extends GhostMode {
 	
 	@Override
 	public void use() {
-		if(startX == -1 || startY == -1 || startZ == -1) {
-			startX = x;
-			startY = y;
-			startZ = z;
-		} else {
-			
-		}
+		startX = x;
+		startY = y;
+		startZ = z;
 	}
 
 	@Override
@@ -46,40 +50,37 @@ public class SelectionMode extends GhostMode {
 
 	@Override
 	public void render(float partialTicks)  {
-		if(startX == -1 || startY == -1 || startZ == -1 ||
-		   (x == startX && y == startY && z == startZ)) {
+		if(startX == -1 || startY == -1 || startZ == -1) {
 			super.render(partialTicks);
 		} else {			
 			int[] start = { startX, startY, startZ };
-			int[] end = { x, y, z };
+			int[] end = { x + 1, y + 1, z + 1 };
+			
+			if(start[0] >= end[0]) {
+				int temp = start[0];
+				start[0] = end[0] - 1;
+				end[0] = temp + 1;
+			}
+			
+			if(start[1] >= end[1]) {
+				int temp = start[1];
+				start[1] = end[1] - 1;
+				end[1] = temp + 1;
+			}
+			
+			if(start[2] >= end[2]) {
+				int temp = start[2];
+				start[2] = end[2] - 1;
+				end[2] = temp + 1;
+			}
 			
 			int width = end[0] - start[0];
 			int height = end[1] - start[1];
 			int length = end[2] - start[2];
 			
-			if(width < 0) {
-				width = -width;
-				start[0] = end[0];
-			} else if(width == 0) {
-				width = 1;
-			}
-			
-			if(height < 0) {
-				height = -height;
-				start[1] = end[1];
-			} else if(height == 0) {
-				height = 1;
-			}
-			
-			if(length < 0) {
-				length = -length;
-				start[2] = end[2];
-			} else if(length == 0) {
-				length = 1;
-			}
-			
-			double[] min = { 0, 0, 0 };
-			double[] max = { width, height, length };
+			double padding = 0.05;
+			double[] min = { -padding, -padding, -padding };
+			double[] max = { width + padding, height + padding, length + padding };
 			
 			glDisable(GL_TEXTURE_2D);
 			glEnable(GL_BLEND);
@@ -106,8 +107,6 @@ public class SelectionMode extends GhostMode {
 			glBegin(GL_LINE_STRIP);
 			renderTopFaceOutline(min, max);
 			renderBottomFaceOutline(min, max);
-			renderFrontFaceOutline(min, max);
-			renderBackFaceOutline(min, max);
 			renderLeftFaceOutline(min, max);
 			renderRightFaceOutline(min, max);
 			glEnd();

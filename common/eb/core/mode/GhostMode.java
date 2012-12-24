@@ -159,8 +159,6 @@ public abstract class GhostMode {
 		glBegin(GL_LINE_STRIP);
 		renderTopFaceOutline(min, max);
 		renderBottomFaceOutline(min, max);
-		renderFrontFaceOutline(min, max);
-		renderBackFaceOutline(min, max);
 		renderLeftFaceOutline(min, max);
 		renderRightFaceOutline(min, max);
 		glEnd();
