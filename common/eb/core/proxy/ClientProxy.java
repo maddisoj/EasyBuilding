@@ -3,7 +3,7 @@ package eb.core.proxy;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import eb.core.handlers.GhostHandler;
-import eb.core.handlers.GhostKeyHandler;
+import eb.core.handlers.KeyBindingHandler;
 
 /**
  * @author Lerp
@@ -13,7 +13,7 @@ import eb.core.handlers.GhostKeyHandler;
 public class ClientProxy extends CommonProxy {
 	@Override
 	public void registerKeyHandler() {
-		KeyBindingRegistry.registerKeyBinding(new GhostKeyHandler());
+		KeyBindingRegistry.registerKeyBinding(new KeyBindingHandler());
 		//TickRegistry.registerTickHandler(new GhostBlockRenderer(), Side.CLIENT);
 	}
 	

@@ -29,7 +29,7 @@ public class SelectionMode extends GhostMode {
 	}
 	
 	@Override
-	public UseInstruction use() {
+	public void use() {
 		if(startX == -1 || startY == -1 || startZ == -1) {
 			startX = x;
 			startY = y;
@@ -37,8 +37,6 @@ public class SelectionMode extends GhostMode {
 		} else {
 			
 		}
-		
-		return null;
 	}
 
 	@Override
@@ -51,17 +49,7 @@ public class SelectionMode extends GhostMode {
 		if(startX == -1 || startY == -1 || startZ == -1 ||
 		   (x == startX && y == startY && z == startZ)) {
 			super.render(partialTicks);
-		} else {
-			/*int[] start = new int[3];
-			int[] end = new int[3];
-			
-			start[0] = Math.min(startX, x);
-			start[1] = Math.min(startY, y);
-			start[2] = Math.min(startZ, z);
-			end[0] = Math.max(startX, x);
-			end[1] = Math.max(startY, y);
-			end[2] = Math.max(startZ, z);*/
-			
+		} else {			
 			int[] start = { startX, startY, startZ };
 			int[] end = { x, y, z };
 			
@@ -69,9 +57,26 @@ public class SelectionMode extends GhostMode {
 			int height = end[1] - start[1];
 			int length = end[2] - start[2];
 			
-			width = (width == 0 ? 1 : width);
-			height = (height == 0 ? 1 : height);
-			length = (length == 0 ? 1 : length);
+			if(width < 0) {
+				width = -width;
+				start[0] = end[0];
+			} else if(width == 0) {
+				width = 1;
+			}
+			
+			if(height < 0) {
+				height = -height;
+				start[1] = end[1];
+			} else if(height == 0) {
+				height = 1;
+			}
+			
+			if(length < 0) {
+				length = -length;
+				start[2] = end[2];
+			} else if(length == 0) {
+				length = 1;
+			}
 			
 			double[] min = { 0, 0, 0 };
 			double[] max = { width, height, length };
@@ -81,7 +86,7 @@ public class SelectionMode extends GhostMode {
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			
 			glPushMatrix();
-			glTranslatef(startX, startY, startZ);
+			glTranslatef(start[0], start[1], start[2]);
 			applyWorldTranslation(partialTicks);
 	
 			Tessellator tess = Tessellator.instance;

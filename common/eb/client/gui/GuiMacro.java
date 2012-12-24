@@ -167,7 +167,7 @@ public class GuiMacro extends GuiScreen {
 
 	private void saveMacro(String name, String description) {
 		if(!name.isEmpty()) {
-			Macro macro = GhostHandler.instance().getMacro();
+			Macro macro = GhostHandler.instance().getMode().getMacro();
 			
 			if(macro != null) {
 				macro.setName(name);

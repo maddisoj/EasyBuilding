@@ -23,6 +23,8 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import eb.core.Direction;
 import eb.core.EBHelper;
+import eb.macro.Macro;
+import eb.macro.instruction.IInstruction;
 import eb.macro.instruction.MoveInstruction;
 import eb.macro.instruction.UseInstruction;
 
@@ -32,7 +34,8 @@ public abstract class GhostMode {
 	protected int x, y, z;
 	protected boolean ghostPlaced;
 	protected boolean recording;
-	private Vec3 lockedDirection;
+	protected Macro macro;
+	protected Vec3 lockedDirection;
 	
 	public void setGhostPlaced(boolean placed) {
 		this.ghostPlaced = placed;
@@ -60,22 +63,67 @@ public abstract class GhostMode {
 		return z;
 	}
 	
+	public boolean isRecording() {
+		return recording;
+	}
+	
 	public void setLockedDirection(Vec3 direction) {
 		this.lockedDirection = direction;
 	}
 	
-	public MoveInstruction move(Direction direction) {
+	public void move(Direction direction) {
 		if(isGhostPlaced()) {
 			moveBy(direction, 1);
 			
-			return new MoveInstruction(direction);
+			if(isRecording() && allowsMacros()) {
+				addInstruction(new MoveInstruction(direction));
+			}
 		}
-		
-		return null;
 	}
 	
-	public abstract UseInstruction use();
+	public void toggleRecording() {
+		if(allowsMacros()) {
+			recording = !recording;
+			
+			if(isRecording()) {
+				setLockedDirection(EBHelper.getPlayerDirection(EBHelper.getPlayer()));
+				macro = new Macro(getClass());
+			} else {
+				setLockedDirection(null);
+				macro.optimize();
+			}
+		}
+	}
+	
+	public abstract void use();
 	public abstract boolean allowsMacros();
+	
+	public void setMacro(Macro macro) {
+		if(allowsMacros()) {
+			this.macro = macro;
+		}
+	}
+
+	public Macro getMacro() {
+		return macro;
+	}
+	
+	public void playMacro() {
+		if(macro != null) {
+			if(!macro.isPlaying()) {
+				setLockedDirection(EBHelper.getPlayerDirection(EBHelper.getPlayer()));
+				macro.play();
+			} else {
+				macro.stop();
+			}
+		}
+	}
+
+	protected void addInstruction(IInstruction instruction) {
+		if(macro != null && instruction != null) {
+			macro.addInstruction(instruction);
+		}
+	}
 	
 	public void render(float partialTicks) {
 		if(!isGhostPlaced()) { return; }

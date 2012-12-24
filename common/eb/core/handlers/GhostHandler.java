@@ -9,9 +9,11 @@ import eb.client.gui.GuiSchematic;
 import eb.core.Direction;
 import eb.core.EBHelper;
 import eb.core.mode.GhostMode;
+import eb.core.mode.GhostModeManager;
 import eb.macro.Macro;
 import eb.macro.instruction.IInstruction;
 import eb.mode.BuildMode;
+import eb.mode.RemoveMode;
 import eb.mode.SelectionMode;
 
 /**
@@ -24,15 +26,15 @@ import eb.mode.SelectionMode;
 public class GhostHandler {
 	private static GhostHandler INSTANCE = new GhostHandler();
 	
-	private Macro macro;
-	private boolean autoplace, recording;
 	private GuiMenu menu;
 	private GhostMode mode;
 
 	private GhostHandler() {
-		autoplace = false;
-		recording = false;
-		mode = new BuildMode();
+		GhostModeManager.addMode(new BuildMode());
+		GhostModeManager.addMode(new RemoveMode());
+		GhostModeManager.addMode(new SelectionMode());
+		
+		mode = GhostModeManager.getMode(BuildMode.class);
 		
 		menu = new GuiMenu(EBHelper.getClient());
 		menu.addScreen("Load/Save Macro", new GuiMacro());
@@ -52,12 +54,8 @@ public class GhostHandler {
 		return mode;
 	}
 	
-	public void move(Direction direction) {
-		if(macro != null && !macro.isPlaying()) {
-			mode.setLockedDirection(null);
-		}
-		
-		addInstruction(mode.move(direction));
+	public void move(Direction direction) {		
+		mode.move(direction);
 	}
 
 	public void place() {
@@ -72,36 +70,41 @@ public class GhostHandler {
 	}
 
 	public void use() {
-		addInstruction(mode.use());
+		mode.use();
 	}
 
 	public void toggleRecording() {
 		if(mode.allowsMacros()) {
-			recording = !recording;
-	
-			if(recording) {
+			mode.toggleRecording();
+			
+			if(mode.isRecording()) {
 				EBHelper.printMessage("Started Recording");
-				macro = new Macro(mode.getClass());
 			} else {
 				EBHelper.printMessage("Finished Recording");
-				macro.optimize();
 			}
+		} else {
+			EBHelper.printMessage("This mode does not support macros");
 		}
 	}
 
 	public void playMacro() {
-		if(recording) {
-			EBHelper.printMessage("You must stop recording before you can play the macro.");
-			return;
-		}
-
-		if(macro != null) {
-			if(!macro.isPlaying()) {
-				mode.setLockedDirection(EBHelper.getPlayerDirection(EBHelper.getPlayer()));
-				macro.play();
-			} else {
-				macro.stop();
+		if(mode.allowsMacros()) {	
+			if(mode.isRecording()) {
+				EBHelper.printMessage("You must stop recording before you can play the macro.");
+				return;
 			}
+	
+			/*if(macro != null) {
+				if(!macro.isPlaying()) {
+					mode.setLockedDirection(EBHelper.getPlayerDirection(EBHelper.getPlayer()));
+					macro.play();
+				} else {
+					macro.stop();
+				}
+			}*/
+			mode.playMacro();
+		} else {
+			EBHelper.printMessage("This mode does not support macros");
 		}
 	}
 
@@ -113,19 +116,13 @@ public class GhostHandler {
 	
 	public void setMacro(Macro macro) {
 		if(macro != null) {
-			this.macro = macro;
-			EBHelper.printMessage("Macro changed to \"" + macro.getName() + "\"");
-			EBHelper.printMessage(macro.getName() + " has a " + macro.getRuntime() + " second runtime");
-		}
-	}
-	
-	public Macro getMacro() {
-		return macro;
-	}
-	
-	private void addInstruction(IInstruction instruction) {
-		if(recording && macro != null && instruction != null) {
-			macro.addInstruction(instruction);
+			mode = GhostModeManager.getMode(macro.getRequiredMode());
+			
+			if(mode != null) {
+				mode.setMacro(macro);
+				EBHelper.printMessage("Macro changed to \"" + macro.getName() + "\"");
+				EBHelper.printMessage(macro.getName() + " has a " + macro.getRuntime() + " second runtime");
+			}
 		}
 	}
 }

@@ -23,31 +23,47 @@ import eb.core.EBHelper;
  */
 
 @SideOnly(Side.CLIENT)
-public class GhostKeyHandler extends KeyHandler {
+public class KeyBindingHandler extends KeyHandler {
+	private static class EBKeyBinding {
+		private KeyBinding keyBinding;
+		private boolean repeats;
+		
+		public EBKeyBinding(String name, int key, boolean repeats) {
+			this.keyBinding = new KeyBinding(name, key);
+			this.repeats = repeats;
+		}
+		
+		public boolean isNamed(String name) {
+			return keyBinding.keyDescription.equals(name);
+		}
+		
+		public KeyBinding getKeyBinding() {
+			return keyBinding;
+		}
+		
+		public boolean getRepeats() {
+			return repeats;
+		}
+	}
 	
-	//TODO: find a better way of doing this
-	public static KeyBinding keyBindings[] = {
-		new KeyBinding("Place Ghost", Keyboard.KEY_NUMPAD0),
-		new KeyBinding("Ghost Forward", Keyboard.KEY_NUMPAD5),
-		new KeyBinding("Ghost Backward", Keyboard.KEY_NUMPAD2),
-		new KeyBinding("Ghost Left", Keyboard.KEY_NUMPAD1),
-		new KeyBinding("Ghost Right", Keyboard.KEY_NUMPAD3),
-		new KeyBinding("Ghost Up", Keyboard.KEY_NUMPAD4),
-		new KeyBinding("Ghost Down", Keyboard.KEY_NUMPAD6),
-		new KeyBinding("Place Block", Keyboard.KEY_RETURN),
-		new KeyBinding("Toggle Recording", Keyboard.KEY_NUMPAD7),
-		new KeyBinding("Play Macro", Keyboard.KEY_NUMPAD9),
-		new KeyBinding("Open Macro UI", Keyboard.KEY_DECIMAL),
-	};
-	
-	public static boolean repeats[] = {
-		false, false, false, false, false, false, false, true, false, false, false, false, false
+	public static EBKeyBinding ebKeyBindings[] = {
+		new EBKeyBinding("Place Ghost", Keyboard.KEY_NUMPAD0, false),
+		new EBKeyBinding("Ghost Forward", Keyboard.KEY_NUMPAD5, false),
+		new EBKeyBinding("Ghost Backward", Keyboard.KEY_NUMPAD2, false),
+		new EBKeyBinding("Ghost Left", Keyboard.KEY_NUMPAD1, false),
+		new EBKeyBinding("Ghost Right", Keyboard.KEY_NUMPAD3, false),
+		new EBKeyBinding("Ghost Up", Keyboard.KEY_NUMPAD4, false),
+		new EBKeyBinding("Ghost Down", Keyboard.KEY_NUMPAD6, false),
+		new EBKeyBinding("Place Block", Keyboard.KEY_RETURN, true),
+		new EBKeyBinding("Toggle Recording", Keyboard.KEY_HOME, false),
+		new EBKeyBinding("Play Macro", Keyboard.KEY_INSERT, false),
+		new EBKeyBinding("Open Macro UI", Keyboard.KEY_DECIMAL, false),
 	};
 	
 	private static boolean controlEnabled = true;
 
-	public GhostKeyHandler() {
-		super(keyBindings, repeats);
+	public KeyBindingHandler() {
+		super(gatherKeyBindings(), gatherRepeats());
 	}
 
 	@Override
@@ -101,5 +117,25 @@ public class GhostKeyHandler extends KeyHandler {
 	
 	public static void setControl(boolean enabled) {
 		controlEnabled = enabled;
+	}
+	
+	private static KeyBinding[] gatherKeyBindings() {
+		KeyBinding[] bindings = new KeyBinding[ebKeyBindings.length];
+		
+		for(int i = 0; i < ebKeyBindings.length; ++i) {
+			bindings[i] = ebKeyBindings[i].getKeyBinding();
+		}
+		
+		return bindings;
+	}
+	
+	private static boolean[] gatherRepeats() {
+		boolean[] repeats = new boolean[ebKeyBindings.length];
+		
+		for(int i = 0; i < ebKeyBindings.length; ++i) {
+			repeats[i] = ebKeyBindings[i].getRepeats();
+		}
+		
+		return repeats;
 	}
 }

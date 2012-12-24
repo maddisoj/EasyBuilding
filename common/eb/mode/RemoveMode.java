@@ -8,12 +8,10 @@ import eb.network.packet.PacketRemoveBlock;
 
 public class RemoveMode extends GhostMode {
 	@Override
-	public UseInstruction use() {
+	public void use() {
 		if(isGhostPlaced()) {
 			EBHelper.sendToServer(new PacketRemoveBlock(x, y, z));
 		}
-		
-		return null;
 	}
 
 	@Override

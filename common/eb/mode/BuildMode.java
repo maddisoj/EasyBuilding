@@ -6,6 +6,7 @@ import eb.core.EBHelper;
 import eb.core.handlers.GhostHandler;
 import eb.core.mode.GhostMode;
 import eb.macro.Macro;
+import eb.macro.instruction.IInstruction;
 import eb.macro.instruction.MoveInstruction;
 import eb.macro.instruction.UseInstruction;
 import eb.network.packet.PacketPlaceBlock;
@@ -54,25 +55,24 @@ public class BuildMode extends GhostMode {
 	}
 
 	@Override
-	public UseInstruction use() {
+	public void use() {
 		if(isGhostPlaced()) {
 			ItemStack currentItem = EBHelper.getCurrentItem();
 
 			if(currentItem != null) {
-				return use(currentItem.itemID, currentItem.getItemDamage());
+				use(currentItem.itemID, currentItem.getItemDamage());
 			}
 		}
-
-		return null;
 	}
 
-	public UseInstruction use(int itemID, int itemMetadata) {
+	public void use(int itemID, int itemMetadata) {
 		if(isGhostPlaced()) {
 			EBHelper.sendToServer(new PacketPlaceBlock(x, y, z, itemID, itemMetadata));
-			return new BuildUseInstruction(itemID, itemMetadata);
+			
+			if(isRecording()) {
+				addInstruction(new BuildUseInstruction(itemID, itemMetadata));
+			}
 		}
-
-		return null;
 	}
 
 	@Override

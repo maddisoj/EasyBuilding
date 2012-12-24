@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import eb.core.handlers.GhostKeyHandler;
+import eb.core.handlers.KeyBindingHandler;
 import eb.core.mode.GhostMode;
 import eb.macro.instruction.IInstruction;
 import eb.macro.instruction.MoveInstruction;
@@ -57,7 +57,7 @@ public class Macro extends Observable implements Runnable {
 		
 		playing = true;
 		iterator = instructions.iterator();
-		GhostKeyHandler.setControl(false);
+		KeyBindingHandler.setControl(false);
 		
 		run();
 	}
@@ -65,7 +65,7 @@ public class Macro extends Observable implements Runnable {
 	public void stop() {
 		playing = false;
 		iterator = null;
-		GhostKeyHandler.setControl(true);
+		KeyBindingHandler.setControl(true);
 	}
 
 	@Override
