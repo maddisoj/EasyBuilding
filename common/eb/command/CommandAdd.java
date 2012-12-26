@@ -26,7 +26,7 @@ public class CommandAdd extends CommandBase {
 			
 			if(target != null) {
 				if(PermissionHandler.instance().hasPermission(target.username)) {
-					sender.sendChatToPlayer("Player \"" + target.username + "\" is already permitted");
+					sender.sendChatToPlayer("Player \"" + target.username + "\" already has permission");
 				} else {
 					PermissionHandler.instance().add(target.username);
 					sender.sendChatToPlayer("\"" + target.username + "\" now has permission");

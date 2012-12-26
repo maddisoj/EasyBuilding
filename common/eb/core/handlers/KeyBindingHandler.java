@@ -48,16 +48,16 @@ public class KeyBindingHandler extends KeyHandler {
 	
 	public static EBKeyBinding ebKeyBindings[] = {
 		new EBKeyBinding("Place Ghost", Keyboard.KEY_NUMPAD0, false),
-		new EBKeyBinding("Ghost Forward", Keyboard.KEY_NUMPAD5, false),
-		new EBKeyBinding("Ghost Backward", Keyboard.KEY_NUMPAD2, false),
-		new EBKeyBinding("Ghost Left", Keyboard.KEY_NUMPAD1, false),
-		new EBKeyBinding("Ghost Right", Keyboard.KEY_NUMPAD3, false),
-		new EBKeyBinding("Ghost Up", Keyboard.KEY_NUMPAD4, false),
-		new EBKeyBinding("Ghost Down", Keyboard.KEY_NUMPAD6, false),
+		new EBKeyBinding("Move Ghost Forward", Keyboard.KEY_NUMPAD5, false),
+		new EBKeyBinding("Move Ghost Backward", Keyboard.KEY_NUMPAD2, false),
+		new EBKeyBinding("Move Ghost Left", Keyboard.KEY_NUMPAD1, false),
+		new EBKeyBinding("Move Ghost Right", Keyboard.KEY_NUMPAD3, false),
+		new EBKeyBinding("Move Ghost Up", Keyboard.KEY_NUMPAD4, false),
+		new EBKeyBinding("Move Ghost Down", Keyboard.KEY_NUMPAD6, false),
 		new EBKeyBinding("Place Block", Keyboard.KEY_RETURN, true),
 		new EBKeyBinding("Toggle Recording", Keyboard.KEY_HOME, false),
 		new EBKeyBinding("Play Macro", Keyboard.KEY_INSERT, false),
-		new EBKeyBinding("Open Macro UI", Keyboard.KEY_DECIMAL, false),
+		new EBKeyBinding("Open Menu", Keyboard.KEY_DECIMAL, false),
 	};
 	
 	private static boolean controlEnabled = true;
@@ -81,17 +81,17 @@ public class KeyBindingHandler extends KeyHandler {
 		if(controlEnabled) {
 			if(kb.keyDescription.equals("Place Ghost")) {
 				GhostHandler.instance().place();
-			} else if(kb.keyDescription.equals("Ghost Forward")) {
+			} else if(kb.keyDescription.equals("Move Ghost Forward")) {
 				GhostHandler.instance().move(Direction.FORWARD);
-			} else if(kb.keyDescription.equals("Ghost Backward")) {
+			} else if(kb.keyDescription.equals("Move Ghost Backward")) {
 				GhostHandler.instance().move(Direction.BACKWARD);
-			} else if(kb.keyDescription.equals("Ghost Left")) {
+			} else if(kb.keyDescription.equals("Move Ghost Left")) {
 				GhostHandler.instance().move(Direction.LEFT);
-			} else if(kb.keyDescription.equals("Ghost Right")) {
+			} else if(kb.keyDescription.equals("Move Ghost Right")) {
 				GhostHandler.instance().move(Direction.RIGHT);
-			} else if(kb.keyDescription .equals("Ghost Up")) {
+			} else if(kb.keyDescription .equals("Move Ghost Up")) {
 				GhostHandler.instance().move(Direction.UP);
-			} else if(kb.keyDescription.equals("Ghost Down")) {
+			} else if(kb.keyDescription.equals("Move Ghost Down")) {
 				GhostHandler.instance().move(Direction.DOWN);
 			} else if(kb.keyDescription.equals("Place Block")) {
 				GhostHandler.instance().use();
@@ -102,7 +102,7 @@ public class KeyBindingHandler extends KeyHandler {
 		
 		if(kb.keyDescription.equals("Play Macro")) {
 			GhostHandler.instance().playMacro();
-		} else if(kb.keyDescription.equals("Open Macro UI")) {
+		} else if(kb.keyDescription.equals("Open Menu")) {
 			GhostHandler.instance().openMacroGui();
 		}
 	}

@@ -26,7 +26,7 @@ public class CommandRemove extends CommandBase {
 			
 			if(target != null) {
 				if(!PermissionHandler.instance().hasPermission(target.username)) {
-					sender.sendChatToPlayer("Player \"" + target.username + "\" is already not permitted");
+					sender.sendChatToPlayer("Player \"" + target.username + "\" already does not have permission");
 				} else {
 					PermissionHandler.instance().remove(target.username);
 					sender.sendChatToPlayer("\"" + target.username + "\" no longer has permission");

@@ -63,6 +63,7 @@ public abstract class GuiComponent extends Gui {
 	}
 	
 	public void mouseMoved(int mouseX, int mouseY) {}
+	public void mouseClicked(int mouseX, int mouseY, int button) {}
 	
 	public abstract void draw();
 }

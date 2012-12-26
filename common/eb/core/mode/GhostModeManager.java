@@ -2,18 +2,31 @@ package eb.core.mode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
-
-public class GhostModeManager {	
-	private static HashMap<Class, GhostMode> modes = new HashMap<Class, GhostMode>();
+public class GhostModeManager implements Iterable<GhostMode> {	
+	private static GhostModeManager INSTANCE = new GhostModeManager();
 	
-	private GhostModeManager() {}
+	private HashMap<Class, GhostMode> modes;
 	
-	public static void addMode(GhostMode mode) {
+	private GhostModeManager() {
+		modes = new HashMap<Class, GhostMode>();
+	}
+	
+	public static GhostModeManager instance() {
+		return INSTANCE;
+	}
+	
+	public void addMode(GhostMode mode) {
 		modes.put(mode.getClass(), mode);
 	}
 	
-	public static GhostMode getMode(Class<? extends GhostMode> ghostModeClass) {
+	public GhostMode getMode(Class<? extends GhostMode> ghostModeClass) {
 		return modes.get(ghostModeClass);
+	}
+
+	@Override
+	public Iterator<GhostMode> iterator() {
+		return modes.values().iterator();
 	}
 }

@@ -30,11 +30,11 @@ public class GhostHandler {
 	private GhostMode mode;
 
 	private GhostHandler() {
-		GhostModeManager.addMode(new BuildMode());
-		GhostModeManager.addMode(new RemoveMode());
-		GhostModeManager.addMode(new SelectionMode());
+		GhostModeManager.instance().addMode(new BuildMode());
+		GhostModeManager.instance().addMode(new RemoveMode());
+		GhostModeManager.instance().addMode(new SelectionMode());
 		
-		mode = GhostModeManager.getMode(SelectionMode.class);
+		mode = GhostModeManager.instance().getMode(SelectionMode.class);
 		
 		menu = new GuiMenu(EBHelper.getClient());
 		menu.addScreen("Load/Save Macro", new GuiMacro());
@@ -116,7 +116,7 @@ public class GhostHandler {
 	
 	public void setMacro(Macro macro) {
 		if(macro != null) {
-			mode = GhostModeManager.getMode(macro.getRequiredMode());
+			mode = GhostModeManager.instance().getMode(macro.getRequiredMode());
 			
 			if(mode != null) {
 				mode.setMacro(macro);
