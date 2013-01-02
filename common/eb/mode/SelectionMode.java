@@ -21,6 +21,7 @@ import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import eb.core.Constants;
 import eb.core.Direction;
 import eb.core.EBHelper;
 import eb.core.mode.GhostMode;
@@ -115,5 +116,9 @@ public class SelectionMode extends GhostMode {
 			glEnable(GL_TEXTURE_2D);
 			glPopMatrix();
 		}
+	}
+	
+	public String toString() {
+		return "Selection";
 	}
 }

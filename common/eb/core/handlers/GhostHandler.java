@@ -36,7 +36,7 @@ public class GhostHandler {
 		
 		mode = GhostModeManager.instance().getMode(SelectionMode.class);
 		
-		menu = new GuiMenu(EBHelper.getClient());
+		menu = new GuiMenu();
 		menu.addScreen("Load/Save Macro", new GuiMacro());
 		menu.addScreen("Import Schematic", new GuiSchematic());
 	}

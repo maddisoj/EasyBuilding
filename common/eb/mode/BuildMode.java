@@ -117,4 +117,8 @@ public class BuildMode extends GhostMode {
 
 		return macro;
 	}
+	
+	public String toString() {
+		return "Build";
+	}
 }

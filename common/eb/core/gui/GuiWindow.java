@@ -9,10 +9,12 @@ import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import eb.core.Constants;
+import eb.core.gui.GuiWindowDrawer.WindowPart;
 
 public class GuiWindow extends GuiComponent {	
 	private Minecraft mc;
 	private ArrayList<GuiComponent> components;
+	private GuiWindowDrawer windowDrawer;
 	
 	public GuiWindow(int width, int height) {
 		this(0, 0, width, height);
@@ -22,27 +24,41 @@ public class GuiWindow extends GuiComponent {
 	public GuiWindow(int x, int y, int width, int height) {
 		super(x, y, width, height);
 		
-		mc = FMLClientHandler.instance().getClient();
+		mc = Minecraft.getMinecraft();
 		components = new ArrayList<GuiComponent>();
+		windowDrawer = new GuiWindowDrawer(x, y, width, height);
+	}	
+
+	public void setX(int x) {
+		super.setX(x);
+		windowDrawer.setX(x);
+	}
+	
+	public void setY(int y) {
+		super.setY(y);
+		windowDrawer.setY(y);
+	}
+	
+	public void setWidth(int width) {
+		super.setWidth(width);
+		windowDrawer.setWidth(width);
+	}
+	
+	public void setHeight(int height) {
+		super.setHeight(height);
+		windowDrawer.setHeight(height);
+	}
+	
+	public void togglePartEnabled(WindowPart part) {
+		windowDrawer.togglePartEnabled(part);
 	}
 	
 	@Override
 	public void draw() {
 		if(!isVisible()) { return; }
 		
-		int texture = mc.renderEngine.getTexture(Constants.GUI_PATH + "window.png");
-		mc.renderEngine.bindTexture(texture);
-		
-		int edgeWidth = getEdgeWidth();
-		int edgeHeight = getEdgeHeight();
-		
-		GuiHelper.drawEdges(x, y, edgeWidth, edgeHeight);
-		GuiHelper.drawCorner(x, y, GuiHelper.TOP_LEFT_CORNER);
-		GuiHelper.drawCorner(x + edgeWidth + getCornerSize(), y, GuiHelper.TOP_RIGHT_CORNER);
-		GuiHelper.drawCorner(x + edgeWidth + getCornerSize(), y + edgeHeight + getCornerSize(), GuiHelper.BOTTOM_RIGHT_CORNER);
-		GuiHelper.drawCorner(x, y + edgeHeight + getCornerSize(), GuiHelper.BOTTOM_LEFT_CORNER);
-		drawBackground();
-		
+		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		windowDrawer.draw();		
 		drawComponents();
 	}
 	
@@ -61,24 +77,14 @@ public class GuiWindow extends GuiComponent {
 	}
 	
 	public void centerOnScreen() {
-		ScaledResolution res = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
+		ScaledResolution res = GuiHelper.getScaledResolution(mc.displayWidth, mc.displayHeight);
 		
-		x = (res.getScaledWidth() - width) / 2;
-		y = (res.getScaledHeight() - height) / 2;
+		setX((res.getScaledWidth() - width) / 2);
+		setY((res.getScaledHeight() - height) / 2);
 	}
 	
 	public void addComponent(GuiComponent component) {
 		components.add(component);
-	}
-	
-	private void drawBackground() {
-		int colour = GuiHelper.RGBtoInt(GuiHelper.BACKGROUND_COLOUR[0],
-										GuiHelper.BACKGROUND_COLOUR[1],
-										GuiHelper.BACKGROUND_COLOUR[2]);
-		
-		drawRect(x + getCornerSize(), y + getCornerSize(),
-				 x + getEdgeWidth() + getCornerSize(),  y + getEdgeHeight() + getCornerSize(), colour);
-		
 	}
 	
 	private void drawComponents() {
@@ -90,17 +96,5 @@ public class GuiWindow extends GuiComponent {
 		}
 		
 		GL11.glPopMatrix();
-	}
-	
-	private int getCornerSize() {
-		return GuiHelper.BACKGROUND_TEXTURE_SIZE / 2;
-	}
-	
-	private int getEdgeWidth() {
-		return width - GuiHelper.BACKGROUND_TEXTURE_SIZE;
-	}
-	
-	private int getEdgeHeight() {
-		return height - GuiHelper.BACKGROUND_TEXTURE_SIZE;
 	}
 }

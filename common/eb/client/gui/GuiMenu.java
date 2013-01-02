@@ -1,16 +1,18 @@
 package eb.client.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import eb.core.gui.GuiIconButton;
-import eb.core.gui.GuiIconMenu;
+import eb.core.gui.GuiTabs;
 import eb.core.gui.GuiWindow;
+import eb.core.gui.GuiWindowDrawer.WindowPart;
 import eb.core.mode.GhostMode;
 import eb.core.mode.GhostModeManager;
 
@@ -18,36 +20,39 @@ public class GuiMenu extends GuiScreen {
 	private HashMap<String, GuiScreen> buttons;
 	private GuiWindow window;
 	private int buttonHeight, buttonPadding;
-	private GuiIconMenu modeSelectMenu;
+	private GuiTabs tabs;
 	
-	public GuiMenu(Minecraft mc) {
+	public GuiMenu() {
+		mc = Minecraft.getMinecraft();
 		buttons = new HashMap<String, GuiScreen>();
 		buttonHeight = 20;
 		buttonPadding = 5;
 	}
 	
 	@Override
-	public void initGui() {		
+	public void initGui() {
 		window = new GuiWindow(100, getWindowHeight());
+		window.togglePartEnabled(WindowPart.TOP_EDGE);
+		window.togglePartEnabled(WindowPart.TOP_LEFT_CORNER);
+		window.togglePartEnabled(WindowPart.TOP_RIGHT_CORNER);
 		
-		modeSelectMenu = new GuiIconMenu(window.getWidth(), 3, 20, 20);
+		tabs = new GuiTabs();
+		tabs.setWidth(window.getWidth());
+		tabs.setHeight(15);
+		tabs.setY(-15);
+		tabs.setTabSelectListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				tabChanged();
+			}
+		});
 		
-		for(GhostMode mode : GhostModeManager.instance()) {
-			GuiIconButton button = new GuiIconButton();
-			button.setWidth(20);
-			button.setActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					System.out.println("Button clicked");
-				}				
-			});
-			
-			modeSelectMenu.addIcon(button);
-		}
+		tabs.addTab("Tools");
+		tabs.addTab("Mode");
 		
-		window.addComponent(modeSelectMenu);
+		window.addComponent(tabs);
 		
-		createButtons();
+		createToolsButtons();
 	}
 	
 	public void addScreen(String name, GuiScreen screen) {
@@ -55,7 +60,9 @@ public class GuiMenu extends GuiScreen {
 	}
 	
 	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {	
+		window.mouseMoved(mouseX, mouseY);
+		
 		window.draw();
 		
 		super.drawScreen(mouseX, mouseY, partialTicks);
@@ -64,6 +71,16 @@ public class GuiMenu extends GuiScreen {
 	@Override
 	public boolean doesGuiPauseGame() {
 		return false;
+	}
+	
+	public void tabChanged() {
+		if(tabs.getSelected().equals("Tools")) {
+			controlList = new ArrayList();
+			createToolsButtons();
+		} else if(tabs.getSelected().equals("Mode")) {
+			controlList = new ArrayList();
+			createModeButtons();
+		}
 	}
 	
 	@Override
@@ -77,20 +94,36 @@ public class GuiMenu extends GuiScreen {
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int button) {
 		window.mouseClicked(mouseX, mouseY, button);
+		super.mouseClicked(mouseX, mouseY, button);
     }
 	
 	private int getWindowHeight() {
 		return ((2 * buttonPadding) + buttons.size() * (buttonHeight + buttonPadding));
 	}
 	
-	private void createButtons() {
+	private void createToolsButtons() {
 		int id = 0;
 		int x = window.getX() + buttonPadding;
-		int y = window.getY() + (int)(1.5 * buttonPadding);
+		int y = window.getY() + buttonPadding;
 		
 		for(Entry<String, GuiScreen> entry : buttons.entrySet()) {
 			controlList.add(new GuiButton(id++, x, y, window.getWidth() - 2 * buttonPadding, buttonHeight, entry.getKey()));
 			y += buttonHeight + buttonPadding;
 		}
+		
+		window.setHeight(y - window.getY());
+	}
+	
+	private void createModeButtons() {
+		int id = 0;
+		int x = window.getX() + buttonPadding;
+		int y = window.getY() + buttonPadding;
+		
+		for(GhostMode mode : GhostModeManager.instance()) {
+			controlList.add(new GuiButton(id++, x, y, window.getWidth() - 2 * buttonPadding, buttonHeight, mode.toString()));
+			y += buttonHeight + buttonPadding;
+		}
+		
+		window.setHeight(y - window.getY());
 	}
 }
