@@ -80,6 +80,11 @@ public class BuildMode extends GhostMode {
 		return true;
 	}
 
+	@Override
+	public boolean repeatsUse() {
+		return true;
+	}
+
 	public static Macro translateRawData(short width, short length, short height, byte[] blocks, byte[] meta) {
 		Macro macro = new Macro(BuildMode.class);
 		boolean leftToRight = true;

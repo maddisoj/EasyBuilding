@@ -28,6 +28,7 @@ public class GhostHandler {
 	
 	private GuiMenu menu;
 	private GhostMode mode;
+	private KeyBindingHandler keyBindingHandler;
 
 	private GhostHandler() {
 		GhostModeManager.instance().addMode(new BuildMode());
@@ -39,6 +40,8 @@ public class GhostHandler {
 		menu = new GuiMenu();
 		menu.addScreen("Load/Save Macro", new GuiMacro());
 		menu.addScreen("Import Schematic", new GuiSchematic());
+		
+		keyBindingHandler = new KeyBindingHandler();
 	}
 
 	public static GhostHandler instance() {
@@ -48,6 +51,22 @@ public class GhostHandler {
 	@ForgeSubscribe
 	public void render(RenderWorldLastEvent event) {
 		mode.render(event.partialTicks);
+	}
+	
+	public void setMode(String name) {
+		if(name == null || name.isEmpty()) {
+			return;
+		}
+		
+		setMode(GhostModeManager.instance().getMode(name));
+	}
+	
+	public void setMode(GhostMode mode) {
+		if(mode != null) {
+			this.mode = mode;
+			
+			EBHelper.printMessage(mode + " mode active");
+		}
 	}
 	
 	public GhostMode getMode() {
@@ -93,15 +112,7 @@ public class GhostHandler {
 				EBHelper.printMessage("You must stop recording before you can play the macro.");
 				return;
 			}
-	
-			/*if(macro != null) {
-				if(!macro.isPlaying()) {
-					mode.setLockedDirection(EBHelper.getPlayerDirection(EBHelper.getPlayer()));
-					macro.play();
-				} else {
-					macro.stop();
-				}
-			}*/
+			
 			mode.playMacro();
 		} else {
 			EBHelper.printMessage("This mode does not support macros");
@@ -124,5 +135,9 @@ public class GhostHandler {
 				EBHelper.printMessage(macro.getName() + " has a " + macro.getRuntime() + " second runtime");
 			}
 		}
+	}
+	
+	public KeyBindingHandler getKeyHandler() {
+		return keyBindingHandler;
 	}
 }

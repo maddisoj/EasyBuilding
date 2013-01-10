@@ -28,10 +28,12 @@ import eb.core.mode.GhostMode;
 import eb.macro.instruction.UseInstruction;
 
 public class SelectionMode extends GhostMode {
+	private boolean firstUse;
 	private int startX, startY, startZ;
 	
 	public SelectionMode() {
 		super();
+		firstUse = true;
 		startX = -1;
 		startY = -1;
 		startZ = -1;
@@ -39,9 +41,15 @@ public class SelectionMode extends GhostMode {
 	
 	@Override
 	public void use() {
-		startX = x;
-		startY = y;
-		startZ = z;
+		if(firstUse) {
+			startX = x;
+			startY = y;
+			startZ = z;
+		} else {			
+			EBHelper.printMessage("Selection made");
+		}
+		
+		firstUse = !firstUse;
 	}
 
 	@Override
@@ -50,30 +58,19 @@ public class SelectionMode extends GhostMode {
 	}
 
 	@Override
+	public boolean repeatsUse() {
+		return false;
+	}
+
+	@Override
 	public void render(float partialTicks)  {
-		if(startX == -1 || startY == -1 || startZ == -1) {
+		if(startX == -1 || startY == -1 || startZ == -1 || 
+		   (startX == x && startY == y && startZ == z)) {
 			super.render(partialTicks);
-		} else {			
-			int[] start = { startX, startY, startZ };
-			int[] end = { x + 1, y + 1, z + 1 };
-			
-			if(start[0] >= end[0]) {
-				int temp = start[0];
-				start[0] = end[0] - 1;
-				end[0] = temp + 1;
-			}
-			
-			if(start[1] >= end[1]) {
-				int temp = start[1];
-				start[1] = end[1] - 1;
-				end[1] = temp + 1;
-			}
-			
-			if(start[2] >= end[2]) {
-				int temp = start[2];
-				start[2] = end[2] - 1;
-				end[2] = temp + 1;
-			}
+		} else {
+			int[][] range = getRange();
+			int[] start = range[0];
+			int[] end = range[1];			
 			
 			int width = end[0] - start[0];
 			int height = end[1] - start[1];
@@ -116,6 +113,31 @@ public class SelectionMode extends GhostMode {
 			glEnable(GL_TEXTURE_2D);
 			glPopMatrix();
 		}
+	}
+	
+	private int[][] getRange() {
+		int[] start = { startX, startY, startZ };
+		int[] end = { x + 1, y + 1, z + 1 };
+		
+		if(start[0] >= end[0]) {
+			int temp = start[0];
+			start[0] = end[0] - 1;
+			end[0] = temp + 1;
+		}
+		
+		if(start[1] >= end[1]) {
+			int temp = start[1];
+			start[1] = end[1] - 1;
+			end[1] = temp + 1;
+		}
+		
+		if(start[2] >= end[2]) {
+			int temp = start[2];
+			start[2] = end[2] - 1;
+			end[2] = temp + 1;
+		}
+		
+		return new int[][] { start, end };
 	}
 	
 	public String toString() {

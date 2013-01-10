@@ -13,6 +13,7 @@ import net.minecraft.client.gui.GuiScreen;
 import eb.core.gui.GuiTabs;
 import eb.core.gui.GuiWindow;
 import eb.core.gui.GuiWindowDrawer.WindowPart;
+import eb.core.handlers.GhostHandler;
 import eb.core.mode.GhostMode;
 import eb.core.mode.GhostModeManager;
 
@@ -85,9 +86,16 @@ public class GuiMenu extends GuiScreen {
 	
 	@Override
 	protected void actionPerformed(GuiButton button) {
-		if(button.enabled) {
-			GuiScreen screen = buttons.get(button.displayString);
-			mc.displayGuiScreen(screen);
+		if(tabs.getSelected().equals("Tools")) {
+			if(button.enabled) {
+				GuiScreen screen = buttons.get(button.displayString);
+				mc.displayGuiScreen(screen);
+			}
+		} else if(tabs.getSelected().equals("Mode")) {
+			if(button.enabled) { 
+				GhostHandler.instance().setMode(button.displayString);
+				//createModeButtons();
+			}
 		}
 	}
 	
@@ -120,8 +128,10 @@ public class GuiMenu extends GuiScreen {
 		int y = window.getY() + buttonPadding;
 		
 		for(GhostMode mode : GhostModeManager.instance()) {
-			controlList.add(new GuiButton(id++, x, y, window.getWidth() - 2 * buttonPadding, buttonHeight, mode.toString()));
-			y += buttonHeight + buttonPadding;
+			if(GhostHandler.instance().getMode() != mode) {
+				controlList.add(new GuiButton(id++, x, y, window.getWidth() - 2 * buttonPadding, buttonHeight, mode.toString()));
+				y += buttonHeight + buttonPadding;
+			}
 		}
 		
 		window.setHeight(y - window.getY());

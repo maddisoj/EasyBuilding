@@ -18,6 +18,11 @@ public class RemoveMode extends GhostMode {
 	public boolean allowsMacros() {
 		return false;
 	}
+
+	@Override
+	public boolean repeatsUse() {
+		return true;
+	}
 	
 	public String toString() {
 		return "Remove";

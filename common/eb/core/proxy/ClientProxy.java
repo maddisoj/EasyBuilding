@@ -13,8 +13,7 @@ import eb.core.handlers.KeyBindingHandler;
 public class ClientProxy extends CommonProxy {
 	@Override
 	public void registerKeyHandler() {
-		KeyBindingRegistry.registerKeyBinding(new KeyBindingHandler());
-		//TickRegistry.registerTickHandler(new GhostBlockRenderer(), Side.CLIENT);
+		KeyBindingRegistry.registerKeyBinding(GhostHandler.instance().getKeyHandler());
 	}
 	
 	@Override

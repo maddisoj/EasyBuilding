@@ -33,10 +33,6 @@ public class KeyBindingHandler extends KeyHandler {
 			this.repeats = repeats;
 		}
 		
-		public boolean isNamed(String name) {
-			return keyBinding.keyDescription.equals(name);
-		}
-		
 		public KeyBinding getKeyBinding() {
 			return keyBinding;
 		}
@@ -47,17 +43,17 @@ public class KeyBindingHandler extends KeyHandler {
 	}
 	
 	public static EBKeyBinding ebKeyBindings[] = {
-		new EBKeyBinding("Place Ghost", Keyboard.KEY_NUMPAD0, false),
-		new EBKeyBinding("Move Ghost Forward", Keyboard.KEY_NUMPAD5, false),
-		new EBKeyBinding("Move Ghost Backward", Keyboard.KEY_NUMPAD2, false),
-		new EBKeyBinding("Move Ghost Left", Keyboard.KEY_NUMPAD1, false),
-		new EBKeyBinding("Move Ghost Right", Keyboard.KEY_NUMPAD3, false),
-		new EBKeyBinding("Move Ghost Up", Keyboard.KEY_NUMPAD4, false),
-		new EBKeyBinding("Move Ghost Down", Keyboard.KEY_NUMPAD6, false),
-		new EBKeyBinding("Place Block", Keyboard.KEY_RETURN, true),
-		new EBKeyBinding("Toggle Recording", Keyboard.KEY_HOME, false),
-		new EBKeyBinding("Play Macro", Keyboard.KEY_INSERT, false),
-		new EBKeyBinding("Open Menu", Keyboard.KEY_DECIMAL, false),
+		new EBKeyBinding(Constants.BN_PLACE, Keyboard.KEY_NUMPAD0, false),
+		new EBKeyBinding(Constants.BN_FORWARD, Keyboard.KEY_NUMPAD5, false),
+		new EBKeyBinding(Constants.BN_BACKWARD, Keyboard.KEY_NUMPAD2, false),
+		new EBKeyBinding(Constants.BN_LEFT, Keyboard.KEY_NUMPAD1, false),
+		new EBKeyBinding(Constants.BN_RIGHT, Keyboard.KEY_NUMPAD3, false),
+		new EBKeyBinding(Constants.BN_UP, Keyboard.KEY_NUMPAD4, false),
+		new EBKeyBinding(Constants.BN_DOWN, Keyboard.KEY_NUMPAD6, false),
+		new EBKeyBinding(Constants.BN_USE, Keyboard.KEY_RETURN, true),
+		new EBKeyBinding(Constants.BN_RECORD, Keyboard.KEY_HOME, false),
+		new EBKeyBinding(Constants.BN_PLAY, Keyboard.KEY_INSERT, false),
+		new EBKeyBinding(Constants.BN_MENU, Keyboard.KEY_DECIMAL, false),
 	};
 	
 	private static boolean controlEnabled = true;
@@ -113,6 +109,14 @@ public class KeyBindingHandler extends KeyHandler {
 	@Override
 	public EnumSet<TickType> ticks() {
 		return EnumSet.of(TickType.CLIENT);
+	}
+
+	public void setRepeats(String description, boolean repeat) {
+		for(int i = 0; i < keyBindings.length; ++i) {
+			if(keyBindings[i].keyDescription.equals(description)) {
+				repeatings[i] = repeat;
+			}
+		}
 	}
 	
 	public static void setControl(boolean enabled) {

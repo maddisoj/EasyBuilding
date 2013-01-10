@@ -97,6 +97,7 @@ public abstract class GhostMode {
 	
 	public abstract void use();
 	public abstract boolean allowsMacros();
+	public abstract boolean repeatsUse();
 	
 	public void setMacro(Macro macro) {
 		if(allowsMacros()) {
