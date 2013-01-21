@@ -28,28 +28,84 @@ import eb.core.mode.GhostMode;
 import eb.macro.instruction.UseInstruction;
 
 public class SelectionMode extends GhostMode {
-	private boolean firstUse;
+	private enum Mode {
+		MOVE, RESIZE;
+	}
+	
+	private Mode mode;
+	private int[] start, end;
 	private int startX, startY, startZ;
 	
 	public SelectionMode() {
 		super();
-		firstUse = true;
+		mode = Mode.MOVE;
+		start = new int[3];
+		end = new int[3];
+		
 		startX = -1;
 		startY = -1;
 		startZ = -1;
 	}
 	
 	@Override
+	public void setGhostPlaced(boolean placed) {
+		super.setGhostPlaced(placed);
+		
+		if(placed) {
+			start[0] = x;
+			start[1] = y;
+			start[2] = z;			
+			end[0] = x;
+			end[1] = y;
+			end[2] = z;
+		}
+	}
+	
+	@Override
 	public void use() {
-		if(firstUse) {
-			startX = x;
-			startY = y;
-			startZ = z;
-		} else {			
-			EBHelper.printMessage("Selection made");
+		if(mode == Mode.MOVE) {
+			mode = Mode.RESIZE;
+		} else if(mode == Mode.RESIZE) {			
+			mode = Mode.MOVE;
+		}
+	}
+	
+	@Override
+	public void move(Direction direction) {	
+		System.out.println(mode.name());
+		Vec3 moveDirection = getAbsoluteMoveDirection(direction);
+		
+		if(mode == Mode.MOVE) {
+			start[0] += moveDirection.xCoord;
+			start[1] += moveDirection.yCoord;
+			start[2] += moveDirection.zCoord;
+			end[0] += moveDirection.xCoord;
+			end[1] += moveDirection.yCoord;
+			end[2] += moveDirection.zCoord;
+		} else if(mode == Mode.RESIZE) {
+			end[0] += moveDirection.xCoord;
+			end[1] += moveDirection.yCoord;
+			end[2] += moveDirection.zCoord;
+			
+			swapStartEnd();
 		}
 		
-		firstUse = !firstUse;
+		System.out.println("(" + start[0] + " " + start[1] + " " + start[2] + ")");
+		System.out.println("(" + end[0] + " " + end[1] + " " + end[2] + ")");
+	}
+
+	@Override
+	public void setGhostPosition(int x, int y, int z) {
+		int dx = this.x - x;
+		int dy = this.y - y;
+		int dz = this.z - z;
+		
+		super.setGhostPosition(x, y, z);
+		end[0] += dx;
+		end[1] += dy;
+		end[2] += dz;
+		
+		super.setGhostPosition(x, y, z);
 	}
 
 	@Override
@@ -64,14 +120,9 @@ public class SelectionMode extends GhostMode {
 
 	@Override
 	public void render(float partialTicks)  {
-		if(startX == -1 || startY == -1 || startZ == -1 || 
-		   (startX == x && startY == y && startZ == z)) {
+		if(start[0] == end[0] && start[1] == end[1] && start[2] == end[2]) {
 			super.render(partialTicks);
-		} else {
-			int[][] range = getRange();
-			int[] start = range[0];
-			int[] end = range[1];			
-			
+		} else {			
 			int width = end[0] - start[0];
 			int height = end[1] - start[1];
 			int length = end[2] - start[2];
@@ -115,29 +166,24 @@ public class SelectionMode extends GhostMode {
 		}
 	}
 	
-	private int[][] getRange() {
-		int[] start = { startX, startY, startZ };
-		int[] end = { x + 1, y + 1, z + 1 };
-		
-		if(start[0] >= end[0]) {
+	private void swapStartEnd() {
+		if(start[0] > end[0]) {
 			int temp = start[0];
-			start[0] = end[0] - 1;
-			end[0] = temp + 1;
+			start[0] = end[0];
+			end[0] = temp;
 		}
 		
-		if(start[1] >= end[1]) {
+		if(start[1] > end[1]) {
 			int temp = start[1];
-			start[1] = end[1] - 1;
-			end[1] = temp + 1;
+			start[1] = end[1];
+			end[1] = temp;
 		}
 		
-		if(start[2] >= end[2]) {
+		if(start[2] > end[2]) {
 			int temp = start[2];
-			start[2] = end[2] - 1;
-			end[2] = temp + 1;
+			start[2] = end[2];
+			end[2] = temp;
 		}
-		
-		return new int[][] { start, end };
 	}
 	
 	public String toString() {

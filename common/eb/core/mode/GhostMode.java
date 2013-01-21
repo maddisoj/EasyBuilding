@@ -72,7 +72,7 @@ public abstract class GhostMode {
 	}
 	
 	public void move(Direction direction) {
-		if(isGhostPlaced()) {
+		if(isGhostPlaced()) {			
 			moveBy(direction, 1);
 			
 			if(isRecording() && allowsMacros()) {
@@ -181,19 +181,19 @@ public abstract class GhostMode {
 	
 	protected final void moveBy(Direction direction, int amount) {
 		if(isGhostPlaced()) {
-			EntityClientPlayerMP player = EBHelper.getPlayer();
-			World world = EBHelper.getWorld();
-			Vec3 moveDirection = null;
-			
-			if(lockedDirection != null) {
-				moveDirection = relativeToAbsoluteDirection(lockedDirection, direction);
-			} else {
-				moveDirection = relativeToAbsoluteDirection(EBHelper.getPlayerDirection(player), direction);
-			}
+			Vec3 moveDirection = getAbsoluteMoveDirection(direction);
 			
 			setGhostPosition(x + ((int)moveDirection.xCoord * amount),
 							 y + ((int)moveDirection.yCoord * amount),
 							 z + ((int)moveDirection.zCoord * amount));
+		}
+	}
+	
+	protected final Vec3 getAbsoluteMoveDirection(Direction direction) {
+		if(lockedDirection != null) {
+			return relativeToAbsoluteDirection(lockedDirection, direction);
+		} else {
+			return relativeToAbsoluteDirection(EBHelper.getPlayerDirection(EBHelper.getPlayer()), direction);
 		}
 	}
 	
