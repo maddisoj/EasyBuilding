@@ -36,6 +36,10 @@ public class EBHelper {
 		return new int[]{x, y, z};
 	}
 	
+	public static Vec3 getPlayerDirection() {
+		return getPlayerDirection(getPlayer());
+	}
+	
 	public static Vec3 getPlayerDirection(EntityPlayer player) {
 		Vec3 look = player.getLookVec();
 		Vec3 absLook = Vec3.createVectorHelper(Math.abs(look.xCoord), Math.abs(look.yCoord), Math.abs(look.zCoord));
@@ -94,5 +98,9 @@ public class EBHelper {
 		if(getPlayer() != null) {
 			getPlayer().addChatMessage(message);
 		}
+	}
+	
+	public static double angleBetweenAroundY(Vec3 a, Vec3 b) {
+		return Math.atan2(a.xCoord, a.zCoord) - Math.atan2(b.xCoord, b.zCoord);
 	}
 }

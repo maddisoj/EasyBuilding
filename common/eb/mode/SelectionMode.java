@@ -15,6 +15,8 @@ import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glTranslatef;
 
+import java.util.Arrays;
+
 import org.lwjgl.input.Keyboard;
 
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -24,7 +26,9 @@ import net.minecraft.world.World;
 import eb.core.Constants;
 import eb.core.Direction;
 import eb.core.EBHelper;
+import eb.core.handlers.GhostHandler;
 import eb.core.mode.GhostMode;
+import eb.core.mode.GhostModeManager;
 import eb.macro.instruction.UseInstruction;
 
 public class SelectionMode extends GhostMode {
@@ -34,17 +38,12 @@ public class SelectionMode extends GhostMode {
 	
 	private Mode mode;
 	private int[] start, end;
-	private int startX, startY, startZ;
 	
 	public SelectionMode() {
 		super();
 		mode = Mode.MOVE;
 		start = new int[3];
 		end = new int[3];
-		
-		startX = -1;
-		startY = -1;
-		startZ = -1;
 	}
 	
 	@Override
@@ -62,20 +61,22 @@ public class SelectionMode extends GhostMode {
 	}
 	
 	@Override
-	public void use() {
+	public void use() {		
 		if(mode == Mode.MOVE) {
 			mode = Mode.RESIZE;
 		} else if(mode == Mode.RESIZE) {			
 			mode = Mode.MOVE;
 		}
+		
+		System.out.println(mode);
 	}
 	
 	@Override
-	public void move(Direction direction) {	
-		System.out.println(mode.name());
+	public void move(Direction direction) {
 		Vec3 moveDirection = getAbsoluteMoveDirection(direction);
 		
 		if(mode == Mode.MOVE) {
+			System.out.println(Arrays.toString(start));
 			start[0] += moveDirection.xCoord;
 			start[1] += moveDirection.yCoord;
 			start[2] += moveDirection.zCoord;
@@ -90,8 +91,9 @@ public class SelectionMode extends GhostMode {
 			swapStartEnd();
 		}
 		
-		System.out.println("(" + start[0] + " " + start[1] + " " + start[2] + ")");
-		System.out.println("(" + end[0] + " " + end[1] + " " + end[2] + ")");
+		x = start[0];
+		y = start[1];
+		z = start[2];
 	}
 
 	@Override
@@ -110,13 +112,74 @@ public class SelectionMode extends GhostMode {
 
 	@Override
 	public boolean allowsMacros() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean repeatsUse() {
 		return false;
 	}
+	
+	@Override
+	public void toggleRecording() {
+		World world = EBHelper.getWorld();
+		
+		if(world == null) {
+			return;
+		}
+		
+		EBHelper.printMessage("Copying Selection");
+		short width = (short)(end[0] - start[0]);
+		short height = (short)(end[1] - start[1]);
+		short length = (short)(end[2] - start[2]);
+		
+		int size = width * height * length;
+		
+		byte[] blocks = new byte[size];
+		byte[] meta = new byte[size];
+		
+		for(int y = 0; y < height; ++y) {
+			for(int z = 0; z < length; ++z) {
+				for(int x = 0; x < width; ++x) {
+					int index = y * width * length + z * width + x;
+					
+					blocks[index] = (byte)world.getBlockId(start[0] + x, start[1] + y, start[2] + z);
+					meta[index] = (byte)world.getBlockMetadata(start[0] + x, start[1] + y, start[2] + z);
+				}
+			}
+		}
+		
+		macro = BuildMode.translateRawData(width, length, height, blocks, meta);
+		
+		GhostMode buildMode = GhostModeManager.instance().getMode(BuildMode.class);
+		
+		if(buildMode != null && macro != null) {
+			buildMode.setMacro(macro);
+			buildMode.setGhostPosition(start[0], start[1], start[2]);
+			macro = null;
+			GhostHandler.instance().setMode(buildMode);
+		}
+		
+		EBHelper.printMessage("Finished copying " + size + " blocks");
+	}
+	
+	/*@Override
+	public void playMacro() {
+		if(macro != null) {
+			GhostMode macroMode = GhostModeManager.instance().getMode(macro.getRequiredMode());
+			
+			if(macroMode != null) {
+				macroMode.setGhostPosition(start[0], start[1], start[2]);
+				GhostHandler.instance().setMode(macroMode);
+
+				super.playMacro();
+			}
+			
+			System.out.println(GhostHandler.instance().getMode());
+			
+			//GhostHandler.instance().setMode(GhostModeManager.instance().getMode(toString()));
+		}
+	}*/
 
 	@Override
 	public void render(float partialTicks)  {

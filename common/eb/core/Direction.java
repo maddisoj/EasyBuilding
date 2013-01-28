@@ -6,27 +6,19 @@ package eb.core;
  */
 
 public enum Direction {
-	FORWARD, BACKWARD(FORWARD), LEFT, RIGHT(LEFT), UP, DOWN(UP);
+	FORWARD, RIGHT, BACKWARD, LEFT, UP, DOWN;
 	
-	private Direction opposite;
-	
-	private Direction() {
-		this(null);
-	}
-	
-	private Direction(Direction opposite) {
-		this.opposite = opposite;
-		
-		if(opposite != null) {
-			opposite.setOpposite(this);
-		}
-	}
+	private static Direction[] oppositeTable = { BACKWARD, LEFT, FORWARD, RIGHT, DOWN, UP };
 	
 	public boolean isOpposite(Direction direction) {
-		return (direction == opposite);
+		return oppositeTable[ordinal()] == direction;
 	}
 	
-	private void setOpposite(Direction direction) {
-		opposite = direction;
+	public Direction rotate(int numRotations) {
+		if(ordinal() >= 4) { return this; }
+				
+		int index = (ordinal() + numRotations) % 4;
+		
+		return values()[index];
 	}
 }

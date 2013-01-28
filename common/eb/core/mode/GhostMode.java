@@ -76,6 +76,15 @@ public abstract class GhostMode {
 			moveBy(direction, 1);
 			
 			if(isRecording() && allowsMacros()) {
+				if(lockedDirection != null) {
+					Vec3 playerDirection = EBHelper.getPlayerDirection();
+					
+					double angle = (2 * Math.PI) - EBHelper.angleBetweenAroundY(playerDirection, lockedDirection);
+					int numRotations = (int) (angle / (Math.PI / 2.0));
+					
+					direction = direction.rotate(numRotations);
+				}
+				
 				addInstruction(new MoveInstruction(direction));
 			}
 		}
@@ -86,11 +95,13 @@ public abstract class GhostMode {
 			recording = !recording;
 			
 			if(isRecording()) {
-				setLockedDirection(EBHelper.getPlayerDirection(EBHelper.getPlayer()));
+				setLockedDirection(EBHelper.getPlayerDirection());
 				macro = new Macro(getClass());
+				EBHelper.printMessage("Started Recording");
 			} else {
 				setLockedDirection(null);
 				macro.optimize();
+				EBHelper.printMessage("Finished Recording");
 			}
 		}
 	}
@@ -112,7 +123,7 @@ public abstract class GhostMode {
 	public void playMacro() {
 		if(macro != null) {
 			if(!macro.isPlaying()) {
-				setLockedDirection(EBHelper.getPlayerDirection(EBHelper.getPlayer()));
+				setLockedDirection(EBHelper.getPlayerDirection());
 				macro.play();
 			} else {
 				macro.stop();
@@ -190,10 +201,10 @@ public abstract class GhostMode {
 	}
 	
 	protected final Vec3 getAbsoluteMoveDirection(Direction direction) {
-		if(lockedDirection != null) {
+		if(lockedDirection != null && !isRecording()) {
 			return relativeToAbsoluteDirection(lockedDirection, direction);
 		} else {
-			return relativeToAbsoluteDirection(EBHelper.getPlayerDirection(EBHelper.getPlayer()), direction);
+			return relativeToAbsoluteDirection(EBHelper.getPlayerDirection(), direction);
 		}
 	}
 	

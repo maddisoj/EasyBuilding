@@ -95,12 +95,6 @@ public class GhostHandler {
 	public void toggleRecording() {
 		if(mode.allowsMacros()) {
 			mode.toggleRecording();
-			
-			if(mode.isRecording()) {
-				EBHelper.printMessage("Started Recording");
-			} else {
-				EBHelper.printMessage("Finished Recording");
-			}
 		} else {
 			EBHelper.printMessage("This mode does not support macros");
 		}
