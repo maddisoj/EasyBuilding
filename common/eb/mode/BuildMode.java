@@ -93,15 +93,14 @@ public class BuildMode extends GhostMode {
 		for(int y = 0; y < height; ++y) {
 			for(int z = 0; z < length; ++z) {
 				for(int x =  (leftToRight ? 0 : width - 1);
-				x != (leftToRight ? width : -1);
-				x += (leftToRight ? 1 : -1)) {
-
+					x != (leftToRight ? width : -1);
+					x += (leftToRight ? 1 : -1)) {
 					int index = y * width * length + z * width + x;
 
 					if(blocks[index] != 0) {
 						macro.addInstruction(new BuildUseInstruction(blocks[index], meta[index]));
 					}
-
+					
 					if(leftToRight && x != width - 1) {
 						macro.addInstruction(new MoveInstruction(Direction.RIGHT));
 					} else if(!leftToRight && x != 0) {

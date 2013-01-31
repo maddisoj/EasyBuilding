@@ -6,6 +6,7 @@ import net.minecraftforge.event.ForgeSubscribe;
 import eb.client.gui.GuiMacro;
 import eb.client.gui.GuiMenu;
 import eb.client.gui.GuiSchematic;
+import eb.core.Constants;
 import eb.core.Direction;
 import eb.core.EBHelper;
 import eb.core.mode.GhostMode;
@@ -64,6 +65,7 @@ public class GhostHandler {
 	public void setMode(GhostMode mode) {
 		if(mode != null) {
 			this.mode = mode;
+			keyBindingHandler.setRepeats(Constants.BN_USE, mode.repeatsUse());
 			
 			EBHelper.printMessage(mode + " mode active");
 		}
